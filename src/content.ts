@@ -18,10 +18,9 @@ export const site = {
   /** Instagram handle, printed on the Applicant Card */
   igHandle: "@gdgocau",
   instagram: "https://www.instagram.com/gdgocau",
-  /** Chapter LinkedIn page. Swap in the exact page URL if you have it. */
+  /** Chapter LinkedIn page */
   linkedinName: "Google Developer Groups on Campus Air University",
-  linkedin:
-    "https://www.linkedin.com/search/results/companies/?keywords=Google%20Developer%20Groups%20on%20Campus%20Air%20University",
+  linkedin: "https://www.linkedin.com/company/gdgocair/",
   /** Link printed on the Applicant Card, so friends can apply too */
   link: "recruitments.wyibe.com",
   /** Official GDG on Campus lockup with your chapter name. Replace the placeholder file. */
