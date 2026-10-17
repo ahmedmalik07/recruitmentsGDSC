@@ -128,6 +128,20 @@ or fails a submission. Edit the text in `content.ts` → `email`.
 
 ### 3.6 Give admins access
 
+**Easiest: allowlist in Vercel.** Set these environment variables, redeploy, and the
+people listed get access automatically the first time they sign in to `/admin`:
+
+```bash
+ADMIN_CORE_EMAILS=ahmed.usman7615@gmail.com,daniyalhero07@gmail.com
+ADMIN_LEAD_EMAILS=lead@gmail.com:technical,other@gmail.com:ops
+```
+
+Only Google accounts with a verified email on the list are granted; everyone else sees
+"Access denied". Removing someone from the list doesn't revoke access they already have;
+use `--remove` below for that.
+
+**Or with the script** (needs the service account in `.env.local`):
+
 Each person signs in to `/admin` once (they'll see "Access denied"), then you run:
 
 ```bash

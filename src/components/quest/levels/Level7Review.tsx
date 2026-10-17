@@ -6,6 +6,7 @@ import { domains, errors as errorCopy, hoursLabels, level3, level5, level7, site
 import { fieldErrors, submitSchema, type ApplyResponse } from "@/lib/schema";
 import { Button } from "@/components/ui/Button";
 import { ApplicantCard } from "../ApplicantCard";
+import { FollowLinks } from "../FollowLinks";
 import { Avatar, avatarParts, type AvatarParts } from "../Avatar";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, type Line } from "../NpcChat";
@@ -342,6 +343,7 @@ function Success({ parts }: { parts: AvatarParts }) {
         <p className="rounded-2xl bg-surface-2 p-3 text-[15px]">
           📅 <strong>{success.shortlistLabel}:</strong> {site.shortlistNote}
         </p>
+        <FollowLinks />
       </div>
       </div>
     </section>

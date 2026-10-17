@@ -15,10 +15,15 @@ export const site = {
   chapterName: "GDG on Campus Air University",
   chapterShort: "GDGOC AU",
   city: "Islamabad",
-  /** PLACEHOLDER: your real Instagram handle */
-  igHandle: "@gdgoc.au",
-  /** PLACEHOLDER: link printed on the Applicant Card and in emails */
-  link: "gdg.community.dev/gdgoc-air-university",
+  /** Instagram handle, printed on the Applicant Card */
+  igHandle: "@gdgocau",
+  instagram: "https://www.instagram.com/gdgocau",
+  /** Chapter LinkedIn page. Swap in the exact page URL if you have it. */
+  linkedinName: "Google Developer Groups on Campus Air University",
+  linkedin:
+    "https://www.linkedin.com/search/results/companies/?keywords=Google%20Developer%20Groups%20on%20Campus%20Air%20University",
+  /** Link printed on the Applicant Card, so friends can apply too */
+  link: "recruitments.wyibe.com",
   /** Official GDG on Campus lockup with your chapter name. Replace the placeholder file. */
   logo: "/brand/gdgoc-au-logo.svg",
   /**
@@ -67,7 +72,8 @@ export const hosts: Record<HostId, Host> = {
     name: "Sumaiya",
     firstName: "Sumaiya",
     role: "President",
-    photo: "/team/sumaiya.svg",
+    photo: "/team/sumaiya.jpg",
+    linkedin: "https://www.linkedin.com/in/sumaiyyah-masood-b1b103308",
     funFact: "PLACEHOLDER: Sumaiya's fun fact goes here.",
     bio: "Runs the show. If GDGOC AU has a vision board, she made it.",
     accent: "#EA4335",
@@ -89,7 +95,8 @@ export const hosts: Record<HostId, Host> = {
     name: "Abdul Rafay",
     firstName: "Rafay",
     role: "General Secretary",
-    photo: "/team/rafay.svg",
+    photo: "/team/rafay.jpg",
+    linkedin: "https://www.linkedin.com/in/abdulrafayqar",
     funFact: "PLACEHOLDER: Rafay's fun fact goes here.",
     bio: "Keeps everything on track. Knows where every file, form and chair is.",
     accent: "#34A853",
@@ -173,6 +180,7 @@ export const level2 = {
   flipHint: "Tap to flip",
   progress: (n: number) => `${n}/3 flipped`,
   linkedin: "Connect on LinkedIn",
+  linkedinShort: "LinkedIn",
 };
 
 /** Desktop side panel (only shown on wide screens) */
@@ -505,6 +513,12 @@ export const closed = {
   title: "Quest closed",
   body: "Applications for this round are closed. Follow us so you don't miss the next one.",
   follow: "Follow on Instagram",
+};
+
+export const follow = {
+  title: "Follow GDGOC AU",
+  instagram: "Instagram",
+  linkedin: "LinkedIn",
 };
 
 export const errors = {

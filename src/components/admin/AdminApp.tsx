@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   signOut,
+  type IdTokenResult,
   type User,
 } from "firebase/auth";
 import { DOMAIN_IDS, site, type DomainId } from "@/content";
@@ -32,14 +33,16 @@ export function AdminApp() {
       if (!user) return setGate({ state: "signedOut" });
       try {
         // Force refresh so claims set by scripts/set-claims.ts show up right away
-        const token = await user.getIdTokenResult(true);
-        const role = token.claims.role;
-        const domain = token.claims.domain as DomainId | undefined;
-        if (role === "core") return setGate({ state: "ok", user, claims: { role: "core" } });
-        if (role === "lead" && domain && (DOMAIN_IDS as readonly string[]).includes(domain)) {
-          return setGate({ state: "ok", user, claims: { role: "lead", domain } });
+        let claims = claimsFrom(await user.getIdTokenResult(true));
+        if (!claims) {
+          // Not an admin yet: ask the server, which grants access to allowlisted emails
+          const res = await fetch("/api/admin/claim", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${await user.getIdToken()}` },
+          });
+          if (res.ok) claims = claimsFrom(await user.getIdTokenResult(true));
         }
-        setGate({ state: "denied", user });
+        setGate(claims ? { state: "ok", user, claims } : { state: "denied", user });
       } catch {
         setGate({ state: "denied", user });
       }
@@ -90,9 +93,10 @@ export function AdminApp() {
     return (
       <Centered title="Access denied 🚫">
         <p className="text-muted">
-          <strong className="text-ink">{gate.user.email}</strong> doesn&apos;t have admin access. Ask the VP to run{" "}
-          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">scripts/set-claims.ts</code> for your email,
-          then sign in again.
+          <strong className="text-ink">{gate.user.email}</strong> isn&apos;t on the admin list. Ask Ahmed to add it to{" "}
+          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">ADMIN_CORE_EMAILS</code> (or{" "}
+          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">ADMIN_LEAD_EMAILS</code>) in Vercel, then sign in
+          again.
         </p>
         <Button variant="secondary" onClick={() => signOut(clientAuth())}>
           Sign out
@@ -102,6 +106,14 @@ export function AdminApp() {
   }
 
   return <Dashboard user={gate.user} claims={gate.claims} onSignOut={() => signOut(clientAuth())} />;
+}
+
+function claimsFrom(token: IdTokenResult): Claims | null {
+  const role = token.claims.role;
+  const domain = token.claims.domain as DomainId | undefined;
+  if (role === "core") return { role: "core" };
+  if (role === "lead" && domain && (DOMAIN_IDS as readonly string[]).includes(domain)) return { role: "lead", domain };
+  return null;
 }
 
 function Centered({ title, children }: { title: string; children?: React.ReactNode }) {
