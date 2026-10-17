@@ -19,7 +19,7 @@ import type { Claims } from "./types";
 type Gate =
   | { state: "loading" }
   | { state: "signedOut" }
-  | { state: "denied"; user: User }
+  | { state: "denied"; user: User; reason?: string }
   | { state: "ok"; user: User; claims: Claims };
 
 export function AdminApp() {
@@ -34,6 +34,7 @@ export function AdminApp() {
       try {
         // Force refresh so claims set by scripts/set-claims.ts show up right away
         let claims = claimsFrom(await user.getIdTokenResult(true));
+        let reason: string | undefined;
         if (!claims) {
           // Not an admin yet: ask the server, which grants access to allowlisted emails
           const res = await fetch("/api/admin/claim", {
@@ -41,10 +42,11 @@ export function AdminApp() {
             headers: { Authorization: `Bearer ${await user.getIdToken()}` },
           });
           if (res.ok) claims = claimsFrom(await user.getIdTokenResult(true));
+          else reason = ((await res.json().catch(() => null)) as { error?: string } | null)?.error ?? `http_${res.status}`;
         }
-        setGate(claims ? { state: "ok", user, claims } : { state: "denied", user });
+        setGate(claims ? { state: "ok", user, claims } : { state: "denied", user, reason });
       } catch {
-        setGate({ state: "denied", user });
+        setGate({ state: "denied", user, reason: "network" });
       }
     });
   }, []);
@@ -95,9 +97,15 @@ export function AdminApp() {
         <p className="text-muted">
           <strong className="text-ink">{gate.user.email}</strong> isn&apos;t on the admin list. Ask Ahmed to add it to{" "}
           <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">ADMIN_CORE_EMAILS</code> (or{" "}
-          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">ADMIN_LEAD_EMAILS</code>) in Vercel, then sign in
-          again.
+          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-sm">ADMIN_LEAD_EMAILS</code>) in Vercel, redeploy, then
+          sign in again.
         </p>
+        {gate.reason && (
+          <p className="rounded-xl bg-surface-2 px-3 py-2 text-sm text-muted">
+            <span className="font-semibold text-ink">Reason: </span>
+            {DENY_REASONS[gate.reason] ?? gate.reason}
+          </p>
+        )}
         <Button variant="secondary" onClick={() => signOut(clientAuth())}>
           Sign out
         </Button>
@@ -107,6 +115,16 @@ export function AdminApp() {
 
   return <Dashboard user={gate.user} claims={gate.claims} onSignOut={() => signOut(clientAuth())} />;
 }
+
+const DENY_REASONS: Record<string, string> = {
+  allowlist_not_configured:
+    "The server has no admin list. Add ADMIN_CORE_EMAILS in Vercel (Production), then redeploy: new variables only apply to new deployments.",
+  not_allowlisted: "The admin list is set, but this email isn't on it. Check the spelling in ADMIN_CORE_EMAILS.",
+  email_not_verified: "This Google account's email isn't verified.",
+  invalid_token: "Sign-in token was rejected. Sign out and sign in again.",
+  server: "The server couldn't save the admin role. Check FIREBASE_* variables in Vercel.",
+  network: "Couldn't reach the server. Check your connection and try again.",
+};
 
 function claimsFrom(token: IdTokenResult): Claims | null {
   const role = token.claims.role;

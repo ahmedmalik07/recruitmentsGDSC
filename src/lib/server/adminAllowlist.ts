@@ -9,11 +9,17 @@ export type AllowedRole = { role: "core" } | { role: "lead"; domain: DomainId };
  *   ADMIN_LEAD_EMAILS="lead@gmail.com:technical,other@gmail.com:ops"
  * Core wins if an email is in both lists.
  */
+/** True when neither list is set (env missing, or not redeployed after adding it) */
+export function allowlistEmpty(): boolean {
+  return !(process.env.ADMIN_CORE_EMAILS ?? "").trim() && !(process.env.ADMIN_LEAD_EMAILS ?? "").trim();
+}
+
 export function allowedRoleFor(email: string): AllowedRole | null {
   const target = email.trim().toLowerCase();
   const split = (v: string | undefined) =>
     (v ?? "")
-      .split(",")
+      .replace(/["'`]/g, "") // tolerate values pasted with quotes
+      .split(/[\s,;]+/) // commas, semicolons, spaces or new lines
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
 

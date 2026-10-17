@@ -1,6 +1,6 @@
 import { getAuth } from "firebase-admin/auth";
 import { adminApp } from "@/lib/server/firebaseAdmin";
-import { allowedRoleFor } from "@/lib/server/adminAllowlist";
+import { allowedRoleFor, allowlistEmpty } from "@/lib/server/adminAllowlist";
 
 function reply(body: Record<string, unknown>, status: number) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -30,7 +30,9 @@ export async function POST(req: Request) {
   }
 
   const wanted = allowedRoleFor(email);
-  if (!wanted) return reply({ ok: false, error: "not_allowlisted" }, 403);
+  if (!wanted) {
+    return reply({ ok: false, error: allowlistEmpty() ? "allowlist_not_configured" : "not_allowlisted" }, 403);
+  }
 
   const current = { role: decoded.role as unknown, domain: decoded.domain as unknown };
   const same =
