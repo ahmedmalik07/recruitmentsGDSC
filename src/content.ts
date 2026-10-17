@@ -190,6 +190,10 @@ export const titleScreen = {
   resume: (level: number) => `Continue from Level ${level}`,
   restart: "Start over",
   joinGroup: "Join the recruitment WhatsApp group for updates",
+  /** The "Your quest starts now" block above Press Start (same as the intro video's ending) */
+  cta: "Your quest starts now",
+  ctaNames: "Sumaiya · Ahmed · Rafay",
+  ctaSub: "No sign-in · ~5 minutes · all AU students",
   facts: ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"],
   npc: [
     "Hey hey! I'm Sumaiya, President of GDGOC AU 👋",

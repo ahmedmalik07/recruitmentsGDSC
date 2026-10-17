@@ -218,7 +218,7 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 
 | Level | Host | |
 |---|---|---|
-| 0 Press Start | Sumaiya + Ahmed | Title screen with the 3D AU building. Returning players get "Continue from Level N" |
+| 0 Press Start | Sumaiya + Ahmed | Title screen with the 3D AU building and the "Your quest starts now" block (all three photos, confetti on Press Start). Returning players get "Continue from Level N" |
 | 1 Welcome to GDG | Sumaiya → Ahmed | Air University photo, 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
 | 2 Meet the Council | Ahmed + Sumaiya | 3 equal flip cards: Sumaiya (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
 | 3 Build your Character | Abdul Rafay | Personal info, department with tap-to-fill suggestions. Each valid field unlocks an avatar part |

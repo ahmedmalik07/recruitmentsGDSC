@@ -257,6 +257,21 @@ select.field-input {
 .avatar-bob {
   animation: bob 2.8s ease-in-out infinite;
 }
+
+/* Title screen trio: hops on every other beat of the music (120 BPM) */
+@keyframes trio-hop {
+  0%,
+  45%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-10px);
+  }
+}
+.trio-hop {
+  animation: trio-hop 1s ease-in-out infinite;
+}
 @keyframes blink {
   0%,
   92%,

@@ -15,13 +15,38 @@ import { useInstant, useQuest } from "../state";
 /** The "music on, tap to mute" tip shows once per visit */
 let soundHintShown = false;
 
+/** Same line-up as the intro video's ending: the guide in the middle, a bit bigger */
+const TRIO: ReadonlyArray<{ id: HostId; size: number; at: string; delay: string }> = [
+  { id: "sumaiya", size: 92, at: "left-0 top-6", delay: "0s" },
+  { id: "rafay", size: 92, at: "right-0 top-6", delay: "0.24s" },
+  { id: "ahmed", size: 120, at: "left-1/2 top-0 z-10 -translate-x-1/2", delay: "0.12s" },
+];
+
+const CONFETTI_COLORS = ["#4285F4", "#EA4335", "#FBBC04", "#34A853"];
+
 export function Level0Start() {
   const { state, dispatch } = useQuest();
   const instant = useInstant();
   const canResume = state.hydrated && state.maxLevel > 1;
 
-  /** Start the soundtrack with the click (browsers block sound before one) */
-  function begin(action: Parameters<typeof dispatch>[0]) {
+  /** Start the soundtrack with the click (browsers block sound before one), confetti from the button */
+  function begin(action: Parameters<typeof dispatch>[0], button: HTMLElement) {
+    if (!instant) {
+      const r = button.getBoundingClientRect();
+      const origin = { x: (r.left + r.width / 2) / window.innerWidth, y: r.top / window.innerHeight };
+      import("canvas-confetti")
+        .then(({ default: confetti }) =>
+          confetti({
+            particleCount: 90,
+            spread: 80,
+            startVelocity: 40,
+            origin,
+            colors: CONFETTI_COLORS,
+            disableForReducedMotion: true,
+          }),
+        )
+        .catch(() => {});
+    }
     if (state.soundOn) {
       music.setEnabled(true);
       music.start();
@@ -134,21 +159,52 @@ export function Level0Start() {
         })}
       </ol>
 
-      <div className="flex flex-col gap-3">
+      <section
+        aria-labelledby="quest-cta"
+        className="flex flex-col gap-3 rounded-3xl border-2 border-line bg-surface/90 px-4 pt-5 pb-4 shadow-sm"
+      >
+        <div className="relative mx-auto h-[136px] w-[272px]" aria-hidden="true">
+          {TRIO.map(({ id, size, at, delay }) => (
+            <span key={id} className={`absolute ${at}`}>
+              <span className="trio-hop block rounded-full" style={{ animationDelay: delay }}>
+                <span
+                  className="block rounded-full bg-white p-1"
+                  style={{ boxShadow: `0 0 0 4px ${hosts[id].accent}, 0 10px 24px rgb(29 42 92 / 0.22)` }}
+                >
+                  <HostPhoto id={id} size={size} priority />
+                </span>
+              </span>
+            </span>
+          ))}
+        </div>
+        <div className="text-center">
+          <p className="text-xs font-bold tracking-wide text-muted uppercase">{titleScreen.ctaNames}</p>
+          <h2 id="quest-cta" className="mt-1 text-[2.4rem] leading-[1] font-extrabold tracking-tight sm:text-5xl">
+            {titleScreen.cta}
+          </h2>
+          <p className="mt-2 text-sm font-semibold text-muted">{titleScreen.ctaSub}</p>
+        </div>
         {canResume ? (
           <>
-            <Button block onClick={() => begin({ type: "go", level: state.maxLevel })} className="min-h-14 text-lg">
+            <Button
+              block
+              onClick={(e) => begin({ type: "go", level: state.maxLevel }, e.currentTarget)}
+              className="min-h-14 text-lg"
+            >
               ▶ {titleScreen.resume(state.maxLevel)}
             </Button>
-            <Button block variant="secondary" onClick={() => begin({ type: "restart" })}>
+            <Button block variant="secondary" onClick={(e) => begin({ type: "restart" }, e.currentTarget)}>
               {titleScreen.restart}
             </Button>
           </>
         ) : (
-          <Button block onClick={() => begin({ type: "start" })} className="min-h-14 text-xl">
+          <Button block onClick={(e) => begin({ type: "start" }, e.currentTarget)} className="min-h-14 text-xl">
             ▶ {titleScreen.start}
           </Button>
         )}
+      </section>
+
+      <div className="flex flex-col gap-3">
         <a
           href={site.whatsappGroup}
           target="_blank"
