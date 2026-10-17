@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, m } from "framer-motion";
-import { domains, jerseyColors, roleAccessory, type DomainId, type TeamRole } from "@/content";
+import { domains, jerseyColors, positionLabel, roleAccessory, type DomainId, type TeamRole } from "@/content";
 import { characterShape } from "@/lib/schema";
 import type { Draft } from "./state";
 
@@ -21,6 +21,8 @@ export type AvatarParts = {
   domain: DomainId | null;
   role: TeamRole | null;
   firstName: string;
+  /** Applied position label, e.g. "Co-lead" (shown on the Applicant Card) */
+  position: string;
 };
 
 /** Which avatar layers are unlocked, based on which fields are valid. */
@@ -37,6 +39,7 @@ export function avatarParts(d: Draft): AvatarParts {
     domain: d.domain,
     role: d.teamRole,
     firstName: ok("fullName", d.fullName) ? d.fullName.trim().split(/\s+/)[0] : "",
+    position: positionLabel(d.domain, d.position),
   };
 }
 
@@ -244,12 +247,19 @@ function Emblem({ domain }: { domain: DomainId }) {
       );
     case "marketing_partnerships":
       return <path d="M71 131 L71 137 L75 137 L84 141 L84 127 L75 131 Z" fill={fg} />;
-    case "visual_media":
+    case "creatives":
       return (
         <g>
           <rect x="70" y="129" width="18" height="12" rx="2.5" fill={fg} />
           <circle cx="79" cy="135" r="3.4" fill="#EA4335" />
           <rect x="74" y="126.5" width="6" height="3" rx="1" fill={fg} />
+        </g>
+      );
+    case "media":
+      return (
+        <g>
+          <rect x="70" y="128" width="18" height="12" rx="3" fill={fg} />
+          <path d="M77 131 L83 134 L77 137 Z" fill="#8430CE" />
         </g>
       );
     case "ops":

@@ -2,8 +2,8 @@
 
 import { useRef, useState, type KeyboardEvent } from "react";
 import { DOMAIN_IDS, domains, level4, type DomainId } from "@/content";
-import { houseSchema } from "@/lib/schema";
-import { ChipMulti } from "@/components/ui/Chips";
+import { fieldErrors, houseSchema } from "@/lib/schema";
+import { ChipMulti, ChipRadio } from "@/components/ui/Chips";
 import { Avatar, avatarParts } from "../Avatar";
 import { IntroVideo } from "../IntroVideo";
 import { LevelShell } from "../LevelShell";
@@ -16,6 +16,7 @@ export function Level4House() {
   const instant = useInstant();
   const d = state.draft;
   const [error, setError] = useState<string>();
+  const [positionError, setPositionError] = useState<string>();
   const doorRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   function pick(id: DomainId) {
@@ -34,10 +35,16 @@ export function Level4House() {
   }
 
   function onNext() {
-    const r = houseSchema.safeParse({ domain: d.domain ?? undefined, skillTags: d.skillTags });
+    const r = houseSchema.safeParse({ domain: d.domain ?? undefined, position: d.position, skillTags: d.skillTags });
     if (r.success) return true;
-    setError("Pick one door to continue");
-    doorRefs.current[0]?.focus();
+    const errs = fieldErrors(r.error);
+    if (errs.domain) {
+      setError("Pick one door to continue");
+      doorRefs.current[0]?.focus();
+    } else if (errs.position) {
+      setPositionError(errs.position);
+      document.querySelector<HTMLButtonElement>('[aria-labelledby="f-position"] [role="radio"]')?.focus();
+    }
     return false;
   }
 
@@ -52,7 +59,11 @@ export function Level4House() {
         <h2 id="doors-label" className="text-lg font-bold">
           {level4.doorsTitle}
         </h2>
-        <div role="radiogroup" aria-labelledby="doors-label" className="grid grid-cols-2 gap-3">
+        <div
+          role="radiogroup"
+          aria-labelledby="doors-label"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 [&>*:last-child:nth-child(odd)]:col-span-2 sm:[&>*:last-child:nth-child(odd)]:col-span-1"
+        >
           {DOMAIN_IDS.map((id, i) => {
             const dom = domains[id];
             const checked = d.domain === id;
@@ -113,6 +124,23 @@ export function Level4House() {
           <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
             <Avatar parts={avatarParts(d)} size={64} showName={false} animated={!instant} />
             <NpcChat id={`l4-pick-${house.id}`} lines={say("ahmed", [level4.npcAfterPick(house.house)])} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <ChipRadio
+              label={level4.positionTitle}
+              labelId="f-position"
+              options={house.positions.map((p) => ({ value: p.id, label: p.label }))}
+              value={d.position || null}
+              onChange={(v) => {
+                set({ position: v });
+                setPositionError(undefined);
+              }}
+              color={house.solid}
+              error={positionError}
+            />
+            {house.positions.some((p) => p.id === "lead") && (
+              <p className="text-sm text-muted">{level4.positionNote}</p>
+            )}
           </div>
           <ChipMulti
             label={level4.skillsTitle}

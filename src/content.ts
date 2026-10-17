@@ -32,6 +32,8 @@ export const site = {
   deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "",
   /** Shown on the success screen instead of a date */
   shortlistNote: "Date will be announced soon on our Instagram and WhatsApp.",
+  /** Recruitment WhatsApp group: updates, shortlist, interview slots */
+  whatsappGroup: "https://chat.whatsapp.com/IRQG5GuGgTw1dYTlc6fi0N",
   /** WhatsApp contact for problems. Number in international format, digits only. */
   whatsapp: {
     name: "Ahmed Malik",
@@ -76,8 +78,9 @@ export const hosts: Record<HostId, Host> = {
     role: "President",
     photo: "/team/sumaiya.jpg",
     linkedin: "https://www.linkedin.com/in/sumaiyyah-masood-b1b103308",
-    funFact: "PLACEHOLDER: Sumaiya's fun fact goes here.",
-    bio: "Runs the show. If GDGOC AU has a vision board, she made it.",
+    stats: ["Top 5 performer, national wilderness leadership camp", "Debate winner, writer & mentor", "President, GDGOC AU"],
+    funFact: "Spent 5 days camping in the lower Himalayas without her phone. A real-life survival challenge.",
+    bio: "Wears many hats, but keeps coming back to one: building inclusive spaces. Innovation grows when everyone belongs.",
     accent: "#EA4335",
   },
   ahmed: {
@@ -89,7 +92,7 @@ export const hosts: Record<HostId, Host> = {
     cardPhoto: "/team/ahmed-card.jpg",
     linkedin: "https://www.linkedin.com/in/ahhmedmalik",
     stats: ["4× National Hackathon Winner", "Founder, Wyibe", "VP, GDGOC AU"],
-    funFact: "PLACEHOLDER: Ahmed's fun fact goes here.",
+    funFact: "Builds video games in Unreal Engine for fun, in between shipping AI agents at Wyibe.",
     bio: "Your guide for this quest. Builds things, wins hackathons, drinks too much chai.",
     accent: "#4285F4",
   },
@@ -100,8 +103,13 @@ export const hosts: Record<HostId, Host> = {
     role: "General Secretary",
     photo: "/team/rafay.jpg",
     linkedin: "https://www.linkedin.com/in/abdulrafayqar",
-    stats: ["International Gold Medalist Calligrapher", "3× National Art Contest Winner", "AI Researcher"],
-    funFact: "An Indian newspaper called him the “Youngest Calligrapher of Pakistan”.",
+    stats: [
+      "International Gold Medalist Calligrapher",
+      "3× National Art Contest Winner",
+      "AI Researcher",
+      "“Youngest Calligrapher of Pakistan” (Indian press)",
+    ],
+    funFact: "Goes from calligraphy qalam to Python notebook in the same afternoon.",
     bio: "Keeps everything on track. Knows where every file, form and chair is.",
     accent: "#34A853",
   },
@@ -115,9 +123,9 @@ export const ahmedVideo = {
   /** Captions shown on top of the muted video. Times in seconds. */
   captions: [
     { start: 0, end: 3, text: "Salam! Ahmed here, VP of GDGOC AU 👋" },
-    { start: 3, end: 7, text: "GDGOC AU has 4 houses: Technical, Marketing & Partnerships, Visual Media and Ops." },
+    { start: 3, end: 7, text: "We have 5 teams: Technical, Marketing & Partnerships, Creatives, Media and Ops." },
     { start: 7, end: 11, text: "Each one runs a different part of the chapter: events, hackathons, baithaqs, sab kuch." },
-    { start: 11, end: 15, text: "Pick the one that actually sounds like you, not the one that sounds cool." },
+    { start: 11, end: 15, text: "Pick the team that actually sounds like you, then the position you want." },
     { start: 15, end: 18, text: "Doors neeche hain. Choose wisely 👇" },
   ],
 } as const;
@@ -159,7 +167,10 @@ export const introCards = [
 ] as const;
 
 export const level1 = {
-  npcIntro: ["Quick lore drop first. Swipe through these 3 cards 👉"],
+  npcIntro: [
+    "At GDGOC AU we believe innovation grows when everyone belongs 💛",
+    "Quick lore drop first. Swipe through these 3 cards 👉",
+  ],
   handover: "Ab tumhara guide Ahmed hai. He'll take it from here. Good luck! ✨",
   swipeHint: "Swipe or use the arrows",
 };
@@ -267,14 +278,16 @@ export const jerseyColors = [
 // Level 4: Choose your House (Ahmed)
 // ---------------------------------------------------------------------------
 
-export const DOMAIN_IDS = ["technical", "marketing_partnerships", "visual_media", "ops"] as const;
+export const DOMAIN_IDS = ["technical", "marketing_partnerships", "creatives", "media", "ops"] as const;
 export type DomainId = (typeof DOMAIN_IDS)[number];
+
+export type Position = { id: string; label: string };
 
 export type Domain = {
   id: DomainId;
   label: string;
   house: string;
-  /** Google brand color: doors, glows, emblems, chart bars */
+  /** Brand color: doors, glows, emblems, chart bars */
   color: string;
   /** Same hue, dark enough for text on top (WCAG AA) */
   solid: string;
@@ -283,10 +296,16 @@ export type Domain = {
   description: [string, string];
   /** Optional, shown under the door. Leave empty to hide. */
   lead: string;
+  /** Positions candidates can apply for in this team */
+  positions: readonly Position[];
   skills: readonly string[];
   portfolioLabel: string;
   portfolioPlaceholder: string;
 };
+
+const LEAD: Position = { id: "lead", label: "Lead" };
+const CO_LEAD: Position = { id: "co_lead", label: "Co-lead" };
+const MEMBER: Position = { id: "member", label: "Member" };
 
 export const domains: Record<DomainId, Domain> = {
   technical: {
@@ -301,6 +320,7 @@ export const domains: Record<DomainId, Domain> = {
       "You teach sessions and help run hackathons.",
     ],
     lead: "",
+    positions: [LEAD, CO_LEAD, MEMBER],
     skills: ["Web", "App", "AI/ML", "Cloud", "Game Dev"],
     portfolioLabel: "GitHub",
     portfolioPlaceholder: "https://github.com/yourname",
@@ -314,28 +334,51 @@ export const domains: Record<DomainId, Domain> = {
     onColor: "#202124",
     description: [
       "Get the word out and bring sponsors on board.",
-      "Socials, outreach, copy and deals with brands.",
+      "Campaigns, outreach, copy and deals with brands.",
     ],
     lead: "",
-    skills: ["Social Media", "Sponsorships", "Outreach", "Copywriting"],
+    positions: [LEAD, CO_LEAD, MEMBER],
+    skills: ["Sponsorships", "Outreach", "Copywriting", "Campaigns", "Brand Deals"],
     portfolioLabel: "LinkedIn / past campaign",
     portfolioPlaceholder: "https://linkedin.com/in/yourname",
   },
-  visual_media: {
-    id: "visual_media",
-    label: "Visual Media",
+  creatives: {
+    id: "creatives",
+    label: "Creatives",
     house: "House of Pixels",
     color: "#EA4335",
     solid: "#C5221F",
     onColor: "#FFFFFF",
     description: [
-      "Make GDGOC AU look good: posts, reels, photos, merch.",
-      "Design, edit, shoot and set the vibe.",
+      "Shoot, edit and design everything GDGOC AU puts out.",
+      "Photos, videos, posters and the whole visual vibe.",
     ],
     lead: "",
-    skills: ["Graphic Design", "Video Editing", "Photography", "UI/UX"],
+    positions: [
+      { id: "photographer", label: "Photographer" },
+      { id: "videographer", label: "Videographer" },
+      { id: "graphics", label: "Graphics" },
+    ],
+    skills: ["Photography", "Videography", "Graphic Design", "Video Editing", "UI/UX"],
     portfolioLabel: "Behance / Drive / IG portfolio",
     portfolioPlaceholder: "https://behance.net/yourname",
+  },
+  media: {
+    id: "media",
+    label: "Media",
+    house: "House of Stories",
+    color: "#A142F4",
+    solid: "#8430CE",
+    onColor: "#FFFFFF",
+    description: [
+      "Run our socials and tell the GDGOC AU story.",
+      "Posts, reels, captions, event coverage and announcements.",
+    ],
+    lead: "",
+    positions: [LEAD, MEMBER],
+    skills: ["Social Media", "Content Writing", "Reels", "Event Coverage", "Hosting/Anchoring"],
+    portfolioLabel: "IG / LinkedIn / content samples",
+    portfolioPlaceholder: "https://instagram.com/yourpage",
   },
   ops: {
     id: "ops",
@@ -349,11 +392,18 @@ export const domains: Record<DomainId, Domain> = {
       "Hosting, anchoring and keeping the docs tight.",
     ],
     lead: "",
+    positions: [LEAD, CO_LEAD, MEMBER],
     skills: ["Event Management", "Logistics", "Hosting/Anchoring", "Documentation"],
     portfolioLabel: "LinkedIn / past events",
     portfolioPlaceholder: "https://linkedin.com/in/yourname",
   },
 };
+
+/** Label for a position id in a team, e.g. ("technical", "co_lead") → "Co-lead" */
+export function positionLabel(domain: DomainId | null | undefined, id: string | null | undefined): string {
+  if (!domain || !id) return "";
+  return domains[domain]?.positions.find((p) => p.id === id)?.label ?? id;
+}
 
 export const level4 = {
   npc: [
@@ -364,8 +414,11 @@ export const level4 = {
   playVideo: "Play intro",
   doorsTitle: "Pick your door",
   chosen: "Your house",
+  positionTitle: "Which position are you applying for?",
+  positionNote:
+    "Going for Lead or Co-lead? Aim high. Selection ke waqt we also consider you for the other roles in this team.",
   skillsTitle: "Your skills (optional, pick any)",
-  npcAfterPick: (house: string) => `${house}, nice pick. Add your skills if you want, then let's go.`,
+  npcAfterPick: (house: string) => `${house}, nice pick. Now choose your position, add skills if you want, then let's go.`,
 };
 
 // ---------------------------------------------------------------------------
@@ -501,10 +554,12 @@ export const success = {
   generating: "Making your card…",
   nextTitle: "What happens next",
   next: [
+    "Join the recruitment WhatsApp group (green button above). Saari updates wahin aayengi.",
     "We review every application, one by one.",
-    `Shortlisted folks get a WhatsApp + email for an interview.`,
-    "Interviews are short and chill. Promise.",
+    "Shortlisted folks get a WhatsApp + email for an interview. Interviews are short and chill. Promise.",
   ],
+  joinGroup: "Join the GDG Recruitment WhatsApp group",
+  joinGroupNote: "Shortlist, interview slots and updates land here first.",
   shortlistLabel: "Shortlist",
 };
 
@@ -564,6 +619,8 @@ export const email = {
       "",
       `Your GDG Quest application for ${house} is in. Nice work.`,
       "If you're shortlisted, we'll reach out on WhatsApp and email for a short interview.",
+      "",
+      `Join the recruitment WhatsApp group so you don't miss updates: ${site.whatsappGroup}`,
       "",
       `Questions? WhatsApp ${site.whatsapp.name} at ${site.whatsapp.display}.`,
       "",

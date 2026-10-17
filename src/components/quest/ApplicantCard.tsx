@@ -162,7 +162,7 @@ function CardArt({ parts }: { parts: AvatarParts }) {
             fontWeight: 700,
           }}
         >
-          {house.house} · {house.label}
+          {house.house} · {parts.position || house.label}
         </div>
       )}
 

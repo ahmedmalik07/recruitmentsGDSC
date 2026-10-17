@@ -16,7 +16,7 @@ export function computeXp(state: QuestState, quizScore: number): { xp: number; p
     valid(characterShape.phone.safeParse(d.phone).success) +
     valid(d.semester !== null) +
     valid(Boolean(d.department));
-  const house = valid(Boolean(d.domain)) + valid(d.skillTags.length > 0);
+  const house = valid(Boolean(d.domain)) + valid(Boolean(d.position)) + valid(d.skillTags.length > 0);
   const story =
     valid(storyShape.experience.safeParse(d.experience).success) +
     valid(storyShape.whyJoin.safeParse(d.whyJoin).success) +
@@ -33,7 +33,7 @@ export function computeXp(state: QuestState, quizScore: number): { xp: number; p
 
   // Bar: whole levels plus partial credit inside the form levels
   const partial =
-    state.level === 3 ? character / 6 : state.level === 5 ? Math.min(story, 5) / 5 : state.level === 4 ? house / 2 : 0;
+    state.level === 3 ? character / 6 : state.level === 5 ? Math.min(story, 5) / 5 : state.level === 4 ? house / 3 : 0;
   const pct = Math.min(1, (state.level + partial * 0.9) / LAST_LEVEL);
   return { xp, pct };
 }

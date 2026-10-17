@@ -6,7 +6,7 @@ rules_version = '2';
 //
 // Custom claims (set with scripts/set-claims.ts):
 //   role:   "core" | "lead"
-//   domain: "technical" | "marketing_partnerships" | "visual_media" | "ops"   (leads only)
+//   domain: "technical" | "marketing_partnerships" | "creatives" | "media" | "ops"   (leads only)
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -35,11 +35,15 @@ service cloud.firestore {
 
       allow create, delete: if false;
 
-      // Only status (and its timestamp) can change from the admin panel
+      // Only status, the position given on selection, and the timestamp can change from the admin panel
       allow update: if canAccess(resource.data.domain)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'assignedPosition'])
         && request.resource.data.status in ['submitted', 'shortlisted', 'rejected', 'selected']
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt == request.time
+        && (!('assignedPosition' in request.resource.data)
+            || request.resource.data.assignedPosition == null
+            || (request.resource.data.assignedPosition is string
+                && request.resource.data.assignedPosition.size() <= 30));
 
       match /reviews/{reviewerUid} {
         function appDomain() {

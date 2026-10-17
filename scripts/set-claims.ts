@@ -12,7 +12,7 @@
 import { cert, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
-const DOMAINS = ["technical", "marketing_partnerships", "visual_media", "ops"] as const;
+const DOMAINS = ["technical", "marketing_partnerships", "creatives", "media", "ops"] as const;
 
 for (const file of [".env.local", ".env"]) {
   try {

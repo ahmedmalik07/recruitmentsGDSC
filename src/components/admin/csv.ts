@@ -1,4 +1,4 @@
-import { domains } from "@/content";
+import { domains, positionLabel } from "@/content";
 import type { Row } from "./types";
 
 /** Quote every cell and neutralise spreadsheet formulas (=, +, -, @). */
@@ -16,6 +16,8 @@ const COLUMNS: Array<[string, (r: Row) => unknown]> = [
   ["Semester", (r) => r.semester],
   ["Department", (r) => r.department],
   ["Domain", (r) => domains[r.domain]?.label ?? r.domain],
+  ["Applied position", (r) => positionLabel(r.domain, r.position)],
+  ["Assigned position", (r) => (r.status === "selected" ? positionLabel(r.domain, r.assignedPosition) : "")],
   ["Skills", (r) => r.skillTags?.join(", ")],
   ["Status", (r) => r.status],
   ["Avg rating", (r) => (r.avgRating === null ? "" : r.avgRating.toFixed(2))],

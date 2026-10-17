@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { User } from "firebase/auth";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { domains, hoursLabels, type Hours } from "@/content";
+import { domains, positionLabel, hoursLabels, type Hours } from "@/content";
 import type { Status } from "@/lib/schema";
 import { clientDb } from "@/lib/firebaseClient";
 import { Button } from "@/components/ui/Button";
@@ -33,11 +33,19 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
     };
   }, [onClose]);
 
+  const positions = domains[row.domain]?.positions ?? [];
+  const [assignTo, setAssignTo] = useState<string>(row.assignedPosition ?? row.position ?? positions[0]?.id ?? "");
+
   async function setStatus(status: Status) {
     setStatusBusy(status);
     setMsg(undefined);
     try {
-      await updateDoc(doc(clientDb(), "applications", row.id), { status, updatedAt: serverTimestamp() });
+      // Only selected people carry an assigned position
+      await updateDoc(doc(clientDb(), "applications", row.id), {
+        status,
+        assignedPosition: status === "selected" ? assignTo || null : null,
+        updatedAt: serverTimestamp(),
+      });
     } catch (e) {
       setMsg(`Couldn't update status: ${(e as Error).message}`);
     } finally {
@@ -114,15 +122,39 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
               Current:{" "}
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyle[row.status]?.className}`}>
                 {statusStyle[row.status]?.label ?? row.status}
+                {row.status === "selected" && row.assignedPosition
+                  ? ` as ${positionLabel(row.domain, row.assignedPosition)}`
+                  : ""}
               </span>
             </p>
+            <p className="text-[15px]">
+              Applied for: <strong>{positionLabel(row.domain, row.position) || "Not specified"}</strong>
+            </p>
+            <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+              Select as
+              <select
+                className="field-input min-h-10 w-auto py-2 font-normal"
+                value={assignTo}
+                onChange={(e) => setAssignTo(e.target.value)}
+              >
+                {positions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                    {p.id === row.position ? " (applied)" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
             <div className="flex flex-wrap gap-2">
               {(["shortlisted", "rejected", "selected", "submitted"] as const).map((s) => (
                 <Button
                   key={s}
                   variant={row.status === s ? "primary" : "secondary"}
                   className="min-h-10 px-4 text-sm"
-                  disabled={statusBusy !== null || row.status === s}
+                  disabled={
+                    statusBusy !== null ||
+                    (row.status === s && (s !== "selected" || (row.assignedPosition ?? "") === assignTo))
+                  }
                   onClick={() => setStatus(s)}
                 >
                   {s === "shortlisted" ? "Shortlist" : s === "rejected" ? "Reject" : s === "selected" ? "Select" : "Reset"}

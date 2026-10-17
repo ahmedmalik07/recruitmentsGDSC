@@ -13,6 +13,10 @@ export type ApplicationDoc = {
   semester: number;
   department: string;
   domain: DomainId;
+  /** Position applied for (id within the team) */
+  position?: string;
+  /** Position given on selection; can differ from what they applied for */
+  assignedPosition?: string | null;
   skillTags: string[];
   experience: string;
   whyJoin: string;
@@ -32,6 +36,10 @@ export type ReviewDoc = {
   reviewerUid: string;
   rollNo: string;
   domain: DomainId;
+  /** Position applied for (id within the team) */
+  position?: string;
+  /** Position given on selection; can differ from what they applied for */
+  assignedPosition?: string | null;
   rating: number;
   notes: string;
   reviewerName: string;

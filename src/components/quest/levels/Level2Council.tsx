@@ -34,9 +34,9 @@ export function Level2Council() {
       <p className="text-sm font-semibold text-muted" aria-live="polite">
         {level2.progress(flippedCount)}
       </p>
-      {/* Phones: Sumaiya + Rafay side by side, Ahmed's big card below.
-          Wider screens: one row with Ahmed in the middle. */}
-      <div className="grid grid-cols-2 items-end gap-3 md:grid-cols-3 md:gap-4">
+      {/* Phones: one card per row. Small tablets: Sumaiya + Rafay side by side,
+          Ahmed's big card below. Wider screens: one row with Ahmed in the middle. */}
+      <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
         {ORDER.map((id) => (
           <FlipCard key={id} id={id} big={id === "ahmed"} flipped={Boolean(faceUp[id])} onFlip={() => flip(id)} />
         ))}
@@ -61,10 +61,10 @@ function FlipCard({
     <div
       className={cn(
         "flex flex-col gap-2",
-        big ? "col-span-2 md:order-2 md:col-span-1" : id === "rafay" ? "md:order-3" : "md:order-1",
+        big ? "sm:col-span-2 md:order-2 md:col-span-1" : id === "rafay" ? "md:order-3" : "md:order-1",
       )}
     >
-    <div className={cn("flip", big ? "h-[360px]" : "h-[290px] md:h-[300px]")}>
+    <div className={cn("flip", big ? "h-[360px] md:h-[420px]" : "h-[270px] sm:h-[300px] md:h-[390px]")}>
       <button
         type="button"
         onClick={onFlip}

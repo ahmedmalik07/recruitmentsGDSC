@@ -85,6 +85,7 @@ export const characterShape = {
 
 export const houseShape = {
   domain: z.enum(DOMAIN_IDS, { error: "Pick one house" }),
+  position: z.string({ error: "Pick a position" }).trim().min(1, { error: "Pick a position" }).max(30),
   skillTags: z.array(z.string().max(40)).max(10).default([]),
 };
 
@@ -111,11 +112,15 @@ export const quizShape = {
   quizScore: z.number().int().min(0).max(quiz.length),
 };
 
-/** skillTags must belong to the chosen domain */
+/** position and skillTags must belong to the chosen domain */
 function refineSkills(
-  data: { domain: DomainId; skillTags: string[] },
+  data: { domain: DomainId; position: string; skillTags: string[] },
   ctx: z.RefinementCtx,
 ): void {
+  const positions = domains[data.domain]?.positions ?? [];
+  if (data.position && !positions.some((p) => p.id === data.position)) {
+    ctx.addIssue({ code: "custom", path: ["position"], message: "Pick a position from this team" });
+  }
   const allowed = domains[data.domain]?.skills ?? [];
   const bad = data.skillTags.filter((s) => !allowed.includes(s));
   if (bad.length) {

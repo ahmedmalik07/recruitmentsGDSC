@@ -1,5 +1,5 @@
 import { getAuth } from "firebase-admin/auth";
-import { adminApp } from "@/lib/server/firebaseAdmin";
+import { AdminConfigError, adminApp } from "@/lib/server/firebaseAdmin";
 import { allowedRoleFor, allowlistEmpty } from "@/lib/server/adminAllowlist";
 
 function reply(body: Record<string, unknown>, status: number) {
@@ -16,7 +16,14 @@ export async function POST(req: Request) {
   const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
   if (!token) return reply({ ok: false, error: "missing_token" }, 401);
 
-  const auth = getAuth(adminApp());
+  let auth;
+  try {
+    auth = getAuth(adminApp());
+  } catch (err) {
+    console.error("[admin/claim] Firebase Admin init failed", err);
+    const detail = err instanceof AdminConfigError ? err.message : "Firebase Admin couldn't start";
+    return reply({ ok: false, error: "server_config", detail }, 500);
+  }
   let decoded;
   try {
     decoded = await auth.verifyIdToken(token, true);

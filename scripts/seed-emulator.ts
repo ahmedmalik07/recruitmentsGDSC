@@ -26,18 +26,26 @@ async function setClaims(email: string, role: string, domain?: string) {
 async function seed() {
   const db = getFirestore();
   const names = ["Ayesha Khan", "Hamza Ali", "Zainab Fatima", "Usman Tariq", "Mahnoor Iqbal", "Bilal Ahmed", "Hira Shah", "Saad Raza", "Fatima Noor", "Ali Hassan", "Maryam Javed", "Taha Qureshi"];
-  const domains = ["technical", "marketing_partnerships", "visual_media", "ops"] as const;
+  const domains = ["technical", "marketing_partnerships", "creatives", "media", "ops"] as const;
+  const positions: Record<string, string[]> = {
+    technical: ["lead", "co_lead", "member"],
+    marketing_partnerships: ["lead", "co_lead", "member"],
+    creatives: ["photographer", "videographer", "graphics"],
+    media: ["lead", "member"],
+    ops: ["lead", "co_lead", "member"],
+  };
   const skills: Record<string, string[]> = {
     technical: ["Web", "App", "AI/ML", "Cloud", "Game Dev"],
-    marketing_partnerships: ["Social Media", "Sponsorships", "Outreach", "Copywriting"],
-    visual_media: ["Graphic Design", "Video Editing", "Photography", "UI/UX"],
+    marketing_partnerships: ["Sponsorships", "Outreach", "Copywriting", "Campaigns"],
+    creatives: ["Photography", "Videography", "Graphic Design", "Video Editing"],
+    media: ["Social Media", "Content Writing", "Reels", "Event Coverage"],
     ops: ["Event Management", "Logistics", "Hosting/Anchoring", "Documentation"],
   };
   const depts = ["Computer Science", "Software Engineering", "Artificial Intelligence", "Cyber Security", "Business Administration", "Electrical Engineering"];
   const statuses = ["submitted", "submitted", "submitted", "shortlisted", "rejected", "selected"];
   const batch = db.batch();
   for (let i = 0; i < 36; i++) {
-    const domain = domains[i % 4];
+    const domain = domains[i % domains.length];
     const rollNo = String(230100 + i * 7);
     const created = new Date(Date.now() - (i % 14) * 86400000 - i * 3600000);
     batch.set(db.doc(`applications/${rollNo}`), {
@@ -48,6 +56,7 @@ async function seed() {
       semester: (i % 8) + 1,
       department: depts[i % depts.length],
       domain,
+      position: positions[domain][i % positions[domain].length],
       skillTags: skills[domain].slice(0, (i % 3) + 1),
       experience: "Built a few side projects, helped run a society event and did some freelancing over the summer. Want to get better at shipping with a team.",
       whyJoin: "I want to learn from people who actually build things, and help make GDGOC AU events bigger and better for everyone.",

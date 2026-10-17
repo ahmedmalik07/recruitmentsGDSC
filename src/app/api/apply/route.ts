@@ -79,7 +79,9 @@ export async function POST(req: Request) {
   }
 
   // 7. Optional confirmation email, after the response is sent
-  after(() => sendConfirmationEmail(application.email, application.fullName, application.domain));
+  after(() =>
+    sendConfirmationEmail(application.email, application.fullName, application.domain, application.position),
+  );
 
   return reply({ ok: true, rollNo: application.rollNo }, 201);
 }

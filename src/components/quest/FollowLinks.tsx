@@ -7,14 +7,14 @@ export function FollowLinks() {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm font-semibold text-muted">{follow.title}</p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <a href={site.instagram} target="_blank" rel="noopener noreferrer" className={base}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#C13584" strokeWidth="2">
             <rect x="3" y="3" width="18" height="18" rx="5" />
             <circle cx="12" cy="12" r="4" />
             <circle cx="17.5" cy="6.5" r="1" fill="#C13584" stroke="none" />
           </svg>
-          {follow.instagram} <span className="text-muted">{site.igHandle}</span>
+          {follow.instagram} <span className="hidden text-muted min-[400px]:inline">{site.igHandle}</span>
           <span className="sr-only">(opens in a new tab)</span>
         </a>
         <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className={base} title={site.linkedinName}>

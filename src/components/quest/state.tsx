@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { useReducedMotion } from "framer-motion";
-import { quiz, type DomainId, type Excited, type Hours, type TeamRole } from "@/content";
+import { DOMAIN_IDS, EXCITED, domains, quiz, type DomainId, type Excited, type Hours, type TeamRole } from "@/content";
 import { readJSON, removeKey, writeJSON } from "@/lib/storage";
 
 export const STORAGE_KEY = "gdg-quest:v1";
@@ -26,6 +26,8 @@ export type Draft = {
   semester: number | null;
   department: string;
   domain: DomainId | null;
+  /** Position id within the chosen team, e.g. "lead" or "photographer" */
+  position: string;
   skillTags: string[];
   experience: string;
   whyJoin: string;
@@ -62,6 +64,7 @@ export const emptyDraft: Draft = {
   semester: null,
   department: "",
   domain: null,
+  position: "",
   skillTags: [],
   experience: "",
   whyJoin: "",
@@ -108,6 +111,19 @@ type Action =
   | { type: "submitted" }
   | { type: "reset" };
 
+/** Drop saved values that no longer exist (e.g. a house that was renamed) */
+function sanitizeDraft(saved: Partial<Draft> | undefined): Draft {
+  const draft = { ...emptyDraft, ...(saved ?? {}) };
+  if (draft.domain && !(DOMAIN_IDS as readonly string[]).includes(draft.domain)) {
+    draft.domain = null;
+    draft.position = "";
+    draft.skillTags = [];
+  }
+  if (draft.domain && !domains[draft.domain].positions.some((p) => p.id === draft.position)) draft.position = "";
+  draft.excitedAbout = draft.excitedAbout.filter((e) => (EXCITED as readonly string[]).includes(e));
+  return draft;
+}
+
 function clampLevel(n: number) {
   return Math.max(0, Math.min(LAST_LEVEL, Math.round(n)));
 }
@@ -123,7 +139,7 @@ function reducer(state: QuestState, action: Action): QuestState {
         // Always land on the title screen so Sumaiya appears first; it offers "Continue"
         level: 0,
         maxLevel: clampLevel(s.maxLevel ?? s.level ?? 0),
-        draft: { ...emptyDraft, ...(s.draft ?? {}) },
+        draft: sanitizeDraft(s.draft),
         flipped: Array.isArray(s.flipped) ? s.flipped : [],
         quizAnswers:
           Array.isArray(s.quizAnswers) && s.quizAnswers.length === quiz.length
@@ -166,9 +182,10 @@ function reducer(state: QuestState, action: Action): QuestState {
       return { ...state, level: LAST_LEVEL, editingFromReview: false };
     case "set": {
       const draft = { ...state.draft, ...action.patch };
-      // Switching house clears skills from the old house
-      if (action.patch.domain && action.patch.domain !== state.draft.domain && !action.patch.skillTags) {
-        draft.skillTags = [];
+      // Switching house clears the position and skills from the old house
+      if (action.patch.domain && action.patch.domain !== state.draft.domain) {
+        if (!action.patch.skillTags) draft.skillTags = [];
+        if (!action.patch.position) draft.position = "";
       }
       return { ...state, draft };
     }

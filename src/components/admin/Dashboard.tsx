@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { User } from "firebase/auth";
-import { DOMAIN_IDS, domains, site, type DomainId } from "@/content";
+import { DOMAIN_IDS, domains, positionLabel, site, type DomainId } from "@/content";
 import { STATUSES, type Status } from "@/lib/schema";
 import { statusStyle } from "./status";
 import { Button } from "@/components/ui/Button";
@@ -21,6 +21,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
   const [semester, setSemester] = useState("");
   const [department, setDepartment] = useState("");
   const [status, setStatus] = useState<Status | "">("");
+  const [position, setPosition] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<Sort>("newest");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -34,6 +35,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
         (!semester || r.semester === Number(semester)) &&
         (!department || r.department.toLowerCase().includes(department.trim().toLowerCase())) &&
         (!status || r.status === status) &&
+        (!position || r.position === position) &&
         (!q || r.rollNo.includes(q) || r.fullName.toLowerCase().includes(q)),
     );
     const time = (r: Row) => r.createdAt?.toMillis() ?? 0;
@@ -51,11 +53,19 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
       }
     });
     return out;
-  }, [rows, domain, semester, department, status, search, sort]);
+  }, [rows, domain, semester, department, status, position, search, sort]);
 
   const open = rows?.find((r) => r.id === openId) ?? null;
   const scopeLabel = claims.role === "core" ? "Core · all houses" : `Lead · ${domains[claims.domain!].label}`;
-  const anyFilter = domain || semester || department || status || search;
+  const anyFilter = domain || semester || department || status || position || search;
+  // Positions available in the current scope (all teams for core, one team for a lead)
+  const positionOptions = Array.from(
+    new Map(
+      (claims.role === "lead" ? [claims.domain!] : domain ? [domain] : DOMAIN_IDS)
+        .flatMap((id) => domains[id].positions)
+        .map((p) => [p.id, p.label] as const),
+    ),
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16">
@@ -97,7 +107,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
               <Filter label="Search">
                 <input
                   className="field-input min-h-10 py-2"
@@ -137,6 +147,16 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                   onChange={(e) => setDepartment(e.target.value)}
                 />
               </Filter>
+              <Filter label="Position">
+                <select className="field-input min-h-10 py-2" value={position} onChange={(e) => setPosition(e.target.value)}>
+                  <option value="">All</option>
+                  {positionOptions.map(([id, label]) => (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Filter>
               <Filter label="Status">
                 <select className="field-input min-h-10 py-2" value={status} onChange={(e) => setStatus(e.target.value as Status | "")}>
                   <option value="">All</option>
@@ -165,6 +185,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                   setSemester("");
                   setDepartment("");
                   setStatus("");
+                  setPosition("");
                   setSearch("");
                 }}
               >
@@ -173,7 +194,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
             )}
 
             <div className="overflow-x-auto rounded-2xl border border-line">
-              <table aria-label="Applications" className="w-full min-w-[760px] border-collapse text-left text-sm">
+              <table aria-label="Applications" className="w-full min-w-[860px] border-collapse text-left text-sm">
                 <thead className="bg-surface text-muted">
                   <tr>
                     <Th>Roll no</Th>
@@ -181,6 +202,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                     <Th>Sem</Th>
                     <Th>Department</Th>
                     <Th>House</Th>
+                    <Th>Position</Th>
                     <Th>Status</Th>
                     <Th>Rating</Th>
                     <Th>Applied</Th>
@@ -207,6 +229,12 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                           {domains[r.domain]?.label ?? r.domain}
                         </span>
                       </Td>
+                      <Td className="whitespace-nowrap">
+                        {positionLabel(r.domain, r.position) || <span className="text-muted">-</span>}
+                        {r.status === "selected" && r.assignedPosition && r.assignedPosition !== r.position && (
+                          <span className="font-semibold text-good"> → {positionLabel(r.domain, r.assignedPosition)}</span>
+                        )}
+                      </Td>
                       <Td>
                         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyle[r.status]?.className ?? ""}`}>
                           {statusStyle[r.status]?.label ?? r.status}
@@ -221,7 +249,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                   ))}
                   {!filtered.length && (
                     <tr>
-                      <td colSpan={8} className="p-6 text-center text-muted">
+                      <td colSpan={9} className="p-6 text-center text-muted">
                         No applications match.
                       </td>
                     </tr>

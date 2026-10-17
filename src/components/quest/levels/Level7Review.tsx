@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { m } from "framer-motion";
-import { domains, errors as errorCopy, hoursLabels, level3, level5, level7, site, success } from "@/content";
+import { domains, errors as errorCopy, hoursLabels, level3, level5, level7, site, success, positionLabel } from "@/content";
 import { fieldErrors, submitSchema, type ApplyResponse } from "@/lib/schema";
 import { Button } from "@/components/ui/Button";
 import { ApplicantCard } from "../ApplicantCard";
 import { FollowLinks } from "../FollowLinks";
+import { JoinGroup } from "../JoinGroup";
 import { Avatar, avatarParts, type AvatarParts } from "../Avatar";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, type Line } from "../NpcChat";
@@ -21,6 +22,7 @@ const FIELD_LEVEL: Record<string, number> = {
   semester: 3,
   department: 3,
   domain: 4,
+  position: 4,
   skillTags: 4,
   experience: 5,
   whyJoin: 5,
@@ -34,6 +36,7 @@ const FIELD_LEVEL: Record<string, number> = {
 const FIELD_LABEL: Record<string, string> = {
   ...level3.labels,
   domain: "House",
+  position: "Position",
   skillTags: "Skills",
   experience: "Experience",
   whyJoin: "Why GDGOC AU",
@@ -171,6 +174,7 @@ export function Level7Review() {
 
         <Section title={level7.sections.house} onEdit={() => edit(4)}>
           <Row label="House" value={house ? `${house.house} (${house.label})` : ""} />
+          <Row label="Position" value={positionLabel(d.domain, d.position)} />
           <Row label="Skills" value={d.skillTags.join(", ") || "None picked"} />
         </Section>
 
@@ -325,7 +329,8 @@ function Success({ parts }: { parts: AvatarParts }) {
         {success.title}
       </m.h1>
       <NpcChat id="success" lines={chat} />
-      <div className="grid gap-6 md:grid-cols-2 md:items-start">
+      <JoinGroup />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-start [&>*]:min-w-0">
       <ApplicantCard parts={parts} />
 
       <div className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-4">

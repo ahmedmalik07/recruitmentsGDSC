@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { closed, site } from "@/content";
 import { FollowLinks } from "./FollowLinks";
+import { JoinGroup } from "./JoinGroup";
 import { HostPhoto } from "./HostPhoto";
 
 export function QuestClosed() {
@@ -16,6 +17,7 @@ export function QuestClosed() {
         🔒 {closed.title}
       </h1>
       <p className="text-lg text-muted">{closed.body}</p>
+      <JoinGroup />
       <FollowLinks />
     </section>
   );

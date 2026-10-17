@@ -19,7 +19,7 @@ import type { Claims } from "./types";
 type Gate =
   | { state: "loading" }
   | { state: "signedOut" }
-  | { state: "denied"; user: User; reason?: string }
+  | { state: "denied"; user: User; reason?: string; detail?: string }
   | { state: "ok"; user: User; claims: Claims };
 
 export function AdminApp() {
@@ -35,6 +35,7 @@ export function AdminApp() {
         // Force refresh so claims set by scripts/set-claims.ts show up right away
         let claims = claimsFrom(await user.getIdTokenResult(true));
         let reason: string | undefined;
+        let detail: string | undefined;
         if (!claims) {
           // Not an admin yet: ask the server, which grants access to allowlisted emails
           const res = await fetch("/api/admin/claim", {
@@ -42,9 +43,13 @@ export function AdminApp() {
             headers: { Authorization: `Bearer ${await user.getIdToken()}` },
           });
           if (res.ok) claims = claimsFrom(await user.getIdTokenResult(true));
-          else reason = ((await res.json().catch(() => null)) as { error?: string } | null)?.error ?? `http_${res.status}`;
+          else {
+            const body = (await res.json().catch(() => null)) as { error?: string; detail?: string } | null;
+            reason = body?.error ?? `http_${res.status}`;
+            detail = body?.detail;
+          }
         }
-        setGate(claims ? { state: "ok", user, claims } : { state: "denied", user, reason });
+        setGate(claims ? { state: "ok", user, claims } : { state: "denied", user, reason, detail });
       } catch {
         setGate({ state: "denied", user, reason: "network" });
       }
@@ -104,6 +109,7 @@ export function AdminApp() {
           <p className="rounded-xl bg-surface-2 px-3 py-2 text-sm text-muted">
             <span className="font-semibold text-ink">Reason: </span>
             {DENY_REASONS[gate.reason] ?? gate.reason}
+            {gate.detail && <span className="mt-1 block font-mono text-xs text-ink">{gate.detail}</span>}
           </p>
         )}
         <Button variant="secondary" onClick={() => signOut(clientAuth())}>
@@ -124,6 +130,9 @@ const DENY_REASONS: Record<string, string> = {
   invalid_token: "Sign-in token was rejected. Sign out and sign in again.",
   server: "The server couldn't save the admin role. Check FIREBASE_* variables in Vercel.",
   network: "Couldn't reach the server. Check your connection and try again.",
+  server_config:
+    "The server's Firebase settings in Vercel are broken, so it can't check admins (or save applications). Fix the variable named below, then redeploy.",
+  http_500: "The server crashed. Check the Firebase variables in Vercel, then redeploy.",
 };
 
 function claimsFrom(token: IdTokenResult): Claims | null {

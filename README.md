@@ -151,7 +151,7 @@ npm run claims -- --email ahmed@gmail.com --role core
 
 # domain leads: see only their house
 npm run claims -- --email lead@gmail.com --role lead --domain technical
-#   domains: technical | marketing_partnerships | visual_media | ops
+#   domains: technical | marketing_partnerships | creatives | media | ops
 
 npm run claims -- --list                         # who has access
 npm run claims -- --email x@gmail.com --remove   # revoke
@@ -180,7 +180,7 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 | 1 Welcome to GDG | Sumaiya | 3 swipeable cards, then the handover to Ahmed |
 | 2 Meet the Council | Ahmed | 3 flip cards; Ahmed's is larger with a "Your Guide" badge and stats |
 | 3 Build your Character | Abdul Rafay | Personal info. Each valid field unlocks an avatar part |
-| 4 Choose your House | Ahmed | Intro video, 4 doors, optional skills |
+| 4 Choose your House | Ahmed | Intro video, 5 doors (teams), the position they're applying for, optional skills |
 | 5 Your Story | Ahmed | Two long answers with power meters and hint bubbles, quick taps |
 | 6 Boss Check | Abdul Rafay | 2 MCQs, just for fun (score stored, not used for selection) |
 | 7 Review + Loot | All 3 | Character sheet, consent, Turnstile, submit, confetti, shareable 1080x1920 card |
@@ -204,15 +204,28 @@ body size → honeypot → deadline → Zod (`src/lib/schema.ts`, shared with th
 
 ```
 applications/{rollNo}
-  fullName, email, rollNo, phone, semester, department, domain, skillTags[],
+  fullName, email, rollNo, phone, semester, department, domain, position, skillTags[],
   experience, whyJoin, portfolioUrl, teamRole, hoursPerWeek, excitedAbout[], funFact,
-  quizScore, timeTakenSec, status, createdAt, updatedAt
+  quizScore, timeTakenSec, status, assignedPosition, createdAt, updatedAt
 applications/{rollNo}/reviews/{reviewerUid}
   rating (1-5), notes, createdAt, updatedAt,
   domain, rollNo, reviewerName, reviewerEmail   ← copies so collection-group reads can be checked cheaply
 ```
 
 `status`: `submitted` | `shortlisted` | `rejected` | `selected`
+
+**Teams and positions** (edit in `src/content.ts` → `domains`):
+
+| Team (`domain`) | Positions |
+|---|---|
+| Technical (`technical`) | Lead, Co-lead, Member |
+| Marketing & Partnerships (`marketing_partnerships`) | Lead, Co-lead, Member |
+| Creatives (`creatives`) | Photographer, Videographer, Graphics |
+| Media (`media`) | Lead, Member |
+| Operations (`ops`) | Lead, Co-lead, Member |
+
+Candidates pick the position they're applying for. When you Select someone in `/admin`, you choose the
+position they get (`assignedPosition`), so a Lead applicant can be selected as Co-lead or Member.
 
 ### Performance notes
 
