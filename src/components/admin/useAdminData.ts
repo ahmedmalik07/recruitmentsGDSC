@@ -1,46 +1,55 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { collection, collectionGroup, onSnapshot, query, where } from "firebase/firestore";
-import { clientDb } from "@/lib/firebaseClient";
-import type { ApplicationDoc, Claims, ReviewDoc, Row } from "./types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { User } from "firebase/auth";
+import { adminFetch, ApiError } from "./api";
+import type { ApplicationDoc, ReviewDoc, Row } from "./types";
+
+const POLL_MS = 30_000;
 
 /**
- * Live applications + reviews for this admin's scope.
- * Rules are not filters, so leads always query with their domain.
+ * Applications + reviews for this admin, loaded through the server API.
+ * Refreshes every 30s while the tab is visible, and right after any change.
  */
-export function useAdminData(claims: Claims) {
+export function useAdminData(user: User) {
   const [apps, setApps] = useState<ApplicationDoc[] | null>(null);
   const [reviews, setReviews] = useState<ReviewDoc[]>([]);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<ApiError | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [lastLoaded, setLastLoaded] = useState<number | null>(null);
+  const busy = useRef(false);
+
+  const refresh = useCallback(async () => {
+    if (busy.current) return;
+    busy.current = true;
+    setLoading(true);
+    try {
+      const data = await adminFetch<{ applications: ApplicationDoc[]; reviews: ReviewDoc[] }>(user, "/api/admin/applications");
+      setApps(data.applications);
+      setReviews(data.reviews);
+      setError(null);
+      setLastLoaded(Date.now());
+    } catch (e) {
+      setError(e instanceof ApiError ? e : new ApiError("network"));
+    } finally {
+      busy.current = false;
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
-    const db = clientDb();
-    const appsQuery =
-      claims.role === "lead"
-        ? query(collection(db, "applications"), where("domain", "==", claims.domain))
-        : collection(db, "applications");
-    const reviewsQuery =
-      claims.role === "lead"
-        ? query(collectionGroup(db, "reviews"), where("domain", "==", claims.domain))
-        : collectionGroup(db, "reviews");
-
-    const unsubApps = onSnapshot(
-      appsQuery,
-      (snap) => setApps(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ApplicationDoc, "id">) }))),
-      (e) => setError(e.message),
-    );
-    const unsubReviews = onSnapshot(
-      reviewsQuery,
-      (snap) =>
-        setReviews(snap.docs.map((d) => ({ reviewerUid: d.id, ...(d.data() as Omit<ReviewDoc, "reviewerUid">) }))),
-      (e) => setError(e.message),
-    );
+    const first = window.setTimeout(refresh, 0);
+    const id = window.setInterval(() => {
+      if (document.visibilityState === "visible") refresh();
+    }, POLL_MS);
+    const onVisible = () => document.visibilityState === "visible" && refresh();
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
-      unsubApps();
-      unsubReviews();
+      window.clearTimeout(first);
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [claims.role, claims.domain]);
+  }, [refresh]);
 
   const rows: Row[] | null = useMemo(() => {
     if (!apps) return null;
@@ -57,5 +66,5 @@ export function useAdminData(claims: Claims) {
     });
   }, [apps, reviews]);
 
-  return { rows, error };
+  return { rows, error, loading, lastLoaded, refresh };
 }

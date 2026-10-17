@@ -2,7 +2,7 @@
 
 import { AnimatePresence, m } from "framer-motion";
 import { domains, jerseyColors, positionLabel, roleAccessory, type DomainId, type TeamRole } from "@/content";
-import { characterShape } from "@/lib/schema";
+import { quick } from "@/lib/quick";
 import type { Draft } from "./state";
 
 const SKIN = "#E0AC69";
@@ -27,8 +27,7 @@ export type AvatarParts = {
 
 /** Which avatar layers are unlocked, based on which fields are valid. */
 export function avatarParts(d: Draft): AvatarParts {
-  const ok = (key: keyof typeof characterShape, value: unknown) =>
-    characterShape[key].safeParse(value).success;
+  const ok = (key: "fullName" | "email" | "rollNo" | "phone", value: string) => quick[key](value);
   return {
     face: ok("fullName", d.fullName),
     lanyard: ok("email", d.email),
@@ -176,8 +175,10 @@ export function Avatar({
       <AnimatePresence initial={false}>
         {parts.face ? (
           <P key="face" {...anim} style={{ originX: "100px", originY: "68px" }}>
-            <circle cx="87" cy="62" r="4.2" fill={INK} />
-            <circle cx="113" cy="62" r="4.2" fill={INK} />
+            <g className={animated ? "avatar-blink" : undefined}>
+              <circle cx="87" cy="62" r="4.2" fill={INK} />
+              <circle cx="113" cy="62" r="4.2" fill={INK} />
+            </g>
             <path d="M88 76 Q100 87 112 76" stroke={INK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
             <circle cx="80" cy="73" r="4" fill="#EA4335" opacity="0.25" />
             <circle cx="120" cy="73" r="4" fill="#EA4335" opacity="0.25" />

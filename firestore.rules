@@ -1,81 +1,16 @@
 rules_version = '2';
 
 // GDG Quest
-// Candidates never touch Firestore directly: /api/apply writes with the Admin SDK,
-// which bypasses these rules. Clients here are only signed-in admins.
-//
-// Custom claims (set with scripts/set-claims.ts):
-//   role:   "core" | "lead"
-//   domain: "technical" | "marketing_partnerships" | "creatives" | "media" | "ops"   (leads only)
+// Browsers get NO direct access to the database. Everything goes through the server:
+//   /api/apply      candidates submit (validated, bot-checked)
+//   /api/admin/*    admins read and update (Google sign-in + role checked on every request)
+// The server uses the Firebase Admin SDK, which is not affected by these rules.
+// So nobody can read, change or delete applications from a browser console, ever.
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function signedIn() {
-      return request.auth != null;
-    }
-
-    function isCore() {
-      return signedIn() && request.auth.token.role == 'core';
-    }
-
-    function isLeadOf(domain) {
-      return signedIn()
-        && request.auth.token.role == 'lead'
-        && request.auth.token.domain == domain;
-    }
-
-    function canAccess(domain) {
-      return isCore() || isLeadOf(domain);
-    }
-
-    match /applications/{rollNo} {
-      // Rules are not filters: lead queries must include where("domain", "==", <their domain>)
-      allow read: if canAccess(resource.data.domain);
-
-      allow create, delete: if false;
-
-      // Only status, the position given on selection, and the timestamp can change from the admin panel
-      allow update: if canAccess(resource.data.domain)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'assignedPosition'])
-        && request.resource.data.status in ['submitted', 'shortlisted', 'rejected', 'selected']
-        && request.resource.data.updatedAt == request.time
-        && (!('assignedPosition' in request.resource.data)
-            || request.resource.data.assignedPosition == null
-            || (request.resource.data.assignedPosition is string
-                && request.resource.data.assignedPosition.size() <= 30));
-
-      match /reviews/{reviewerUid} {
-        function appDomain() {
-          return get(/databases/$(database)/documents/applications/$(rollNo)).data.domain;
-        }
-
-        function validReview() {
-          let d = request.resource.data;
-          return d.keys().hasOnly(['rating', 'notes', 'domain', 'rollNo', 'reviewerName', 'reviewerEmail', 'createdAt', 'updatedAt'])
-            && d.rating is int && d.rating >= 1 && d.rating <= 5
-            && d.notes is string && d.notes.size() <= 2000
-            && d.domain == appDomain()
-            && d.rollNo == rollNo
-            && d.updatedAt == request.time
-            && (resource == null ? d.createdAt == request.time : d.createdAt == resource.data.createdAt);
-        }
-
-        allow read: if canAccess(appDomain());
-        allow create, update: if signedIn()
-          && request.auth.uid == reviewerUid
-          && canAccess(appDomain())
-          && validReview();
-        allow delete: if signedIn()
-          && request.auth.uid == reviewerUid
-          && canAccess(appDomain());
-      }
-    }
-
-    // Collection-group reads for average ratings in the admin table.
-    // Reviews carry a copy of the application's domain so this check needs no extra reads.
-    match /{path=**}/reviews/{reviewerUid} {
-      allow read: if canAccess(resource.data.domain);
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

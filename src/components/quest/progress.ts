@@ -1,4 +1,4 @@
-import { characterShape, storyShape, WORDS, countWords } from "@/lib/schema";
+import { WORDS, countWords, quick } from "@/lib/quick";
 import { LAST_LEVEL, type QuestState } from "./state";
 
 /**
@@ -10,16 +10,17 @@ export function computeXp(state: QuestState, quizScore: number): { xp: number; p
   const valid = (ok: boolean) => (ok ? 1 : 0);
 
   const character =
-    valid(characterShape.fullName.safeParse(d.fullName).success) +
-    valid(characterShape.email.safeParse(d.email).success) +
-    valid(characterShape.rollNo.safeParse(d.rollNo).success) +
-    valid(characterShape.phone.safeParse(d.phone).success) +
+    valid(quick.fullName(d.fullName)) +
+    valid(quick.email(d.email)) +
+    valid(quick.rollNo(d.rollNo)) +
+    valid(quick.phone(d.phone)) +
     valid(d.semester !== null) +
     valid(Boolean(d.department));
   const house = valid(Boolean(d.domain)) + valid(Boolean(d.position)) + valid(d.skillTags.length > 0);
   const story =
-    valid(storyShape.experience.safeParse(d.experience).success) +
-    valid(storyShape.whyJoin.safeParse(d.whyJoin).success) +
+    valid(quick.longText(d.experience)) +
+    valid(Boolean(d.achievements.trim())) +
+    valid(quick.longText(d.whyJoin)) +
     valid(Boolean(d.teamRole)) +
     valid(Boolean(d.hoursPerWeek)) +
     valid(d.excitedAbout.length > 0) +

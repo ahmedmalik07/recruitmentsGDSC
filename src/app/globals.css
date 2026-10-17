@@ -3,11 +3,11 @@
 @theme {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 
-  /* Light "paper" theme, same family as ahmadmalik.wyibe.com */
-  --color-bg: #f8f4e9;
+  /* Bright, warm light theme in the ahmadmalik.wyibe.com family */
+  --color-bg: #fbf8f1;
   --color-surface: #ffffff;
-  --color-surface-2: #eef1f8;
-  --color-line: #e2dccb;
+  --color-surface-2: #eef2fb;
+  --color-line: #e6e0d0;
   --color-ink: #1d2a5c;
   --color-muted: #56608a;
 
@@ -24,6 +24,12 @@
   --color-eyebrow: #c5221f;
   --color-link: #1967d2;
   --color-good: #137333;
+
+  /* Host-tinted chat bubbles */
+  --color-tint-red: #fdecea;
+  --color-tint-blue: #e8f0fe;
+  --color-tint-green: #e6f4ea;
+  --color-tint-yellow: #fef7e0;
 }
 
 :root {
@@ -35,6 +41,14 @@ body {
   background: var(--color-bg);
   color: var(--color-ink);
   overflow-x: hidden;
+}
+/* "clip" stops sideways scroll WITHOUT making body a scroll container, which would
+   break the sticky top bar (and the live avatar in it). Old browsers keep "hidden". */
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 body {
@@ -173,13 +187,132 @@ select.field-input {
   }
 }
 
-/* Soft Google-color dots on the page background (cheap: no images, no blur) */
+/* Page background: warm paper + soft Google-color glows (no images, no blur filters) */
 .paper-bg {
   background:
-    radial-gradient(circle at 8% 12%, rgb(66 133 244 / 0.1) 0, transparent 260px),
-    radial-gradient(circle at 92% 8%, rgb(234 67 53 / 0.08) 0, transparent 240px),
-    radial-gradient(circle at 90% 92%, rgb(52 168 83 / 0.09) 0, transparent 280px),
-    radial-gradient(circle at 6% 88%, rgb(251 188 4 / 0.12) 0, transparent 260px),
+    radial-gradient(circle at 8% 12%, rgb(66 133 244 / 0.13) 0, transparent 300px),
+    radial-gradient(circle at 92% 8%, rgb(234 67 53 / 0.1) 0, transparent 280px),
+    radial-gradient(circle at 90% 92%, rgb(52 168 83 / 0.12) 0, transparent 320px),
+    radial-gradient(circle at 6% 88%, rgb(251 188 4 / 0.16) 0, transparent 300px),
     var(--color-bg);
   background-attachment: fixed;
+}
+
+/* ---------- Game feel ---------- */
+
+/* Chunky "3D" buttons that press down */
+.btn-3d {
+  box-shadow: 0 4px 0 var(--btn-edge, rgb(0 0 0 / 0.18));
+  transform: translateY(0);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background-color 0.15s;
+}
+.btn-3d:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--btn-edge, rgb(0 0 0 / 0.18));
+}
+.btn-3d:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--btn-edge, rgb(0 0 0 / 0.18));
+}
+
+/* Floating Google-color shapes behind everything */
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(14px, -22px, 0) rotate(18deg);
+  }
+}
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-18px, 16px, 0) rotate(-24deg);
+  }
+}
+.floaty-a {
+  animation: float-a 9s ease-in-out infinite;
+}
+.floaty-b {
+  animation: float-b 11s ease-in-out infinite;
+}
+
+/* Avatar: gentle idle bob + blink */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+.avatar-bob {
+  animation: bob 2.8s ease-in-out infinite;
+}
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+.avatar-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 4.5s infinite;
+}
+
+/* Shimmer across the XP bar */
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+.xp-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  animation: shimmer 2.6s ease-in-out infinite;
+}
+
+/* Wiggle for attention (e.g. Next unlocked) */
+@keyframes pop-in {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+
+/* Gradient text for big titles */
+.text-google {
+  background: linear-gradient(90deg, #4285f4 0%, #ea4335 35%, #fbbc04 65%, #34a853 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

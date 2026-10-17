@@ -49,9 +49,11 @@ export function Level3Character() {
   const blur = (k: Key) => () => setTouched((t) => ({ ...t, [k]: true }));
 
   return (
-    <LevelShell chatId="l3" chat={say("rafay", level3.npc)} onNext={onNext}>
+    <LevelShell chatId="l3" chat={[...say("rafay", level3.npc), ...say("ahmed", level3.npcAhmed)]} onNext={onNext}>
       <div className="flex justify-center rounded-3xl border border-line bg-surface py-3 lg:hidden">
-        <Avatar parts={avatarParts(d)} size={130} animated={!instant} />
+        <div className={instant ? undefined : "avatar-bob"}>
+          <Avatar parts={avatarParts(d)} size={130} animated={!instant} />
+        </div>
       </div>
 
       {/* Honeypot: hidden from humans and assistive tech */}

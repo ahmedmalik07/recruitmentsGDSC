@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 type Option<T extends string | number> = { value: T; label: string };
 
 const chipBase =
-  "min-h-11 rounded-full border-[1.5px] px-4 text-[15px] font-medium transition-colors select-none";
+  "min-h-11 rounded-full border-2 px-4 text-[15px] font-semibold transition-[transform,background-color,border-color] select-none active:scale-95 hover:-translate-y-px";
 
 /** Single choice. Arrow keys move between options like a native radio group. */
 export function ChipRadio<T extends string | number>({

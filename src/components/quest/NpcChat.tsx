@@ -12,6 +12,12 @@ export function say(host: HostId, lines: readonly string[]): Line[] {
   return lines.map((text) => ({ host, text }));
 }
 
+const TINT: Record<HostId, string> = {
+  sumaiya: "var(--color-tint-red)",
+  ahmed: "var(--color-tint-blue)",
+  rafay: "var(--color-tint-green)",
+};
+
 /** Chats already played this session. Going Back to a level shows them instantly. */
 const played = new Set<string>();
 
@@ -65,7 +71,7 @@ export function NpcChat({
       {!done && nextHost && (
         <div className="flex items-end gap-2" aria-label={`${hosts[nextHost].firstName} is typing`}>
           <HostPhoto id={nextHost} size={32} />
-          <div className="flex gap-1 rounded-2xl rounded-bl-md bg-surface-2 px-4 py-3">
+          <div className="flex gap-1 rounded-2xl rounded-bl-md px-4 py-3" style={{ background: TINT[nextHost] }}>
             {[0, 1, 2].map((d) => (
               <span
                 key={d}
@@ -99,7 +105,10 @@ function Bubble({ line, showHost, animate }: { line: Line; showHost: boolean; an
       className="flex items-end gap-2"
     >
       {showHost ? <HostPhoto id={line.host} size={32} /> : <span className="w-8 shrink-0" />}
-      <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-surface-2 px-4 py-2.5 text-[15px] leading-snug">
+      <div
+        className="max-w-[85%] rounded-2xl rounded-bl-md border-l-4 px-4 py-2.5 text-[15px] leading-snug shadow-sm"
+        style={{ background: TINT[line.host], borderLeftColor: host.accent }}
+      >
         {showHost && (
           <span className="mb-0.5 flex items-center gap-1.5 text-xs font-semibold text-muted">
             <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: host.accent }} />

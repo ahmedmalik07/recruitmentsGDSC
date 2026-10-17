@@ -33,7 +33,7 @@ export const site = {
   /** Shown on the success screen instead of a date */
   shortlistNote: "Date will be announced soon on our Instagram and WhatsApp.",
   /** Recruitment WhatsApp group: updates, shortlist, interview slots */
-  whatsappGroup: "https://chat.whatsapp.com/IRQG5GuGgTw1dYTlc6fi0N",
+  whatsappGroup: "https://chat.whatsapp.com/G1vkks6yNgaHT6pKYOJhen",
   /** WhatsApp contact for problems. Number in international format, digits only. */
   whatsapp: {
     name: "Ahmed Malik",
@@ -93,7 +93,7 @@ export const hosts: Record<HostId, Host> = {
     linkedin: "https://www.linkedin.com/in/ahhmedmalik",
     stats: ["4× National Hackathon Winner", "Founder, Wyibe", "VP, GDGOC AU"],
     funFact: "Builds video games in Unreal Engine for fun, in between shipping AI agents at Wyibe.",
-    bio: "Your guide for this quest. Builds things, wins hackathons, drinks too much chai.",
+    bio: "Your guide for this quest. Builds things, wins hackathons, ships AI agents.",
     accent: "#4285F4",
   },
   rafay: {
@@ -141,10 +141,15 @@ export const titleScreen = {
   start: "Press Start",
   resume: (level: number) => `Continue from Level ${level}`,
   restart: "Start over",
+  joinGroup: "Join the recruitment WhatsApp group for updates",
   npc: [
     "Hey hey! I'm Sumaiya, President of GDGOC AU 👋",
     "Welcome to GDG Quest. Yeh koi boring form nahi hai, it's a mini game.",
-    "Finish all 7 levels and your application is in. Ready?",
+  ],
+  /** Ahmed joins right after Sumaiya's welcome */
+  npcAhmed: [
+    "And I'm Ahmed, VP. I built this whole quest, so I'll be your guide 🫡",
+    "7 levels, ~5 minutes. Finish them all and your application is in. Ready?",
   ],
 };
 
@@ -157,7 +162,7 @@ export const introCards = [
   {
     emoji: "🛠️",
     title: "What GDGOC AU does",
-    body: "Events, hackathons, hands-on workshops, real projects, and baithaqs: our chill networking sessions where you meet people who actually build stuff. Plus a lot of chai.",
+    body: "Events, hackathons, hands-on workshops, real projects, and baithaqs: our chill networking sessions where you meet people who actually build stuff.",
   },
   {
     emoji: "🚀",
@@ -172,6 +177,7 @@ export const level1 = {
     "Quick lore drop first. Swipe through these 3 cards 👉",
   ],
   handover: "Ab tumhara guide Ahmed hai. He'll take it from here. Good luck! ✨",
+  ahmedReply: "Shukriya Sumaiya! Chalo, let's meet the council 🚀",
   swipeHint: "Swipe or use the arrows",
 };
 
@@ -208,7 +214,9 @@ export const sidebar = {
 export const level3 = {
   npc: [
     "Rafay here, GS. I handle the paperwork, so let's make it quick.",
-    "Fill your details and watch your character come alive 👀",
+  ],
+  npcAhmed: [
+    "Every field you fill unlocks something on your character. Watch it at the top 👀",
   ],
   labels: {
     fullName: "Full name",
@@ -445,8 +453,14 @@ export const level5 = {
     "No essays needed. Just honest answers.",
   ],
   experience: {
-    label: "Tell us about your experience (projects, events, societies, freelancing, anything)",
-    helper: "No experience? Totally fine, tell us what you want to learn.",
+    label: "Your past experience",
+    helper:
+      "Projects, internships, societies, events you helped run, freelancing, roles you've held. No experience? Totally fine, tell us what you want to learn.",
+  },
+  achievements: {
+    label: "Achievements you're proud of",
+    helper: "Competitions, hackathons, awards, certifications, positions, published work. Small wins count too. Optional.",
+    placeholder: "e.g. 2nd place at a uni hackathon, Google Cloud cert, Head of Media at XYZ society",
   },
   whyJoin: {
     label: "Why do you want to join GDGOC AU?",
@@ -493,6 +507,7 @@ export const level6 = {
     "Boss check! 2 quick questions 🧠",
     "Relax, this doesn't affect selection. Just for fun.",
   ],
+  npcAhmed: ["Pro tip: question 2 is about me 😉"],
   correct: ["Sahi jawab! 🎯", "Easy money ✅"],
   wrong: ["Close, but nope 😅", "Oof. Plot twist 🙃"],
   answerWas: "Correct answer:",
@@ -569,6 +584,14 @@ export const closed = {
   follow: "Follow on Instagram",
 };
 
+export const footer = {
+  help: "Need help? WhatsApp",
+  group: "Recruitment WhatsApp group",
+  builtBy: "Built with",
+  builtByName: "Ahmed Malik",
+  builtByRole: "your Vice President",
+};
+
 export const follow = {
   title: "Follow GDGOC AU",
   instagram: "Instagram",
@@ -609,6 +632,22 @@ export const levelNames = [
   "Boss Check",
   "Review + Loot",
 ] as const;
+
+/** Per-level look: badge color (AA with its text color), emoji, and who hosts it */
+export const levelStyle: Record<number, { color: string; solid: string; onSolid: string; emoji: string; hosts: HostId[] }> = {
+  1: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "🌍", hosts: ["sumaiya", "ahmed"] },
+  2: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "👑", hosts: ["ahmed"] },
+  3: { color: "#FBBC04", solid: "#FBBC04", onSolid: "#202124", emoji: "🧑‍🎨", hosts: ["rafay", "ahmed"] },
+  4: { color: "#34A853", solid: "#188038", onSolid: "#FFFFFF", emoji: "🚪", hosts: ["ahmed"] },
+  5: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "📝", hosts: ["ahmed"] },
+  6: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "🧠", hosts: ["rafay", "ahmed"] },
+  7: { color: "#FBBC04", solid: "#FBBC04", onSolid: "#202124", emoji: "🎁", hosts: ["ahmed", "sumaiya", "rafay"] },
+};
+
+export const levelUp = {
+  cleared: (n: number) => `Level ${n} cleared!`,
+  xp: "+50 XP",
+};
 
 /** Confirmation email (only sent when RESEND_API_KEY is set) */
 export const email = {

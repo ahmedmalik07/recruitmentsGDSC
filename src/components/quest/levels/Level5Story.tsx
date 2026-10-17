@@ -21,8 +21,25 @@ import { PowerMeter } from "../PowerMeter";
 import { toast } from "../toast";
 import { useInstant, useQuest } from "../state";
 
-type Key = "experience" | "whyJoin" | "portfolioUrl" | "teamRole" | "hoursPerWeek" | "excitedAbout" | "funFact";
-const ORDER: Key[] = ["experience", "whyJoin", "portfolioUrl", "teamRole", "hoursPerWeek", "excitedAbout", "funFact"];
+type Key =
+  | "experience"
+  | "achievements"
+  | "whyJoin"
+  | "portfolioUrl"
+  | "teamRole"
+  | "hoursPerWeek"
+  | "excitedAbout"
+  | "funFact";
+const ORDER: Key[] = [
+  "experience",
+  "achievements",
+  "whyJoin",
+  "portfolioUrl",
+  "teamRole",
+  "hoursPerWeek",
+  "excitedAbout",
+  "funFact",
+];
 
 export function Level5Story() {
   const { state, set } = useQuest();
@@ -66,6 +83,27 @@ export function Level5Story() {
           blur("experience")();
         }}
       />
+
+      <Field
+        id="f-achievements"
+        label={level5.achievements.label}
+        optional
+        error={err("achievements")}
+        help={level5.achievements.helper}
+      >
+        <textarea
+          id="f-achievements"
+          className="field-input min-h-[96px] resize-y"
+          rows={3}
+          maxLength={1500}
+          placeholder={level5.achievements.placeholder}
+          value={d.achievements}
+          onChange={(e) => set({ achievements: e.target.value })}
+          onBlur={blur("achievements")}
+          aria-invalid={Boolean(err("achievements"))}
+          aria-describedby={describedBy("f-achievements", err("achievements"), true)}
+        />
+      </Field>
 
       <StoryBox
         id="whyJoin"

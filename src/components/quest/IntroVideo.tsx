@@ -77,7 +77,14 @@ export function IntroVideo({ instant }: { instant: boolean }) {
             onError={() => setFailed(true)}
           />
         ) : (
-          <Image src={ahmedVideo.poster} alt="" fill unoptimized className="object-cover" sizes="260px" />
+          <Image
+            src={ahmedVideo.poster}
+            alt=""
+            fill
+            unoptimized={ahmedVideo.poster.endsWith(".svg")}
+            className="object-cover"
+            sizes="260px"
+          />
         )}
 
         {/* Captions (video is muted, so these carry the message) */}

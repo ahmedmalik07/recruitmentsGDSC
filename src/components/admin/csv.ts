@@ -28,8 +28,9 @@ const COLUMNS: Array<[string, (r: Row) => unknown]> = [
   ["Portfolio", (r) => r.portfolioUrl],
   ["Quiz", (r) => r.quizScore],
   ["Time taken (sec)", (r) => r.timeTakenSec],
-  ["Applied at", (r) => r.createdAt?.toDate().toISOString() ?? ""],
+  ["Applied at", (r) => (r.createdAt ? new Date(r.createdAt).toISOString() : "")],
   ["Experience", (r) => r.experience],
+  ["Achievements", (r) => r.achievements ?? ""],
   ["Why join", (r) => r.whyJoin],
   ["Fun fact", (r) => r.funFact],
 ];

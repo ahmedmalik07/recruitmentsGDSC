@@ -2,9 +2,11 @@
 
 import { getApp, getApps, initializeApp, type FirebaseApp } from "firebase/app";
 import { connectAuthEmulator, getAuth, type Auth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore, type Firestore } from "firebase/firestore";
 
-/** Web SDK, used only by /admin. The candidate route never imports this. */
+/**
+ * Web SDK, used only by /admin and only for Google sign-in.
+ * All data goes through /api/admin/* on the server; browsers never read Firestore directly.
+ */
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -16,14 +18,13 @@ const config = {
 
 export const firebaseConfigured = Boolean(config.apiKey && config.projectId);
 
-function app(): FirebaseApp {
-  return getApps().length ? getApp() : initializeApp(config);
-}
-
 /** Local dev: NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true talks to `firebase emulators:start` */
 const useEmulators = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === "true";
 let authInstance: Auth | undefined;
-let dbInstance: Firestore | undefined;
+
+function app(): FirebaseApp {
+  return getApps().length ? getApp() : initializeApp(config);
+}
 
 export function clientAuth(): Auth {
   if (!authInstance) {
@@ -31,12 +32,4 @@ export function clientAuth(): Auth {
     if (useEmulators) connectAuthEmulator(authInstance, "http://127.0.0.1:9099", { disableWarnings: true });
   }
   return authInstance;
-}
-
-export function clientDb(): Firestore {
-  if (!dbInstance) {
-    dbInstance = getFirestore(app());
-    if (useEmulators) connectFirestoreEmulator(dbInstance, "127.0.0.1", 8080);
-  }
-  return dbInstance;
 }

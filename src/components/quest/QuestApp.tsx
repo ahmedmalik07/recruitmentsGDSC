@@ -1,32 +1,47 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, LazyMotion, MotionConfig, domAnimation, m } from "framer-motion";
 import { site } from "@/content";
 import { Hud } from "./Hud";
 import { QuestClosed } from "./QuestClosed";
+import { BackgroundFX } from "./BackgroundFX";
+import { LevelUp } from "./LevelUp";
 import { QuestSidebar } from "./QuestSidebar";
+import { SiteFooter } from "./SiteFooter";
 import { QuestProvider, useInstant, useQuest } from "./state";
 import { Toaster } from "./toast";
 import { Level0Start } from "./levels/Level0Start";
-import { Level1Welcome } from "./levels/Level1Welcome";
-import { Level2Council } from "./levels/Level2Council";
-import { Level3Character } from "./levels/Level3Character";
-import { Level4House } from "./levels/Level4House";
-import { Level5Story } from "./levels/Level5Story";
-import { Level6Boss } from "./levels/Level6Boss";
-import { Level7Review } from "./levels/Level7Review";
 
-const LEVELS: ComponentType[] = [
-  Level0Start,
-  Level1Welcome,
-  Level2Council,
-  Level3Character,
-  Level4House,
-  Level5Story,
-  Level6Boss,
-  Level7Review,
+/**
+ * Levels 1-7 are loaded on demand so the title screen ships as little JS as possible.
+ * While on a level, the next one is pre-fetched in the background.
+ */
+const LOADERS: Array<() => Promise<ComponentType>> = [
+  async () => Level0Start,
+  () => import("./levels/Level1Welcome").then((m) => m.Level1Welcome),
+  () => import("./levels/Level2Council").then((m) => m.Level2Council),
+  () => import("./levels/Level3Character").then((m) => m.Level3Character),
+  () => import("./levels/Level4House").then((m) => m.Level4House),
+  () => import("./levels/Level5Story").then((m) => m.Level5Story),
+  () => import("./levels/Level6Boss").then((m) => m.Level6Boss),
+  () => import("./levels/Level7Review").then((m) => m.Level7Review),
 ];
+
+function LevelLoading() {
+  return (
+    <div className="flex flex-col gap-4 pt-4" aria-busy="true" aria-label="Loading level">
+      <div className="h-[86px] animate-pulse rounded-3xl bg-surface-2" />
+      <div className="h-16 w-3/4 animate-pulse rounded-2xl bg-surface-2" />
+      <div className="h-40 animate-pulse rounded-3xl bg-surface-2" />
+    </div>
+  );
+}
+
+const LEVELS: ComponentType[] = LOADERS.map((load, i) =>
+  i === 0 ? Level0Start : dynamic(load, { loading: LevelLoading }),
+);
 
 export function QuestApp() {
   return (
@@ -55,12 +70,21 @@ function Quest() {
 
   const Level = LEVELS[state.level] ?? Level0Start;
 
+  // Warm the next level's code while the player reads this one
+  useEffect(() => {
+    if (!state.hydrated) return;
+    const nextLoad = LOADERS[Math.min(state.level + 1, LOADERS.length - 1)];
+    const t = window.setTimeout(() => void nextLoad().catch(() => {}), 1200);
+    return () => window.clearTimeout(t);
+  }, [state.level, state.hydrated]);
+
   return (
     <MotionConfig reducedMotion={state.speedMode ? "always" : "user"}>
       <div
         data-speed={state.speedMode ? "on" : "off"}
         className="mx-auto min-h-dvh w-full max-w-md px-4 md:max-w-2xl md:px-6 lg:grid lg:max-w-6xl lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12 lg:px-8"
       >
+        <BackgroundFX />
         {isClosed && state.level !== 7 ? (
           <div className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-xl">
             <QuestClosed />
@@ -83,8 +107,10 @@ function Quest() {
                 </m.div>
               </AnimatePresence>
             </main>
+            <SiteFooter />
             </div>
             <Toaster />
+            <LevelUp />
           </>
         )}
       </div>

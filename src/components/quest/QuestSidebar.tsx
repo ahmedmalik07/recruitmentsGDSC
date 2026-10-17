@@ -23,11 +23,13 @@ export function QuestSidebar() {
   return (
     <aside className="hidden lg:block" aria-label="Quest panel">
       <div className="sticky top-6 flex flex-col gap-4 py-6">
-        <Image src={site.logo} alt={site.chapterName} width={360} height={64} unoptimized className="h-auto w-full" />
+        <Image src={site.logo} alt={site.chapterName} width={400} height={72} unoptimized className="h-auto w-full" />
 
         <section className="flex flex-col items-center gap-2 rounded-3xl border border-line bg-surface p-5 shadow-sm">
           <h2 className="self-start text-xs font-bold tracking-wide text-eyebrow uppercase">{sidebar.title}</h2>
-          <Avatar parts={parts} size={190} animated={!instant} />
+          <div className={instant ? undefined : "avatar-bob"}>
+            <Avatar parts={parts} size={190} animated={!instant} />
+          </div>
           {house ? (
             <span
               className="rounded-full px-3 py-1 text-xs font-bold"

@@ -84,30 +84,30 @@ and reload `/admin`.
 5. **Project settings → General → Your apps → Web (`</>`)**: register an app. Copy the config values into the
    `NEXT_PUBLIC_FIREBASE_*` variables.
 
-### 3.2 Service account (server writes)
+### 3.2 Service account (server access)
 
 1. **Project settings → Service accounts → Generate new private key**. A JSON file downloads.
-2. Copy into env:
-   - `FIREBASE_PROJECT_ID` ← `project_id`
-   - `FIREBASE_CLIENT_EMAIL` ← `client_email`
-   - `FIREBASE_PRIVATE_KEY` ← `private_key` (paste in double quotes, keep the `\n` sequences)
+2. In Vercel add **one** variable, `FIREBASE_SERVICE_ACCOUNT`, and paste the **whole JSON file** as its value.
+   (Alternative: the three variables `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`.
+   Quotes, `\n` or real line breaks are all accepted.)
 3. Never commit the JSON file. `.env*` files are already git-ignored (except `.env.example`).
+4. Open `https://<your-domain>/api/health` after deploying: `"firebaseAdmin": "ok"` means the key works.
+   It shows only yes/no and counts, never secret values.
 
-### 3.3 Deploy the security rules
+### 3.3 Security rules (lock the database)
+
+Browsers never talk to Firestore. Candidates go through `/api/apply`; admins through `/api/admin/*`, which
+checks the Google sign-in and role on every request and then uses the Admin SDK. So the rules simply deny
+everything from browsers. Publish `firestore.rules` once: Firebase console → Firestore → Rules → paste → Publish,
+or:
 
 ```bash
 npx firebase login
 npx firebase use --add          # pick your project
-npm run deploy:rules            # firestore.rules + firestore.indexes.json
+npm run deploy:rules
 ```
 
-The index file enables collection-group queries on `reviews.domain`, which the admin table uses for average ratings.
-Rules summary:
-
-- Candidates never touch Firestore. Only `/api/apply` writes, via the Admin SDK.
-- `applications`: no public access. Clients can't create or delete. Core reads everything; a lead reads only
-  their domain. Updates may change **only** `status` and `updatedAt`.
-- `reviews/{reviewerUid}`: readable by core or that domain's lead. Writable only by the reviewer themselves.
+No indexes are needed.
 
 ### 3.4 Cloudflare Turnstile
 
@@ -196,6 +196,29 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 - **Deadline is optional.** Leave `NEXT_PUBLIC_APPLICATIONS_DEADLINE` empty and applications stay open.
   Once set and passed, the quest shows "Quest closed" and the API returns 403.
 
+### Admin
+
+`/admin` signs in with Google, then calls the server:
+
+| Endpoint | What |
+|---|---|
+| `GET /api/admin/me` | Who am I? Grants the role from `ADMIN_CORE_EMAILS` / `ADMIN_LEAD_EMAILS` on first sign-in |
+| `GET /api/admin/applications` | Applications + reviews (leads: their team only). The page refreshes every 30s |
+| `POST /api/admin/status` | Shortlist / reject / select (with the position given), records who did it |
+| `POST /api/admin/review` | Your own rating + notes |
+| `GET /api/admin/backup` | Full JSON backup download (button in the admin header) |
+
+If access fails, the page shows the exact reason and a live setup check.
+
+### Data safety
+
+- Nobody can read, change or delete applications from a browser; the rules deny all direct access.
+- Applications are create-only. Even admins can only change status, the assigned position and their own review.
+  Every status change stores `statusBy`.
+- **Take a backup** now and then with "⬇ Full backup (JSON)" in `/admin`, plus "Export CSV" for spreadsheets.
+  (Firestore's own scheduled backups and point-in-time recovery need the paid Blaze plan; worth turning on if
+  you upgrade.)
+
 ### Submission API checks, in order
 
 body size → honeypot → deadline → Zod (`src/lib/schema.ts`, shared with the UI) → Turnstile → `create()` → email (after response)
@@ -229,8 +252,12 @@ position they get (`assignedPosition`), so a Lead applicant can be selected as C
 
 ### Performance notes
 
-- The candidate route ships about 210 KB of gzipped JS (around half is the React/Next runtime).
-  Firebase is only loaded on `/admin`; html-to-image and confetti load only on the success screen;
+- The title screen ships about 190 KB of gzipped JS (around 60% is the React/Next runtime). Each level's code
+  loads on demand, and the next level is pre-fetched in the background. Zod loads with Level 3.
+- The Three.js scene on the title screen loads only after the page is idle, only on capable devices
+  (≥4 cores, ≥3 GB RAM, WebGL), never with Save-Data / 2G or reduced motion; everyone else sees an SVG.
+  It pauses when off-screen or the tab is hidden.
+- Firebase (auth only) loads only on `/admin`; html-to-image and confetti load on demand;
   Turnstile loads only on Level 7.
 - The video uses `preload="none"`, mounts only when scrolled into view, and doesn't autoplay on Save-Data or 2G.
 - Outfit is self-hosted via `next/font`. Team photos go through `next/image` once you swap in .jpg/.webp files.

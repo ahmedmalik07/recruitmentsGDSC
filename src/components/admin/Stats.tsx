@@ -22,7 +22,7 @@ export function Stats({ rows }: { rows: Row[] }) {
     for (const r of rows) {
       perDomain[r.domain] = (perDomain[r.domain] ?? 0) + 1;
       if (r.semester >= 1 && r.semester <= 8) perSemester[r.semester - 1]++;
-      const d = r.createdAt?.toDate();
+      const d = r.createdAt ? new Date(r.createdAt) : null;
       if (d) perDay.set(dayKey(d), (perDay.get(dayKey(d)) ?? 0) + 1);
       if (r.status === "shortlisted") shortlisted++;
       if (r.status === "selected") selected++;

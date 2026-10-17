@@ -12,13 +12,10 @@ import {
 
 /** Shared between the candidate UI and /api/apply. */
 
-export const WORDS = { min: 10, max: 250, sweetMin: 40, sweetMax: 150 } as const;
-export const MAX_TEXT_CHARS = 2500;
+export { WORDS, countWords } from "./quick";
+import { WORDS, countWords } from "./quick";
 
-export function countWords(text: string): number {
-  const trimmed = text.trim();
-  return trimmed ? trimmed.split(/\s+/).length : 0;
-}
+export const MAX_TEXT_CHARS = 2500;
 
 /** Strip spaces/dashes and convert +92 / 92 prefixes to the local 03 format. */
 export function normalizePhone(raw: string): string {
@@ -91,6 +88,12 @@ export const houseShape = {
 
 export const storyShape = {
   experience: longText("Experience"),
+  achievements: z
+    .string()
+    .trim()
+    .max(1500, { error: "Keep it under 1500 characters" })
+    .refine((v) => countWords(v) <= 200, { error: "Keep it under 200 words" })
+    .default(""),
   whyJoin: longText("Your answer"),
   portfolioUrl: z
     .string()

@@ -1,5 +1,5 @@
 import { level5 } from "@/content";
-import { WORDS, countWords } from "@/lib/schema";
+import { WORDS, countWords } from "@/lib/quick";
 
 /** Darker, text-safe versions of the bar colors (AA on light backgrounds) */
 const TEXT: Record<string, string> = {

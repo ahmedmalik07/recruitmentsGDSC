@@ -2,15 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { User } from "firebase/auth";
-import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { domains, positionLabel, hoursLabels, type Hours } from "@/content";
 import type { Status } from "@/lib/schema";
-import { clientDb } from "@/lib/firebaseClient";
+import { adminFetch, ApiError, ERROR_TEXT } from "./api";
 import { Button } from "@/components/ui/Button";
 import { statusStyle } from "./status";
 import type { Row } from "./types";
 
-export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; onClose: () => void }) {
+export function CandidateDrawer({
+  row,
+  user,
+  onClose,
+  onChanged,
+}: {
+  row: Row;
+  user: User;
+  onClose: () => void;
+  /** Reload data after a change */
+  onChanged: () => void;
+}) {
   const mine = row.reviews.find((r) => r.reviewerUid === user.uid);
   const others = row.reviews.filter((r) => r.reviewerUid !== user.uid);
   const [rating, setRating] = useState<number>(mine?.rating ?? 0);
@@ -41,13 +51,14 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
     setMsg(undefined);
     try {
       // Only selected people carry an assigned position
-      await updateDoc(doc(clientDb(), "applications", row.id), {
-        status,
-        assignedPosition: status === "selected" ? assignTo || null : null,
-        updatedAt: serverTimestamp(),
+      await adminFetch(user, "/api/admin/status", {
+        method: "POST",
+        body: JSON.stringify({ rollNo: row.id, status, assignedPosition: status === "selected" ? assignTo : null }),
       });
+      onChanged();
     } catch (e) {
-      setMsg(`Couldn't update status: ${(e as Error).message}`);
+      const code = e instanceof ApiError ? e.code : "network";
+      setMsg(`Couldn't update status: ${ERROR_TEXT[code] ?? code}`);
     } finally {
       setStatusBusy(null);
     }
@@ -58,19 +69,15 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
     setSaving(true);
     setMsg(undefined);
     try {
-      await setDoc(doc(clientDb(), "applications", row.id, "reviews", user.uid), {
-        rating,
-        notes: notes.trim().slice(0, 2000),
-        domain: row.domain,
-        rollNo: row.id,
-        reviewerName: user.displayName ?? "",
-        reviewerEmail: user.email ?? "",
-        createdAt: mine?.createdAt ?? serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      await adminFetch(user, "/api/admin/review", {
+        method: "POST",
+        body: JSON.stringify({ rollNo: row.id, rating, notes }),
       });
       setMsg("Saved ✓");
+      onChanged();
     } catch (e) {
-      setMsg(`Couldn't save: ${(e as Error).message}`);
+      const code = e instanceof ApiError ? e.code : "network";
+      setMsg(`Couldn't save: ${ERROR_TEXT[code] ?? code}`);
     } finally {
       setSaving(false);
     }
@@ -196,7 +203,8 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
             <Info label="Skills">{row.skillTags?.length ? row.skillTags.join(", ") : <span className="text-muted">None</span>}</Info>
           </section>
 
-          <LongAnswer label="Experience" text={row.experience} />
+          <LongAnswer label="Past experience" text={row.experience} />
+          {row.achievements && <LongAnswer label="Achievements" text={row.achievements} />}
           <LongAnswer label="Why GDGOC AU" text={row.whyJoin} />
 
           <section className="grid grid-cols-2 gap-2 text-[15px]">
@@ -205,7 +213,7 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
             <Info label="Excited about">{row.excitedAbout?.join(", ")}</Info>
             <Info label="Boss check">{row.quizScore}/2</Info>
             <Info label="Time taken">{formatDuration(row.timeTakenSec)}</Info>
-            <Info label="Applied">{row.createdAt?.toDate().toLocaleString("en-PK") ?? "…"}</Info>
+            <Info label="Applied">{row.createdAt ? new Date(row.createdAt).toLocaleString("en-PK") : "…"}</Info>
             {row.funFact && (
               <div className="col-span-2">
                 <Info label="Fun fact">{row.funFact}</Info>

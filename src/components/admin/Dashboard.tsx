@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { CandidateDrawer } from "./CandidateDrawer";
 import { Stats } from "./Stats";
 import { downloadCsv } from "./csv";
+import { ERROR_TEXT } from "./api";
 import { useAdminData } from "./useAdminData";
 import type { Claims, Row } from "./types";
 
@@ -16,7 +17,30 @@ type Sort = "newest" | "oldest" | "rating_desc" | "rating_asc";
 
 
 export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Claims; onSignOut: () => void }) {
-  const { rows, error } = useAdminData(claims);
+  const { rows, error, loading, lastLoaded, refresh } = useAdminData(user);
+  const [backupBusy, setBackupBusy] = useState(false);
+
+  async function downloadBackup() {
+    setBackupBusy(true);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch("/api/admin/backup", { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
+      if (!res.ok) throw new Error(String(res.status));
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gdg-quest-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    } catch {
+      alert("Backup download failed. Try again.");
+    } finally {
+      setBackupBusy(false);
+    }
+  }
   const [domain, setDomain] = useState<DomainId | "">("");
   const [semester, setSemester] = useState("");
   const [department, setDepartment] = useState("");
@@ -38,7 +62,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
         (!position || r.position === position) &&
         (!q || r.rollNo.includes(q) || r.fullName.toLowerCase().includes(q)),
     );
-    const time = (r: Row) => r.createdAt?.toMillis() ?? 0;
+    const time = (r: Row) => r.createdAt ?? 0;
     const rating = (r: Row, empty: number) => r.avgRating ?? empty;
     out.sort((a, b) => {
       switch (sort) {
@@ -76,19 +100,31 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
             {scopeLabel} · {user.email}
           </p>
         </div>
-        <Button variant="secondary" onClick={onSignOut}>
-          Sign out
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted" aria-live="polite">
+            {loading ? "Refreshing…" : lastLoaded ? `Updated ${new Date(lastLoaded).toLocaleTimeString("en-PK")}` : ""}
+          </span>
+          <Button variant="secondary" onClick={refresh} disabled={loading}>
+            ↻ Refresh
+          </Button>
+          <Button variant="secondary" onClick={downloadBackup} disabled={backupBusy}>
+            {backupBusy ? "Preparing…" : "⬇ Full backup (JSON)"}
+          </Button>
+          <Button variant="secondary" onClick={onSignOut}>
+            Sign out
+          </Button>
+        </div>
       </header>
 
       {error && (
-        <p role="alert" className="mt-4 rounded-xl bg-g-red/15 p-3 text-sm">
-          Firestore error: {error}
-        </p>
+        <div role="alert" className="mt-4 rounded-xl bg-g-red/10 p-3 text-sm">
+          <p className="font-semibold">{ERROR_TEXT[error.code] ?? `Error: ${error.code}`}</p>
+          {error.detail && <p className="mt-1 font-mono text-xs">{error.detail}</p>}
+        </div>
       )}
 
       {!rows ? (
-        <p className="py-10 text-muted">Loading applications…</p>
+        <p className="py-10 text-muted">{error ? "Couldn't load applications." : "Loading applications…"}</p>
       ) : (
         <>
           <Stats rows={rows} />
@@ -261,13 +297,15 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
         </>
       )}
 
-      {open && <CandidateDrawer key={open.id} row={open} user={user} onClose={() => setOpenId(null)} />}
+      {open && (
+        <CandidateDrawer key={open.id} row={open} user={user} onClose={() => setOpenId(null)} onChanged={refresh} />
+      )}
     </div>
   );
 }
 
 function formatDate(r: Row) {
-  const d = r.createdAt?.toDate();
+  const d = r.createdAt ? new Date(r.createdAt) : null;
   return d ? d.toLocaleString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "…";
 }
 

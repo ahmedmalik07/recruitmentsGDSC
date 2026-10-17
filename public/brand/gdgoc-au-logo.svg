@@ -1,4 +1,14 @@
-<!-- PLACEHOLDER. Replace with the official GDG on Campus lockup for your chapter
-     (download it from the GDG brand resources / chapter portal). Do not recolor,
-     stretch or redraw the official logo. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" width="360" height="64"><rect x="0.5" y="0.5" width="359" height="63" rx="10" fill="none" stroke="#56608a" stroke-dasharray="6 4"/><text x="180" y="28" font-family="Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#1d2a5c">Google Developer Groups on Campus</text><text x="180" y="48" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#56608a">Air University · logo placeholder</text></svg>
+<!-- Stand-in for the official GDG on Campus Air University lockup.
+     Replace with the official file (same name, or update site.logo in src/content.ts). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 72" width="400" height="72">
+  <g stroke-linecap="round" stroke-width="9" fill="none">
+    <path d="M30 20 L10 34" stroke="#EA4335"/>
+    <path d="M10 38 L30 52" stroke="#4285F4"/>
+    <path d="M48 20 L68 34" stroke="#34A853"/>
+    <path d="M68 38 L48 52" stroke="#FBBC04"/>
+  </g>
+  <text x="86" y="36" font-family="Outfit, 'Google Sans', Arial, sans-serif" font-size="25" fill="#5f6368">Google Developer Groups</text>
+  <text x="86" y="62" font-family="Outfit, 'Google Sans', Arial, sans-serif" font-size="17">
+    <tspan fill="#4285F4">On Campus</tspan><tspan fill="#5f6368"> • Air University</tspan>
+  </text>
+</svg>

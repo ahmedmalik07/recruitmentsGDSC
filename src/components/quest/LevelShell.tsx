@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { m } from "framer-motion";
 import { level7, ui } from "@/content";
 import { Button } from "@/components/ui/Button";
+import { LevelBanner } from "./LevelBanner";
 import { NpcChat, type Line } from "./NpcChat";
 import { useInstant, useQuest } from "./state";
 
@@ -48,10 +49,11 @@ export function LevelShell({
 
   return (
     <section className="flex flex-col gap-5 pt-4 pb-4 md:pt-6" aria-labelledby={title ? `${chatId}-title` : undefined}>
+      <LevelBanner level={state.level} />
       {title && (
-        <h1 id={`${chatId}-title`} className="text-2xl leading-tight font-bold">
+        <h2 id={`${chatId}-title`} className="text-2xl leading-tight font-bold">
           {title}
-        </h1>
+        </h2>
       )}
       <NpcChat id={chatId} lines={chat} onDone={() => setReady(true)} />
       {(ready || instant) && (

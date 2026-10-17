@@ -14,7 +14,7 @@ export function Level6Boss() {
   return (
     <LevelShell
       chatId="l6"
-      chat={say("rafay", level6.npc)}
+      chat={[...say("rafay", level6.npc), ...say("ahmed", level6.npcAhmed)]}
       canNext={answeredAll}
       nextHint="Answer both to continue"
     >

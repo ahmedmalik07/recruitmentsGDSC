@@ -30,6 +30,7 @@ export type Draft = {
   position: string;
   skillTags: string[];
   experience: string;
+  achievements: string;
   whyJoin: string;
   portfolioUrl: string;
   teamRole: TeamRole | null;
@@ -67,6 +68,7 @@ export const emptyDraft: Draft = {
   position: "",
   skillTags: [],
   experience: "",
+  achievements: "",
   whyJoin: "",
   portfolioUrl: "",
   teamRole: null,

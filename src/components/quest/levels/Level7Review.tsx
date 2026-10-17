@@ -25,6 +25,7 @@ const FIELD_LEVEL: Record<string, number> = {
   position: 4,
   skillTags: 4,
   experience: 5,
+  achievements: 5,
   whyJoin: 5,
   portfolioUrl: 5,
   teamRole: 5,
@@ -39,6 +40,7 @@ const FIELD_LABEL: Record<string, string> = {
   position: "Position",
   skillTags: "Skills",
   experience: "Experience",
+  achievements: "Achievements",
   whyJoin: "Why GDGOC AU",
   portfolioUrl: "Portfolio link",
   teamRole: "Team role",
@@ -180,6 +182,7 @@ export function Level7Review() {
 
         <Section title={level7.sections.story} onEdit={() => edit(5)}>
           <Row label="Experience" value={d.experience} long />
+          <Row label="Achievements" value={d.achievements || "None added"} long />
           <Row label="Why GDGOC AU" value={d.whyJoin} long />
           <Row label={house?.portfolioLabel ?? "Portfolio"} value={d.portfolioUrl || "Not added"} />
         </Section>
@@ -313,8 +316,8 @@ function Success({ parts }: { parts: AvatarParts }) {
   }, []);
 
   const chat: Line[] = [
-    { host: "sumaiya", text: success.npc.sumaiya },
     { host: "ahmed", text: success.npc.ahmed },
+    { host: "sumaiya", text: success.npc.sumaiya },
     { host: "rafay", text: success.npc.rafay },
   ];
 

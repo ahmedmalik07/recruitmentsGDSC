@@ -5,6 +5,8 @@ import { AdminConfigError, adminApp } from "@/lib/server/firebaseAdmin";
  * Setup check: open /api/health in a browser after changing Vercel variables.
  * Reports only yes/no and counts, never the values themselves.
  */
+let cache: { at: number; firebaseAdmin: string } | null = null;
+
 export async function GET() {
   const count = (v: string | undefined) =>
     (v ?? "")
@@ -12,14 +14,19 @@ export async function GET() {
       .split(/[\s,;]+/)
       .filter(Boolean).length;
 
-  let firebaseAdmin = "ok";
-  try {
-    // A cheap authenticated call proves the key actually works, not just that it parses
-    await getFirestore(adminApp()).collection("applications").limit(1).get();
-  } catch (err) {
-    firebaseAdmin =
-      err instanceof AdminConfigError ? err.message : `error: ${(err as Error).message.split("\n")[0].slice(0, 160)}`;
+  // Cached for a minute so this public URL can't be used to burn Firestore reads
+  if (!cache || Date.now() - cache.at > 60_000) {
+    let result = "ok";
+    try {
+      // A cheap authenticated call proves the key actually works, not just that it parses
+      await getFirestore(adminApp()).collection("applications").limit(1).get();
+    } catch (err) {
+      result =
+        err instanceof AdminConfigError ? err.message : `error: ${(err as Error).message.split("\n")[0].slice(0, 160)}`;
+    }
+    cache = { at: Date.now(), firebaseAdmin: result };
   }
+  const firebaseAdmin = cache.firebaseAdmin;
 
   return Response.json(
     {

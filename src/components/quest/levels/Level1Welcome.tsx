@@ -100,7 +100,9 @@ export function Level1Welcome() {
         <p className="text-center text-xs text-muted">{level1.swipeHint}</p>
       </div>
 
-      {seenAll && <NpcChat id="l1-handover" lines={say("sumaiya", [level1.handover])} />}
+      {seenAll && (
+        <NpcChat id="l1-handover" lines={[...say("sumaiya", [level1.handover]), ...say("ahmed", [level1.ahmedReply])]} />
+      )}
     </LevelShell>
   );
 }
