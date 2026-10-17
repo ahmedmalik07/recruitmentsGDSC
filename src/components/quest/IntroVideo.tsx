@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { introVideo } from "@/content";
 import { music } from "@/lib/music";
 import { IntroStory } from "./IntroStory";
-import { useInstant, useQuest } from "./state";
+import { useQuest } from "./state";
 
 /** Data saver on, or a 2G connection */
 function lowData(): boolean {
@@ -12,52 +13,84 @@ function lowData(): boolean {
   return Boolean(c?.saveData) || /(^|-)2g$/.test(c?.effectiveType ?? "");
 }
 
-/** Play with the soundtrack when sound is on; if the browser refuses, play muted instead */
-function playWithSound(el: HTMLVideoElement, sound: boolean, onFail?: () => void) {
-  el.muted = !sound;
-  el.play().catch(() => {
-    if (el.muted) return onFail?.();
-    el.muted = true;
-    el.play().catch(() => onFail?.());
-  });
-}
-
 /**
- * The council trailer. Nothing downloads until it's on screen (preload="none"), then it plays,
- * with its song if sound is on (the background music fades out meanwhile).
- * Speed mode, reduced motion and data saver get the poster and a play button instead.
+ * The council trailer. It starts by itself as soon as Level 4 shows it (only reduced motion and
+ * data saver wait for a tap). The video file is silent: its music is the site's own song, played
+ * live in sync (music.playTrailer), so it works on every phone, iPhones included, and follows 🔊.
  * If the video can't play, or they'd rather tap, the HTML story takes its place.
  */
 export function IntroVideo() {
-  const instant = useInstant();
+  const reduced = useReducedMotion();
   const { state } = useQuest();
   const sound = state.soundOn;
   const video = useRef<HTMLVideoElement>(null);
   const [story, setStory] = useState(false);
   const [started, setStarted] = useState(false);
 
+  // Autoplay once on screen; pause when scrolled away or the tab is hidden
   useEffect(() => {
     const el = video.current;
     if (!el) return;
-    if (!sound) el.muted = true;
+    let resumeOnReturn = false;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) el.pause();
-        else if (!instant && !lowData() && el.currentTime === 0) playWithSound(el, sound);
+        else if (!reduced && !lowData() && !el.ended && (el.currentTime === 0 || resumeOnReturn)) {
+          resumeOnReturn = false;
+          void el.play().catch(() => {});
+        }
       },
-      { threshold: 0.6 },
+      { threshold: 0.25 },
     );
     io.observe(el);
-    // Background music steps aside while the video is audible
-    const duck = () => music.duck(!el.paused && !el.ended && !el.muted);
-    const events = ["play", "pause", "ended", "volumechange"] as const;
-    events.forEach((e) => el.addEventListener(e, duck));
+    const onVisibility = () => {
+      if (document.hidden && !el.paused) {
+        resumeOnReturn = true;
+        el.pause();
+      } else if (!document.hidden && resumeOnReturn) {
+        resumeOnReturn = false;
+        void el.play().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       io.disconnect();
-      events.forEach((e) => el.removeEventListener(e, duck));
-      music.duck(false);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [instant, story, sound]);
+  }, [reduced, story]);
+
+  // Keep the music in step with the picture
+  useEffect(() => {
+    const el = video.current;
+    if (!el) return;
+    const play = () => {
+      if (!el.paused && !el.seeking) music.playTrailer(el.currentTime);
+    };
+    const stop = () => music.stopTrailer();
+    const on: Array<[string, () => void]> = [
+      ["playing", play],
+      ["seeked", play],
+      ["pause", stop],
+      ["waiting", stop],
+      ["seeking", stop],
+      ["ended", stop],
+      ["emptied", stop],
+    ];
+    on.forEach(([e, f]) => el.addEventListener(e, f));
+    // Sound switched on while it plays
+    if (sound) play();
+    return () => {
+      on.forEach(([e, f]) => el.removeEventListener(e, f));
+      music.stopTrailer();
+    };
+  }, [sound, story]);
+
+  function tapPlay() {
+    const el = video.current;
+    if (!el) return;
+    if (sound) music.start();
+    el.play().catch(() => setStory(true));
+  }
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -85,7 +118,7 @@ export function IntroVideo() {
           {!started && (
             <button
               type="button"
-              onClick={() => video.current && playWithSound(video.current, sound, () => setStory(true))}
+              onClick={tapPlay}
               className="absolute inset-x-0 bottom-[10%] mx-auto flex w-max items-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-extrabold text-white shadow-lg"
             >
               <span aria-hidden="true">▶</span> {introVideo.play}

@@ -37,7 +37,7 @@ Assets (keep the filenames, or update the paths in `content.ts`):
 | `public/brand/gdgoc-au-full.png`, `gdgoc-au-art.png` | AU building artwork (desktop sidebar) |
 | `src/app/icon.png`, `apple-icon.png` | Favicon and home-screen icon (GDG chevrons) |
 | `public/campus/au-day.jpg`, `au-night.jpg`, `au-logo.jpg` | Real Air University photos (Level 1 card, intro video) |
-| `public/intro/gdg-quest-intro.mp4`, `.webm`, `poster.jpg` | The Level 4 intro video with music (generated, see below) |
+| `public/intro/gdg-quest-intro.mp4`, `.webm`, `poster.jpg` | The Level 4 intro video (generated, see below; the site adds the music live) |
 
 ### Intro video (no filming needed)
 
@@ -45,34 +45,43 @@ Level 4 plays a 23 second vertical trailer with our own song: a "yeh GAME hai" h
 GDG Quest title, Sumaiya, Ahmed and Rafay each with their photo, badge and a line, the 5 teams, and
 "Your quest starts now" with confetti on the final beat. Every cut lands on a beat (120 BPM).
 It's made in code: `scripts/intro-video/trailer.html` is the picture (open it in Chrome to preview it live),
-`soundtrack.ts` arranges the site's song for it, and `render.mjs` draws every frame, renders the music and
+the music is `trailerStep` in `src/lib/music.ts`, and `render.mjs` draws every frame, renders the music and
 encodes it all with ffmpeg:
 
 ```bash
 npm i -D playwright && npx playwright install chromium   # once
 node scripts/intro-video/render.mjs --stills 4,10,15     # quick PNG checks
-node scripts/intro-video/render.mjs --audio              # just the music, as out/music.wav
+node scripts/intro-video/render.mjs --preview            # 36 s of the site music, out/music-preview.m4a
+node scripts/intro-video/render.mjs --audio              # just the video's music, as out/music.wav
+node scripts/intro-video/render.mjs --remux              # new music on the last render's frames (2 min)
 node scripts/intro-video/render.mjs                      # full render, about 3 minutes
 ```
 
-It writes the web versions (`public/intro/`, about 1.5 MB, MP4 plus WebM) and a full-quality 1080x1920 copy
-for Instagram Reels and WhatsApp status in `scripts/intro-video/out/` (not committed). On the site it loads
-only when scrolled into view and plays with sound when sound is on (muted otherwise); it stays paused in
-speed mode, with reduced motion or on data saver. "Tap through it instead" switches to the HTML story version.
+It writes the site's copies (`public/intro/`, about 1.2 MB each, MP4 plus WebM, no audio track) and a
+full-quality 1080x1920 copy with the music for Instagram Reels and WhatsApp status in
+`scripts/intro-video/out/` (not committed).
+
+On the site the video starts by itself as soon as Level 4 shows it (only reduced motion and data saver wait
+for a tap), pauses when scrolled away or the tab is hidden, and downloads nothing before that. Its music is
+played live by the site in sync with the picture (it follows pause and seeking). That way it works on iPhones
+too, which block video sound without a tap, and it follows the 🔊 button. "Tap through it instead" switches to
+the HTML story version.
 
 ### Music and sound effects
 
-`src/lib/music.ts` is an original chiptune (C, G, Am, F at 120 BPM) played live with the Web Audio API, so
-there is no audio file to download (about 4 KB of code) and it loops without gaps.
+`src/lib/music.ts` is an original chill synth-pop tune played live with the Web Audio API: an FM electric
+piano, a warm detuned pad, round bass and soft lo-fi drums, with a bell melody on top, a little room reverb,
+an echo, and keys that "pump" with the kick. The chords are the "royal road" progression (Fmaj7, G6, Em7, Am7,
+120 BPM). There is no audio file to download (a few KB of code) and it loops without gaps.
 
 - It starts when someone presses Start or Continue (browsers don't allow sound before a click) and shows a
   one-time "tap 🔊 to mute" tip. The 🔊 button in the top bar turns music and effects off; the choice is saved.
-- The arrangement follows the level: melody and beat on the intro levels, calm (no melody) while typing in
-  Levels 3 and 5, full drums for the Boss Check, everything after submitting.
+- The mix follows the level: laid-back beat with the melody on the intro levels, just keys, pad, bass and hats
+  while typing in Levels 3 and 5, a four-on-the-floor beat with arpeggios for the Boss Check and after submitting.
 - Effects: a coin on every +XP, a jingle on level up, a boing when you poke your character, a fanfare on submit.
-- It goes quiet in background tabs, and fades out while the intro video plays with sound.
-- Edit the melody (`LEAD`), chords or `LEVEL_LAYERS` in `music.ts`. Re-render the intro video afterwards so
-  its soundtrack matches.
+- It goes quiet in background tabs, and steps aside while the intro video plays its own arrangement.
+- Edit the melody (`LEAD`), chords (`CHORDS`) or `LEVEL_MIX` in `music.ts`, listen with `--preview`, and run
+  `--remux` afterwards so the Instagram copy of the video matches.
 
 ## 2. Run it locally
 
@@ -229,7 +238,7 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 
 - **Progress** is saved to `localStorage` (every access is wrapped in try/catch) and cleared after a successful submit.
 - **Speed mode** (top right) skips typing animations, transitions and story autoplay. `prefers-reduced-motion` does the same.
-- **Sound** (🔊, top right): original game music that changes per level, plus sound effects. One tap to mute.
+- **Sound** (🔊, top right): original chill music that changes per level, plus sound effects. One tap to mute.
 - **The character is always visible** while filling the form: in the top bar on phones, in the sidebar on desktop.
   Tap it and it jumps.
 - **Portfolio links:** up to 4, any of GitHub, LinkedIn, Behance, Dribbble, Instagram, YouTube, Drive/Docs or any
@@ -323,14 +332,14 @@ position they get (`assignedPosition`), so a Lead applicant can be selected as C
 
 ### Performance notes
 
-- The title screen ships about 201 KB of gzipped JS on phones (around 60% is the React/Next runtime). Each level's code
+- The title screen ships about 203 KB of gzipped JS on phones (around 60% is the React/Next runtime). Each level's code
   loads on demand, and the next level is pre-fetched in the background. Zod loads with Level 3.
 - The Three.js scene on the title screen loads only after the page is idle, only on capable devices
   (≥4 cores, ≥3 GB RAM, WebGL), never with Save-Data / 2G or reduced motion; everyone else sees an SVG.
   It pauses when off-screen or the tab is hidden.
 - Firebase (auth only) loads only on `/admin`; html-to-image and confetti load on demand;
   Turnstile loads only on Level 7.
-- The Level 4 intro video is about 1.5 MB and downloads only when it scrolls into view (`preload="none"`).
+- The Level 4 intro video is about 1.2 MB and downloads only when Level 4 shows it (`preload="none"`).
 - The music is generated live in the browser (about 4 KB of code, no audio file).
 - Outfit is self-hosted via `next/font`. Team photos go through `next/image`.
 

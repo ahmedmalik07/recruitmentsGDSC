@@ -165,13 +165,13 @@ export const introVideo = {
   /** Same video for browsers without H.264 */
   srcWebm: "/intro/gdg-quest-intro.webm",
   poster: "/intro/poster.jpg",
-  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 23 seconds, with music",
+  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 23 seconds",
   /** Read by screen readers instead of the burned-in text */
   transcript:
     "Yeh koi form nahi hai, yeh game hai. Air University, Islamabad: GDG on Campus Air University presents GDG Quest, Recruitment 2026. " +
     "Sumaiya, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
     "Abdul Rafay, General Secretary. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
-    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com. Upbeat game music plays throughout.",
+    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com. Upbeat music plays throughout.",
   caption: "🎬 23 sec intro with the council",
   play: "Play intro",
   showStory: "Tap through it instead",
