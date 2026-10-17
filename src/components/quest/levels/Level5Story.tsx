@@ -203,12 +203,16 @@ function StoryBox({
       <m.div
         key={hint}
         initial={instant ? false : { opacity: 0, y: 4 }}
-        animate={{ opacity: focused ? 1 : 0.6, y: 0 }}
+        animate={{ opacity: 1, y: 0 }}
         className="flex items-start gap-2"
         role={focused ? "status" : undefined}
       >
           <HostPhoto id="ahmed" size={28} />
-          <p className="rounded-2xl rounded-tl-md bg-surface-2 px-3 py-2 text-sm leading-snug">
+          <p
+            className={`rounded-2xl rounded-tl-md bg-surface-2 px-3 py-2 text-sm leading-snug ring-2 transition-shadow ${
+              focused ? "ring-g-blue/60" : "ring-transparent"
+            }`}
+          >
             <span className="sr-only">Hint from Ahmed: </span>
             {hint}
           </p>

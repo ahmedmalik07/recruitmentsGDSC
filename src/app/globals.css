@@ -3,12 +3,13 @@
 @theme {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 
-  --color-bg: #0b1020;
-  --color-surface: #141b2d;
-  --color-surface-2: #1c2440;
-  --color-line: #2c3658;
-  --color-ink: #f1f3f9;
-  --color-muted: #a9b2ca;
+  /* Light "paper" theme, same family as ahmadmalik.wyibe.com */
+  --color-bg: #f8f4e9;
+  --color-surface: #ffffff;
+  --color-surface-2: #eef1f8;
+  --color-line: #e2dccb;
+  --color-ink: #1d2a5c;
+  --color-muted: #56608a;
 
   --color-g-blue: #4285f4;
   --color-g-red: #ea4335;
@@ -18,11 +19,15 @@
   --color-g-blue-strong: #1967d2;
   --color-g-blue-stronger: #185abc;
   --color-g-green-strong: #188038;
-  --color-danger: #ff8a80;
+  --color-danger: #c5221f;
+  /* Text-safe accents on light backgrounds (AA) */
+  --color-eyebrow: #c5221f;
+  --color-link: #1967d2;
+  --color-good: #137333;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -40,7 +45,7 @@ body {
 
 /* Visible, high-contrast focus for keyboard users */
 :focus-visible {
-  outline: 3px solid var(--color-g-yellow);
+  outline: 3px solid var(--color-g-blue-strong);
   outline-offset: 2px;
   border-radius: 10px;
 }
@@ -59,7 +64,10 @@ body {
   transition: border-color 0.15s;
 }
 .field-input::placeholder {
-  color: #7a84a3;
+  color: #6b7395;
+}
+.field-input:hover {
+  border-color: #cfc7b2;
 }
 .field-input:focus {
   border-color: var(--color-g-blue);
@@ -71,8 +79,8 @@ body {
 }
 select.field-input {
   appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, #a9b2ca 50%),
-    linear-gradient(135deg, #a9b2ca 50%, transparent 50%);
+  background-image: linear-gradient(45deg, transparent 50%, #56608a 50%),
+    linear-gradient(135deg, #56608a 50%, transparent 50%);
   background-position:
     calc(100% - 20px) 21px,
     calc(100% - 15px) 21px;
@@ -163,4 +171,15 @@ select.field-input {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Soft Google-color dots on the page background (cheap: no images, no blur) */
+.paper-bg {
+  background:
+    radial-gradient(circle at 8% 12%, rgb(66 133 244 / 0.1) 0, transparent 260px),
+    radial-gradient(circle at 92% 8%, rgb(234 67 53 / 0.08) 0, transparent 240px),
+    radial-gradient(circle at 90% 92%, rgb(52 168 83 / 0.09) 0, transparent 280px),
+    radial-gradient(circle at 6% 88%, rgb(251 188 4 / 0.12) 0, transparent 260px),
+    var(--color-bg);
+  background-attachment: fixed;
 }

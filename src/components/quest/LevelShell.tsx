@@ -47,7 +47,7 @@ export function LevelShell({
   }
 
   return (
-    <section className="flex flex-col gap-5 pt-4 pb-28" aria-labelledby={title ? `${chatId}-title` : undefined}>
+    <section className="flex flex-col gap-5 pt-4 pb-4 md:pt-6" aria-labelledby={title ? `${chatId}-title` : undefined}>
       {title && (
         <h1 id={`${chatId}-title`} className="text-2xl leading-tight font-bold">
           {title}
@@ -68,9 +68,9 @@ export function LevelShell({
       {!hideNav && (
         <nav
           aria-label="Level navigation"
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-line/60 bg-bg/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]"
+          className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-line bg-bg/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] md:-mx-6 md:px-6 lg:bottom-4 lg:mx-0 lg:rounded-2xl lg:border lg:bg-surface/95 lg:px-4 lg:pb-3 lg:shadow-lg"
         >
-          <div className="mx-auto flex max-w-md items-center gap-3">
+          <div className="flex items-center gap-3">
             {!state.editingFromReview && !hideBack && (
               <Button variant="secondary" onClick={back} aria-label="Previous level">
                 ←
@@ -83,7 +83,7 @@ export function LevelShell({
             </div>
           </div>
           {nextHint && !canNext && (
-            <p className="mx-auto mt-1.5 max-w-md text-center text-xs text-muted">{nextHint}</p>
+            <p className="mt-1.5 text-center text-xs text-muted">{nextHint}</p>
           )}
         </nav>
       )}

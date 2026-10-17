@@ -120,11 +120,12 @@ function CardArt({ parts }: { parts: AvatarParts }) {
         position: "relative",
         overflow: "hidden",
         fontFamily: "var(--font-outfit), system-ui, sans-serif",
-        color: "#F1F3F9",
-        background: `radial-gradient(circle at 15% 10%, ${color}55 0, transparent 420px),
-          radial-gradient(circle at 90% 85%, #34A85340 0, transparent 480px),
-          radial-gradient(circle at 85% 20%, #EA433533 0, transparent 360px),
-          #0B1020`,
+        color: "#1D2A5C",
+        background: `radial-gradient(circle at 12% 8%, ${color}33 0, transparent 440px),
+          radial-gradient(circle at 92% 88%, #34A85326 0, transparent 480px),
+          radial-gradient(circle at 88% 18%, #EA433522 0, transparent 380px),
+          radial-gradient(circle at 8% 92%, #FBBC0430 0, transparent 420px),
+          #F8F4E9`,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -155,7 +156,7 @@ function CardArt({ parts }: { parts: AvatarParts }) {
             marginTop: 36,
             padding: "18px 44px",
             borderRadius: 999,
-            background: house.color,
+            background: house.solid,
             color: house.onColor,
             fontSize: 48,
             fontWeight: 700,
@@ -169,7 +170,7 @@ function CardArt({ parts }: { parts: AvatarParts }) {
 
       <div style={{ marginTop: "auto", textAlign: "center" }}>
         <div style={{ fontSize: 46, fontWeight: 700 }}>{site.igHandle}</div>
-        <div style={{ marginTop: 10, fontSize: 34, color: "#A9B2CA" }}>{site.link}</div>
+        <div style={{ marginTop: 10, fontSize: 34, color: "#56608A" }}>{site.link}</div>
       </div>
 
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", height: 22 }}>

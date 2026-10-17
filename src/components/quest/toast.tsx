@@ -42,7 +42,7 @@ export function Toaster() {
             exit={{ opacity: 0, y: -8 }}
             className="rounded-full border border-line bg-surface-2 px-4 py-2 text-sm font-semibold shadow-lg"
           >
-            {t.xp ? <span className="mr-1.5 text-g-yellow">+{t.xp} XP</span> : null}
+            {t.xp ? <span className="mr-1.5 text-eyebrow">+{t.xp} XP</span> : null}
             {t.text}
           </m.div>
         ))}

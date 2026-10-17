@@ -8,6 +8,7 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { useReducedMotion } from "framer-motion";
@@ -48,6 +49,8 @@ export type QuestState = {
   editingFromReview: boolean;
   /** Honeypot, never persisted */
   website: string;
+  /** Application accepted by the API (this visit only) */
+  submitted: boolean;
   hydrated: boolean;
 };
 
@@ -79,6 +82,7 @@ const initialState: QuestState = {
   speedMode: false,
   editingFromReview: false,
   website: "",
+  submitted: false,
   hydrated: false,
 };
 
@@ -101,6 +105,7 @@ type Action =
   | { type: "answer"; index: number; option: number }
   | { type: "speed"; on: boolean }
   | { type: "honeypot"; value: string }
+  | { type: "submitted" }
   | { type: "reset" };
 
 function clampLevel(n: number) {
@@ -141,7 +146,13 @@ function reducer(state: QuestState, action: Action): QuestState {
       };
     case "go": {
       const level = clampLevel(action.level);
-      return { ...state, level, maxLevel: Math.max(state.maxLevel, level), startedAt: state.startedAt ?? Date.now() };
+      return {
+        ...state,
+        level,
+        editingFromReview: false,
+        maxLevel: Math.max(state.maxLevel, level),
+        startedAt: state.startedAt ?? Date.now(),
+      };
     }
     case "next": {
       const level = clampLevel(state.editingFromReview ? LAST_LEVEL : state.level + 1);
@@ -173,6 +184,8 @@ function reducer(state: QuestState, action: Action): QuestState {
       return { ...state, speedMode: action.on };
     case "honeypot":
       return { ...state, website: action.value };
+    case "submitted":
+      return { ...state, submitted: true, editingFromReview: false };
     case "reset":
       return { ...initialState, hydrated: true, speedMode: state.speedMode };
   }
@@ -251,9 +264,24 @@ export function useQuest(): QuestApi {
   return ctx;
 }
 
-/** True when animations should be skipped (speed mode or OS reduced motion). */
+const noopSubscribe = () => () => {};
+
+/** false on the server and during hydration, true afterwards (no hydration mismatch). */
+export function useMounted(): boolean {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
+/**
+ * True when animations should be skipped (speed mode or OS reduced motion).
+ * Always false until hydrated, because the server can't know either setting.
+ */
 export function useInstant(): boolean {
   const { state } = useQuest();
   const reduced = useReducedMotion();
-  return state.speedMode || Boolean(reduced);
+  const mounted = useMounted();
+  return mounted && (state.speedMode || Boolean(reduced));
 }

@@ -1,6 +1,14 @@
 import { level5 } from "@/content";
 import { WORDS, countWords } from "@/lib/schema";
 
+/** Darker, text-safe versions of the bar colors (AA on light backgrounds) */
+const TEXT: Record<string, string> = {
+  "#EA4335": "#C5221F",
+  "#FBBC04": "#8A5A00",
+  "#34A853": "#137333",
+  "#4285F4": "#1967D2",
+};
+
 /** Fills as they type. 40 to 150 words = full power. */
 export function PowerMeter({ id, text }: { id: string; text: string }) {
   const n = countWords(text);
@@ -33,7 +41,7 @@ export function PowerMeter({ id, text }: { id: string; text: string }) {
         />
       </div>
       <p className="flex justify-between text-xs font-medium">
-        <span style={{ color: color === "#EA4335" ? "#FF8A80" : color === "#4285F4" ? "#8AB4F8" : color }}>
+        <span style={{ color: TEXT[color] ?? color }}>
           {label}
         </span>
         <span className="text-muted tabular-nums">

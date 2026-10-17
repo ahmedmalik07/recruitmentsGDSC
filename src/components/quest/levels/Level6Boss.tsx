@@ -25,7 +25,7 @@ export function Level6Boss() {
         return (
           <fieldset key={qi} className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-4">
             <legend className="sr-only">Question {qi + 1}</legend>
-            <p className="text-xs font-bold tracking-wide text-g-yellow uppercase">Boss question {qi + 1}/{quiz.length}</p>
+            <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">Boss question {qi + 1}/{quiz.length}</p>
             <p className="text-lg leading-snug font-bold">{q.question}</p>
             <div className="flex flex-col gap-2">
               {q.options.map((opt, oi) => {

@@ -22,11 +22,11 @@ export function Level0Start() {
         height={64}
         priority
         unoptimized
-        className="h-auto w-full max-w-[280px]"
+        className="h-auto w-full max-w-[280px] lg:hidden"
       />
 
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-semibold tracking-widest text-g-yellow uppercase">{titleScreen.tagline}</p>
+        <p className="text-sm font-semibold tracking-widest text-eyebrow uppercase">{titleScreen.tagline}</p>
         <m.h1
           id="title"
           className="text-5xl leading-none font-extrabold tracking-tight"
@@ -35,7 +35,7 @@ export function Level0Start() {
         >
           <span className="text-g-blue">G</span>
           <span className="text-g-red">D</span>
-          <span className="text-g-yellow">G</span> <span>Quest</span>
+          <span className="text-eyebrow">G</span> <span>Quest</span>
         </m.h1>
         <p className="text-base text-muted">{titleScreen.subtitle}</p>
       </div>

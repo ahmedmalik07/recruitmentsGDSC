@@ -34,7 +34,9 @@ export function Level2Council() {
       <p className="text-sm font-semibold text-muted" aria-live="polite">
         {level2.progress(flippedCount)}
       </p>
-      <div className="grid grid-cols-2 gap-3">
+      {/* Phones: Sumaiya + Rafay side by side, Ahmed's big card below.
+          Wider screens: one row with Ahmed in the middle. */}
+      <div className="grid grid-cols-2 items-end gap-3 md:grid-cols-3 md:gap-4">
         {ORDER.map((id) => (
           <FlipCard key={id} id={id} big={id === "ahmed"} flipped={Boolean(faceUp[id])} onFlip={() => flip(id)} />
         ))}
@@ -56,7 +58,13 @@ function FlipCard({
 }) {
   const host = hosts[id];
   return (
-    <div className={cn("flip", big ? "col-span-2 h-[340px]" : "h-[240px]")}>
+    <div
+      className={cn(
+        "flex flex-col gap-2",
+        big ? "col-span-2 md:order-2 md:col-span-1" : id === "rafay" ? "md:order-3" : "md:order-1",
+      )}
+    >
+    <div className={cn("flip", big ? "h-[360px]" : "h-[240px] md:h-[300px]")}>
       <button
         type="button"
         onClick={onFlip}
@@ -74,10 +82,10 @@ function FlipCard({
               ⭐ {level2.guideBadge}
             </span>
           )}
-          <HostPhoto id={id} size={big ? 112 : 76} />
+          <HostPhoto id={id} size={big ? 132 : 76} portrait={big} priority={big} />
           <span className={cn("font-bold", big ? "text-2xl" : "text-lg")}>{host.name}</span>
           <span className="text-sm text-muted">{host.role}</span>
-          <span className="mt-1 text-xs font-semibold text-g-yellow">{level2.flipHint} ↻</span>
+          <span className="mt-1 text-xs font-semibold text-eyebrow">{level2.flipHint} ↻</span>
         </span>
 
         {/* Back */}
@@ -85,7 +93,7 @@ function FlipCard({
           className="flip-face flip-back flex flex-col justify-center gap-2 rounded-3xl border-2 p-4"
           style={{ borderColor: host.accent, background: "var(--color-surface-2)" }}
         >
-          <span className="text-xs font-bold tracking-wide uppercase" style={{ color: "#F1F3F9" }}>
+          <span className="text-xs font-bold tracking-wide uppercase" style={{ color: "var(--color-ink)" }}>
             {host.firstName} · {host.role}
           </span>
           {big ? (
@@ -93,7 +101,7 @@ function FlipCard({
               <ul className="flex flex-col gap-1.5">
                 {ahmedStats.map((s) => (
                   <li key={s} className="flex items-center gap-2 text-[15px] font-semibold">
-                    <span aria-hidden="true" className="text-g-yellow">
+                    <span aria-hidden="true" className="text-eyebrow">
                       ▸
                     </span>
                     {s}
@@ -117,6 +125,21 @@ function FlipCard({
           )}
         </span>
       </button>
+    </div>
+    {host.linkedin && (
+      <a
+        href={host.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border-[1.5px] border-line bg-surface px-4 text-sm font-semibold text-link hover:bg-surface-2"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="#0A66C2">
+          <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+        </svg>
+        {level2.linkedin}
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+    )}
     </div>
   );
 }

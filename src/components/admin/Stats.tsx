@@ -146,7 +146,7 @@ function DailyChart({ days }: { days: Array<{ key: string; date: Date; count: nu
         aria-label={`Daily submissions for the last ${days.length} days, peak ${max} per day`}
         onMouseLeave={() => setHover(null)}
       >
-        <line x1={pad.left} x2={W - pad.right} y1={H - pad.bottom} y2={H - pad.bottom} stroke="#2C3658" strokeWidth="1" />
+        <line x1={pad.left} x2={W - pad.right} y1={H - pad.bottom} y2={H - pad.bottom} stroke="#E2DCCB" strokeWidth="1" />
         {days.map((d, i) => {
           const h = d.count ? Math.max(4, (d.count / max) * plotH) : 0;
           const x = pad.left + i * slot + 1;
@@ -174,7 +174,7 @@ function DailyChart({ days }: { days: Array<{ key: string; date: Date; count: nu
             y={H - 6}
             textAnchor={i === 0 ? "start" : i === days.length - 1 ? "end" : "middle"}
             fontSize="10"
-            fill="#A9B2CA"
+            fill="#56608A"
           >
             {fmt(days[i].date)}
           </text>

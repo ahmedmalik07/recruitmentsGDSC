@@ -22,10 +22,10 @@ export function Hud() {
   }, [state.level]);
 
   return (
-    <header className="sticky top-0 z-40 -mx-4 border-b border-line/60 bg-bg/95 px-4 pt-3 pb-2.5">
+    <header className="sticky top-0 z-40 -mx-4 border-b border-line/60 bg-bg/95 px-4 pt-3 pb-2.5 md:-mx-6 md:px-6 lg:mx-0 lg:px-0 lg:pt-6">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold tracking-wide text-g-yellow uppercase">{ui.level(state.level)}</p>
+          <p className="text-xs font-semibold tracking-wide text-eyebrow uppercase">{ui.level(state.level)}</p>
           {state.level > 0 ? (
             <h1 ref={heading} tabIndex={-1} className="truncate text-sm font-semibold outline-none">
               {levelNames[state.level]}

@@ -5,6 +5,7 @@ import { AnimatePresence, LazyMotion, MotionConfig, domAnimation, m } from "fram
 import { site } from "@/content";
 import { Hud } from "./Hud";
 import { QuestClosed } from "./QuestClosed";
+import { QuestSidebar } from "./QuestSidebar";
 import { QuestProvider, useInstant, useQuest } from "./state";
 import { Toaster } from "./toast";
 import { Level0Start } from "./levels/Level0Start";
@@ -56,11 +57,18 @@ function Quest() {
 
   return (
     <MotionConfig reducedMotion={state.speedMode ? "always" : "user"}>
-      <div data-speed={state.speedMode ? "on" : "off"} className="mx-auto min-h-dvh w-full max-w-md px-4">
+      <div
+        data-speed={state.speedMode ? "on" : "off"}
+        className="mx-auto min-h-dvh w-full max-w-md px-4 md:max-w-2xl md:px-6 lg:grid lg:max-w-6xl lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12 lg:px-8"
+      >
         {isClosed && state.level !== 7 ? (
-          <QuestClosed />
+          <div className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-xl">
+            <QuestClosed />
+          </div>
         ) : (
           <>
+            <QuestSidebar />
+            <div className="min-w-0 lg:max-w-2xl">
             <Hud />
             <main>
               <AnimatePresence mode="wait" initial={false}>
@@ -75,6 +83,7 @@ function Quest() {
                 </m.div>
               </AnimatePresence>
             </main>
+            </div>
             <Toaster />
           </>
         )}

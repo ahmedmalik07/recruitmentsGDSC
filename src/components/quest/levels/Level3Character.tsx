@@ -50,7 +50,7 @@ export function Level3Character() {
 
   return (
     <LevelShell chatId="l3" chat={say("rafay", level3.npc)} onNext={onNext}>
-      <div className="flex justify-center rounded-3xl border border-line bg-surface py-3">
+      <div className="flex justify-center rounded-3xl border border-line bg-surface py-3 lg:hidden">
         <Avatar parts={avatarParts(d)} size={130} animated={!instant} />
       </div>
 
@@ -68,6 +68,7 @@ export function Level3Character() {
         />
       </div>
 
+      <div className="grid gap-5 md:grid-cols-2 md:items-start md:gap-4">
       <Field id="f-fullName" label={level3.labels.fullName} error={err("fullName")}>
         <input
           id="f-fullName"
@@ -102,7 +103,9 @@ export function Level3Character() {
           aria-describedby={describedBy("f-email", err("email"))}
         />
       </Field>
+      </div>
 
+      <div className="grid gap-5 md:grid-cols-2 md:items-start md:gap-4">
       <Field id="f-rollNo" label={level3.labels.rollNo} error={err("rollNo")} help={site.rollNoHint}>
           <input
             id="f-rollNo"
@@ -133,6 +136,7 @@ export function Level3Character() {
             aria-describedby={describedBy("f-phone", err("phone"), true)}
           />
         </Field>
+      </div>
 
       <ChipRadio
         label={level3.labels.semester}

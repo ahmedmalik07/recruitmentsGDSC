@@ -134,13 +134,13 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
           {/* Contact */}
           <section className="grid grid-cols-1 gap-2 text-[15px] sm:grid-cols-2">
             <Info label="Email">
-              <a className="break-all text-[#8AB4F8] underline" href={`mailto:${row.email}`}>
+              <a className="break-all text-link underline" href={`mailto:${row.email}`}>
                 {row.email}
               </a>
             </Info>
             <Info label="WhatsApp">
               <a
-                className="text-[#8AB4F8] underline"
+                className="text-link underline"
                 href={`https://wa.me/92${row.phone.slice(1)}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -151,7 +151,7 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
             <Info label="Portfolio">
               {row.portfolioUrl ? (
                 portfolioSafe ? (
-                  <a className="break-all text-[#8AB4F8] underline" href={row.portfolioUrl} target="_blank" rel="noopener noreferrer nofollow">
+                  <a className="break-all text-link underline" href={row.portfolioUrl} target="_blank" rel="noopener noreferrer nofollow">
                     {row.portfolioUrl}
                   </a>
                 ) : (
@@ -194,7 +194,7 @@ export function CandidateDrawer({ row, user, onClose }: { row: Row; user: User; 
                   aria-label={`${n} out of 5`}
                   onClick={() => setRating(n)}
                   className={`grid h-11 w-11 place-items-center rounded-xl border-[1.5px] text-lg ${
-                    n <= rating ? "border-g-yellow bg-g-yellow/15 text-g-yellow" : "border-line text-muted"
+                    n <= rating ? "border-g-yellow bg-g-yellow/15 text-eyebrow" : "border-line text-muted"
                   }`}
                 >
                   ★

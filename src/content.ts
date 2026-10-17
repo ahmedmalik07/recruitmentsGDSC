@@ -52,6 +52,10 @@ export type Host = {
   role: string;
   /** Square photo, at least 256x256. Replace the SVG placeholders with .jpg/.webp files. */
   photo: string;
+  /** Optional bigger portrait for the council card (falls back to `photo`) */
+  cardPhoto?: string;
+  /** Optional profile link shown on the council card */
+  linkedin?: string;
   funFact: string;
   bio: string;
   accent: string;
@@ -73,7 +77,9 @@ export const hosts: Record<HostId, Host> = {
     name: "Ahmed Malik",
     firstName: "Ahmed",
     role: "Vice President",
-    photo: "/team/ahmed.svg",
+    photo: "/team/ahmed.jpg",
+    cardPhoto: "/team/ahmed-card.jpg",
+    linkedin: "https://www.linkedin.com/in/ahhmedmalik",
     funFact: "PLACEHOLDER: Ahmed's fun fact goes here.",
     bio: "Your guide for this quest. Builds things, wins hackathons, drinks too much chai.",
     accent: "#4285F4",
@@ -100,7 +106,7 @@ export const ahmedStats = [
 /** Ahmed's intro video for Level 4. Keep it ~15 sec, muted friendly, under 2 MB. */
 export const ahmedVideo = {
   src: "/team/ahmed-intro.mp4",
-  poster: "/team/ahmed-intro-poster.svg",
+  poster: "/team/ahmed-intro-poster.jpg",
   /** Captions shown on top of the muted video. Times in seconds. */
   captions: [
     { start: 0, end: 4, text: "Salam! Ahmed here, VP of GDGOC AU." },
@@ -137,7 +143,7 @@ export const introCards = [
   {
     emoji: "🛠️",
     title: "What GDGOC AU does",
-    body: "Events, hackathons, hands-on workshops and real projects at Air University. Tech talks, Google tech, and a lot of chai.",
+    body: "Events, hackathons, hands-on workshops, real projects, and baithaqs: our chill networking sessions where you meet people who actually build stuff. Plus a lot of chai.",
   },
   {
     emoji: "🚀",
@@ -166,6 +172,15 @@ export const level2 = {
   guideBadge: "Your Guide",
   flipHint: "Tap to flip",
   progress: (n: number) => `${n}/3 flipped`,
+  linkedin: "Connect on LinkedIn",
+};
+
+/** Desktop side panel (only shown on wide screens) */
+export const sidebar = {
+  title: "Your character",
+  empty: "Your character builds up here as you play.",
+  map: "Quest map",
+  help: "Stuck? WhatsApp",
 };
 
 // ---------------------------------------------------------------------------
@@ -361,7 +376,7 @@ export const hoursLabels: Record<Hours, string> = {
   "8+": "8+ hrs",
 };
 
-export const EXCITED = ["Events", "Hackathons", "Workshops", "Networking", "Content"] as const;
+export const EXCITED = ["Events", "Hackathons", "Workshops", "Baithaqs", "Networking", "Content"] as const;
 export type Excited = (typeof EXCITED)[number];
 
 export const level5 = {

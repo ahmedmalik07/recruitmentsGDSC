@@ -8,21 +8,25 @@ export function HostPhoto({
   size = 40,
   className,
   priority,
+  portrait,
 }: {
   id: HostId;
   size?: number;
   className?: string;
   priority?: boolean;
+  /** Use the bigger council-card portrait when the host has one */
+  portrait?: boolean;
 }) {
   const host = hosts[id];
+  const src = portrait && host.cardPhoto ? host.cardPhoto : host.photo;
   return (
     <Image
-      src={host.photo}
+      src={src}
       alt=""
       width={size}
       height={size}
       sizes={`${size}px`}
-      unoptimized={host.photo.endsWith(".svg")}
+      unoptimized={src.endsWith(".svg")}
       priority={priority}
       className={cn("shrink-0 rounded-full object-cover", className)}
       style={{ width: size, height: size, boxShadow: `0 0 0 2px ${host.accent}` }}

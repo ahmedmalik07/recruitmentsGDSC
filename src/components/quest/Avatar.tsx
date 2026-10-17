@@ -88,7 +88,7 @@ export function Avatar({
       className="overflow-visible"
     >
       {/* House glow */}
-      <circle cx="100" cy="140" r="96" fill={house?.color ?? "#2C3658"} opacity={house ? 0.28 : 0.35} />
+      <circle cx="100" cy="140" r="96" fill={house?.color ?? "#C9CFE3"} opacity={house ? 0.22 : 0.45} />
 
       {/* Legs */}
       <rect x="78" y="186" width="19" height="50" rx="9" fill="#262C47" />
@@ -213,14 +213,14 @@ export function Avatar({
       {/* Name plate */}
       {showName && parts.firstName && (
         <g>
-          <rect x="35" y="252" width="130" height="26" rx="13" fill="#141B2D" stroke="#2C3658" strokeWidth="1.5" />
+          <rect x="35" y="252" width="130" height="26" rx="13" fill="#FFFFFF" stroke="#E2DCCB" strokeWidth="1.5" />
           <text
             x="100"
             y="270"
             textAnchor="middle"
             fontSize="14"
             fontWeight="700"
-            fill="#F1F3F9"
+            fill="#1D2A5C"
             fontFamily="var(--font-outfit), system-ui, sans-serif"
           >
             {parts.firstName.slice(0, 16)}

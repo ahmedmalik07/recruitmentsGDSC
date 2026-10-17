@@ -193,7 +193,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
                       <Td>
                         <button
                           type="button"
-                          className="text-left font-semibold text-[#8AB4F8] underline-offset-2 hover:underline"
+                          className="text-left font-semibold text-link underline-offset-2 hover:underline"
                           onClick={() => setOpenId(r.id)}
                         >
                           {r.fullName}

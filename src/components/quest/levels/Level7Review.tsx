@@ -102,6 +102,7 @@ export function Level7Review() {
       const body = (await res.json().catch(() => null)) as ApplyResponse | null;
       if (res.ok && body?.ok) {
         clearSaved();
+        dispatch({ type: "submitted" });
         setDone(avatarParts(d));
         return;
       }
@@ -254,7 +255,7 @@ function Section({ title, onEdit, children }: { title: string; onEdit: () => voi
   return (
     <section className="flex flex-col gap-2 border-t border-line pt-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold tracking-wide text-g-yellow uppercase">{title}</h2>
+        <h2 className="text-sm font-bold tracking-wide text-eyebrow uppercase">{title}</h2>
         <button
           type="button"
           onClick={onEdit}
@@ -323,6 +324,7 @@ function Success({ parts }: { parts: AvatarParts }) {
         {success.title}
       </m.h1>
       <NpcChat id="success" lines={chat} />
+      <div className="grid gap-6 md:grid-cols-2 md:items-start">
       <ApplicantCard parts={parts} />
 
       <div className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-4">
@@ -340,6 +342,7 @@ function Success({ parts }: { parts: AvatarParts }) {
         <p className="rounded-2xl bg-surface-2 p-3 text-[15px]">
           📅 <strong>{success.shortlistLabel}:</strong> {site.shortlistNote}
         </p>
+      </div>
       </div>
     </section>
   );
