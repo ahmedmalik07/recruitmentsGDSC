@@ -10,9 +10,16 @@ const outfit = Outfit({
   display: "swap",
 });
 
+const title = `${site.appName} · ${site.chapterShort} Recruitment`;
+const description = `Apply to join ${site.chapterName}. 7 levels, about 5 minutes, no sign-in.`;
+
 export const metadata: Metadata = {
-  title: `${site.appName} · ${site.chapterShort} Recruitment`,
-  description: `Apply to join ${site.chapterName}. 7 levels, about 5 minutes, no sign-in.`,
+  // Absolute base for link previews. Drop a 1200x630 src/app/opengraph-image.png in and it's used automatically.
+  metadataBase: new URL(`https://${site.link}`),
+  title,
+  description,
+  openGraph: { title, description, siteName: site.chapterName, type: "website" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export const viewport: Viewport = {
