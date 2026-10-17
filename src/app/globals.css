@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #0b1020;
+  --color-surface: #141b2d;
+  --color-surface-2: #1c2440;
+  --color-line: #2c3658;
+  --color-ink: #f1f3f9;
+  --color-muted: #a9b2ca;
+
+  --color-g-blue: #4285f4;
+  --color-g-red: #ea4335;
+  --color-g-yellow: #fbbc04;
+  --color-g-green: #34a853;
+  /* Darker shades for text on solid fills (AA contrast with white) */
+  --color-g-blue-strong: #1967d2;
+  --color-g-blue-stronger: #185abc;
+  --color-g-green-strong: #188038;
+  --color-danger: #ff8a80;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible, high-contrast focus for keyboard users */
+:focus-visible {
+  outline: 3px solid var(--color-g-yellow);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* Inputs */
+.field-input {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1.5px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 12px 14px;
+  font-size: 16px; /* prevents iOS zoom */
+  line-height: 1.4;
+  transition: border-color 0.15s;
+}
+.field-input::placeholder {
+  color: #7a84a3;
+}
+.field-input:focus {
+  border-color: var(--color-g-blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(66 133 244 / 0.35);
+}
+.field-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+select.field-input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #a9b2ca 50%),
+    linear-gradient(135deg, #a9b2ca 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) 21px,
+    calc(100% - 15px) 21px;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+/* Typing dots in NPC bubbles */
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+.typing-dot {
+  animation: typing-dot 1s infinite ease-in-out;
+}
+
+/* Flip cards (Level 2) */
+.flip {
+  perspective: 1000px;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+  transform-style: preserve-3d;
+}
+.flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Door opening (Level 4) */
+.door-panel {
+  transform-origin: left center;
+  transition: transform 0.45s ease;
+}
+.door[aria-checked="true"] .door-panel {
+  transform: perspective(600px) rotateY(-55deg);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Speed mode and reduced motion both kill CSS motion */
+[data-speed="on"] *,
+[data-speed="on"] *::before,
+[data-speed="on"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
