@@ -27,7 +27,7 @@ export const site = {
    */
   deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "",
   /** Shown on the success screen instead of a date */
-  shortlistNote: "Shortlist date will be announced soon on our Instagram and WhatsApp.",
+  shortlistNote: "Date will be announced soon on our Instagram and WhatsApp.",
   /** WhatsApp contact for problems. Number in international format, digits only. */
   whatsapp: {
     name: "Ahmed Malik",
