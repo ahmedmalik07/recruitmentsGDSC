@@ -13,7 +13,6 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: `${site.appName} · ${site.chapterShort} Recruitment`,
   description: `Apply to join ${site.chapterName}. 7 levels, about 5 minutes, no sign-in.`,
-  icons: { icon: "/brand/icon.svg" },
 };
 
 export const viewport: Viewport = {

@@ -1,12 +1,12 @@
 import { json, requireAdmin } from "@/lib/server/adminAuth";
-import { loadForAdmin } from "@/lib/server/adminData";
+import { loadBackup } from "@/lib/server/adminData";
 
 /** Full JSON backup of everything this admin can see (core: the whole database). */
 export async function GET(req: Request) {
   const admin = await requireAdmin(req);
   if (admin instanceof Response) return admin;
   try {
-    const data = await loadForAdmin(admin);
+    const data = await loadBackup(admin);
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
     return new Response(JSON.stringify({ exportedAt: new Date().toISOString(), exportedBy: admin.email, ...data }, null, 2), {
       headers: {

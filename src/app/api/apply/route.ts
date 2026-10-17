@@ -9,6 +9,12 @@ import { verifyTurnstile } from "@/lib/server/turnstile";
 const MAX_BODY_BYTES = 32 * 1024;
 /** gRPC ALREADY_EXISTS, returned by DocumentReference.create() when the doc exists */
 const ALREADY_EXISTS = 6;
+/** Daily free-plan quota or rate limit hit */
+const RESOURCE_EXHAUSTED = 8;
+/** Worth a quick retry: DEADLINE_EXCEEDED, ABORTED, INTERNAL, UNAVAILABLE */
+const TRANSIENT = new Set([4, 10, 13, 14]);
+
+export const maxDuration = 30;
 
 function reply(body: ApplyResponse, status: number) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -62,20 +68,50 @@ export async function POST(req: Request) {
   }
 
   // 6. Write once per roll number. create() fails if the doc already exists.
+  let ref;
   try {
-    const ref = adminDb().collection("applications").doc(application.rollNo);
-    await ref.create({
-      ...application,
-      status: "submitted",
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    ref = adminDb().collection("applications").doc(application.rollNo);
   } catch (err) {
-    if ((err as { code?: number }).code === ALREADY_EXISTS) {
-      return reply({ ok: false, code: "duplicate", message: copy.duplicate }, 409);
-    }
-    console.error("[apply] firestore write failed", err);
+    console.error("[apply] Firebase Admin init failed", err);
     return reply({ ok: false, code: "server", message: copy.generic }, 500);
+  }
+  const record = {
+    ...application,
+    status: "submitted",
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  };
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await ref.create(record);
+      break;
+    } catch (err) {
+      const code = (err as { code?: number }).code;
+      if (code === ALREADY_EXISTS) {
+        // Same person retrying after a lost response (e.g. weak signal)? Then it's already saved: success.
+        try {
+          const existing = await ref.get();
+          const created = existing.get("createdAt") as { toMillis?: () => number } | undefined;
+          const recent = created?.toMillis ? Date.now() - created.toMillis() < 30 * 60_000 : false;
+          if (existing.get("email") === application.email && existing.get("phone") === application.phone && recent) {
+            return reply({ ok: true, rollNo: application.rollNo }, 200);
+          }
+        } catch {
+          // fall through to the duplicate message
+        }
+        return reply({ ok: false, code: "duplicate", message: copy.duplicate }, 409);
+      }
+      if (code === RESOURCE_EXHAUSTED) {
+        console.error("[apply] Firestore quota exhausted", err);
+        return reply({ ok: false, code: "busy", message: copy.busy }, 503);
+      }
+      if (TRANSIENT.has(code ?? -1) && attempt < 3) {
+        await new Promise((r) => setTimeout(r, 300 * 2 ** attempt + Math.random() * 200));
+        continue;
+      }
+      console.error("[apply] firestore write failed", err);
+      return reply({ ok: false, code: "server", message: copy.generic }, 500);
+    }
   }
 
   // 7. Optional confirmation email, after the response is sent

@@ -1,11 +1,12 @@
 # Brand assets
 
-`gdgoc-au-logo.svg` is a placeholder. Replace it with the official
-**GDG on Campus** chapter lockup (Google Developer Groups on Campus + "Air University")
-from the GDG brand resources available to organizers.
+| File | What |
+|---|---|
+| `gdgoc-au-logo.png` | Official GDG on Campus Air University lockup (transparent), used in headers and on the Applicant Card |
+| `gdgoc-au-full.png` | Full artwork: the Air University building in Google colors + lockup (desktop side panel) |
+| `gdgoc-au-art.png` | Just the building artwork |
 
-Brand rules to follow:
-- Use the official lockup file as-is. Don't redraw, recolor, rotate, stretch or add effects.
-- Keep clear space around the logo and don't place it on busy backgrounds.
-- Use the white/reversed version on the dark quest background.
-- Google brand colors used in the app: Blue #4285F4, Red #EA4335, Yellow #FBBC04, Green #34A853.
+The favicon and home-screen icons are `src/app/icon.png` and `src/app/apple-icon.png` (the GDG `< >` mark).
+
+Brand rules: use the official files as-is (no recoloring, stretching or effects), keep clear space around them.
+Google colors: Blue #4285F4, Red #EA4335, Yellow #FBBC04, Green #34A853.

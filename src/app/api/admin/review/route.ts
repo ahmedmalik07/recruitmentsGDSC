@@ -34,6 +34,17 @@ export async function POST(req: Request) {
       createdAt: existing.exists ? existing.get("createdAt") : FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
+    // Mirror onto the application so the dashboard needs no extra reads for ratings
+    tx.update(appSnap.ref, {
+      [`ratings.${admin.uid}`]: {
+        rating,
+        notes,
+        reviewerName: admin.name,
+        reviewerEmail: admin.email,
+        updatedAt: FieldValue.serverTimestamp(),
+      },
+      updatedAt: FieldValue.serverTimestamp(),
+    });
   });
   return json({ ok: true });
 }

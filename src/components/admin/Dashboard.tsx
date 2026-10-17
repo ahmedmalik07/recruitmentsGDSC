@@ -17,7 +17,7 @@ type Sort = "newest" | "oldest" | "rating_desc" | "rating_asc";
 
 
 export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Claims; onSignOut: () => void }) {
-  const { rows, error, loading, lastLoaded, refresh } = useAdminData(user);
+  const { rows, error, loading, lastLoaded, refresh, manualRefresh } = useAdminData(user);
   const [backupBusy, setBackupBusy] = useState(false);
 
   async function downloadBackup() {
@@ -104,7 +104,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
           <span className="text-xs text-muted" aria-live="polite">
             {loading ? "Refreshing…" : lastLoaded ? `Updated ${new Date(lastLoaded).toLocaleTimeString("en-PK")}` : ""}
           </span>
-          <Button variant="secondary" onClick={refresh} disabled={loading}>
+          <Button variant="secondary" onClick={manualRefresh} disabled={loading}>
             ↻ Refresh
           </Button>
           <Button variant="secondary" onClick={downloadBackup} disabled={backupBusy}>
@@ -298,7 +298,7 @@ export function Dashboard({ user, claims, onSignOut }: { user: User; claims: Cla
       )}
 
       {open && (
-        <CandidateDrawer key={open.id} row={open} user={user} onClose={() => setOpenId(null)} onChanged={refresh} />
+        <CandidateDrawer key={open.id} row={open} user={user} onClose={() => setOpenId(null)} onChanged={() => refresh()} />
       )}
     </div>
   );

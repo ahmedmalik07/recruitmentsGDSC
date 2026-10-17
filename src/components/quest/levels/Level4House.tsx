@@ -5,7 +5,7 @@ import { DOMAIN_IDS, domains, level4, type DomainId } from "@/content";
 import { fieldErrors, houseSchema } from "@/lib/schema";
 import { ChipMulti, ChipRadio } from "@/components/ui/Chips";
 import { Avatar, avatarParts } from "../Avatar";
-import { IntroVideo } from "../IntroVideo";
+import { IntroStory } from "../IntroStory";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, say } from "../NpcChat";
 import { toast } from "../toast";
@@ -53,7 +53,7 @@ export function Level4House() {
 
   return (
     <LevelShell chatId="l4" chat={say("ahmed", level4.npc)} onNext={onNext}>
-      <IntroVideo instant={instant} />
+      <IntroStory />
 
       <div className="flex flex-col gap-3">
         <h2 id="doors-label" className="text-lg font-bold">

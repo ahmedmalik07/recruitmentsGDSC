@@ -173,6 +173,32 @@ export function Level3Character() {
           ))}
         </datalist>
       </Field>
+      <DepartmentChips value={d.department} onPick={(v) => set({ department: v })} />
     </LevelShell>
+  );
+}
+
+/** Tappable suggestions under the department field (free text still allowed) */
+function DepartmentChips({ value, onPick }: { value: string; onPick: (v: string) => void }) {
+  const q = value.trim().toLowerCase();
+  const exact = departmentSuggestions.some((dep) => dep.toLowerCase() === q);
+  const list = departmentSuggestions.filter((dep) => !q || dep.toLowerCase().includes(q)).slice(0, 8);
+  if (exact || list.length === 0) return null;
+  return (
+    <div className="-mt-3 flex flex-col gap-1.5">
+      <span className="text-xs font-semibold text-muted">{level3.departmentHint}</span>
+      <div className="flex flex-wrap gap-1.5">
+        {list.map((dep) => (
+          <button
+            key={dep}
+            type="button"
+            onClick={() => onPick(dep)}
+            className="min-h-9 rounded-full border-2 border-line bg-surface px-3 text-[13px] font-semibold hover:border-g-blue hover:bg-tint-blue active:scale-95"
+          >
+            {dep}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

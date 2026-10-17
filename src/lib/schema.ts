@@ -177,7 +177,7 @@ export type ApplyResponse =
   | { ok: true; rollNo: string }
   | {
       ok: false;
-      code: "duplicate" | "closed" | "bot" | "validation" | "bad_request" | "server";
+      code: "duplicate" | "closed" | "bot" | "validation" | "bad_request" | "server" | "busy";
       message: string;
       fields?: Record<string, string>;
     };

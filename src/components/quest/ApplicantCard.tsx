@@ -134,7 +134,7 @@ function CardArt({ parts }: { parts: AvatarParts }) {
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={site.logo} alt="" width={640} height={114} style={{ width: 640, height: "auto" }} />
+      <img src={site.logo} alt="" width={640} height={111} style={{ width: 640, height: "auto" }} />
 
       <div style={{ marginTop: 70, fontSize: 56, fontWeight: 800, letterSpacing: 8 }}>
         <span style={{ color: "#4285F4" }}>G</span>

@@ -30,6 +30,11 @@ export type ApplicationDoc = {
   timeTakenSec: number;
   status: Status;
   statusBy?: string;
+  /** Reviewer uid → their rating (mirrored from the reviews subcollection) */
+  ratings?: Record<
+    string,
+    { rating: number; notes: string; reviewerName: string; reviewerEmail: string; updatedAt: number | null }
+  >;
   createdAt: number | null;
   updatedAt: number | null;
 };

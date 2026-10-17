@@ -104,6 +104,8 @@ export function Level7Review() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        // Never hang forever on bad mobile data; a retry is safe (same person = success)
+        signal: AbortSignal.timeout(30_000),
       });
       const body = (await res.json().catch(() => null)) as ApplyResponse | null;
       if (res.ok && body?.ok) {
@@ -118,7 +120,9 @@ export function Level7Review() {
           ? errorCopy.duplicate
           : code === "closed"
             ? errorCopy.closed
-            : code === "bot"
+            : code === "busy"
+              ? errorCopy.busy
+              : code === "bot"
               ? errorCopy.bot
               : code === "validation"
                 ? errorCopy.validation

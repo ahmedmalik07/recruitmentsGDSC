@@ -21,10 +21,10 @@ export function Level0Start() {
       <Image
         src={site.logo}
         alt={site.chapterName}
-        width={400}
-        height={72}
+        width={site.logoSize.width}
+        height={site.logoSize.height}
         priority
-        unoptimized
+        sizes="260px"
         className="h-auto w-full max-w-[260px] lg:hidden"
       />
 

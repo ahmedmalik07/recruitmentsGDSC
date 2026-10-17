@@ -24,7 +24,12 @@ export const site = {
   /** Link printed on the Applicant Card, so friends can apply too */
   link: "recruitments.wyibe.com",
   /** Official GDG on Campus lockup with your chapter name. Replace the placeholder file. */
-  logo: "/brand/gdgoc-au-logo.svg",
+  logo: "/brand/gdgoc-au-logo.png",
+  /** Logo lockup size (px) so it never shifts the layout while loading */
+  logoSize: { width: 701, height: 122 },
+  /** Full artwork: the AU building in Google colors + lockup (desktop side panel) */
+  art: "/brand/gdgoc-au-full.png",
+  artSize: { width: 800, height: 524 },
   /**
    * Optional. Applications close at this moment if NEXT_PUBLIC_APPLICATIONS_DEADLINE is set
    * (ISO 8601 with timezone, e.g. 2026-11-01T23:59:00+05:00). Empty = applications stay open.
@@ -116,19 +121,26 @@ export const hosts: Record<HostId, Host> = {
 };
 
 /** Ahmed's stat lines on his council card (Level 2). */
-/** Ahmed's intro video for Level 4. Keep it ~15 sec, muted friendly, under 2 MB. */
-export const ahmedVideo = {
-  src: "/team/ahmed-intro.mp4",
-  poster: "/team/ahmed-intro-poster.jpg",
-  /** Captions shown on top of the muted video. Times in seconds. */
-  captions: [
-    { start: 0, end: 3, text: "Salam! Ahmed here, VP of GDGOC AU 👋" },
-    { start: 3, end: 7, text: "We have 5 teams: Technical, Marketing & Partnerships, Creatives, Media and Ops." },
-    { start: 7, end: 11, text: "Each one runs a different part of the chapter: events, hackathons, baithaqs, sab kuch." },
-    { start: 11, end: 15, text: "Pick the team that actually sounds like you, then the position you want." },
-    { start: 15, end: 18, text: "Doors neeche hain. Choose wisely 👇" },
-  ],
-} as const;
+/** Level 4 intro: an animated story starring the council (no video needed) */
+export const introStory = {
+  label: "GDGOC AU council intro",
+  slides: [
+    { hosts: ["sumaiya", "ahmed", "rafay"], text: "Salam! We're the GDGOC AU council 👋", sub: "Sumaiya · Ahmed · Rafay" },
+    { teams: true, text: "5 teams run the chapter", sub: "Every single one matters." },
+    { hosts: ["sumaiya"], text: "Innovation grows when everyone belongs. There's a seat for you here 💛", sub: "Sumaiya, President" },
+    {
+      hosts: ["ahmed"],
+      backdrop: "/team/ahmed-intro-poster.jpg",
+      text: "Pick the team that actually sounds like you, not the one that sounds cool.",
+      sub: "Ahmed, Vice President",
+    },
+    { hosts: ["rafay"], text: "Then choose your position. Doors are right below 👇", sub: "Rafay, General Secretary" },
+  ] as ReadonlyArray<{ hosts?: HostId[]; teams?: boolean; backdrop?: string; text: string; sub: string }>,
+  secondsPerSlide: 4,
+  pause: "Pause",
+  play: "Play",
+  replay: "Replay",
+};
 
 // ---------------------------------------------------------------------------
 // Level 0 + 1: Sumaiya
@@ -231,11 +243,12 @@ export const level3 = {
     email: "you@example.com",
     rollNo: "231234",
     phone: "03XXXXXXXXX",
-    department: "e.g. Computer Science",
+    department: "Type it, or tap one below",
   },
   help: {
     phone: "Pakistani mobile, 11 digits, starts with 03",
   },
+  departmentHint: "Suggestions (or just type yours):",
   /** Toasts when each field unlocks an avatar part */
   unlocks: {
     fullName: "Face unlocked",
@@ -257,6 +270,7 @@ export const departmentSuggestions = [
   "Artificial Intelligence",
   "Cyber Security",
   "Data Science",
+  "Information Technology",
   "Electrical Engineering",
   "Mechanical Engineering",
   "Mechatronics Engineering",
@@ -264,6 +278,12 @@ export const departmentSuggestions = [
   "Avionics Engineering",
   "Business Administration",
   "Accounting & Finance",
+  "Economics",
+  "English",
+  "Psychology",
+  "Media & Communication",
+  "Mathematics",
+  "Physics",
 ] as const;
 
 /** Jersey colors. A department always maps to the same color (picked from its name). */
@@ -416,10 +436,8 @@ export function positionLabel(domain: DomainId | null | undefined, id: string | 
 export const level4 = {
   npc: [
     "Okay, the big one. Choosing your house 🏠",
-    "Watch my 15 sec intro, then pick exactly one door.",
+    "Watch our quick intro, then pick exactly one door.",
   ],
-  videoLabel: "Ahmed's intro to the houses",
-  playVideo: "Play intro",
   doorsTitle: "Pick your door",
   chosen: "Your house",
   positionTitle: "Which position are you applying for?",
@@ -604,7 +622,8 @@ export const errors = {
   bot: "Bot check failed. Refresh the page and try again.",
   validation: "Kuch fields theek nahi hain. Check the highlighted ones.",
   network: "Network issue. Check your connection and try again.",
-  generic: "Something went wrong on our side. Try again in a minute.",
+  generic: "Something went wrong on our side. Your answers are saved on this device, so just try again in a minute.",
+  busy: "Bohat rush hai abhi! Your answers are saved on this device. Try submitting again in a few minutes.",
   whatsapp: "WhatsApp us",
 };
 
