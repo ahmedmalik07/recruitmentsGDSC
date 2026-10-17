@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ahmedStats, hosts, level2, type HostId } from "@/content";
+import { hosts, level2, type HostId } from "@/content";
 import { cn } from "@/lib/cn";
 import { HostPhoto } from "../HostPhoto";
 import { LevelShell } from "../LevelShell";
@@ -64,7 +64,7 @@ function FlipCard({
         big ? "col-span-2 md:order-2 md:col-span-1" : id === "rafay" ? "md:order-3" : "md:order-1",
       )}
     >
-    <div className={cn("flip", big ? "h-[360px]" : "h-[240px] md:h-[300px]")}>
+    <div className={cn("flip", big ? "h-[360px]" : "h-[290px] md:h-[300px]")}>
       <button
         type="button"
         onClick={onFlip}
@@ -90,38 +90,33 @@ function FlipCard({
 
         {/* Back */}
         <span
-          className="flip-face flip-back flex flex-col justify-center gap-2 rounded-3xl border-2 p-4"
+          className="flip-face flip-back flex flex-col justify-center gap-2 overflow-hidden rounded-3xl border-2 p-3.5 md:p-4"
           style={{ borderColor: host.accent, background: "var(--color-surface-2)" }}
         >
           <span className="text-xs font-bold tracking-wide uppercase" style={{ color: "var(--color-ink)" }}>
             {host.firstName} · {host.role}
           </span>
-          {big ? (
-            <>
-              <ul className="flex flex-col gap-1.5">
-                {ahmedStats.map((s) => (
-                  <li key={s} className="flex items-center gap-2 text-[15px] font-semibold">
-                    <span aria-hidden="true" className="text-eyebrow">
-                      ▸
-                    </span>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-              <span className="text-sm text-muted">{host.bio}</span>
-              <span className="text-sm">
-                <span aria-hidden="true">💡 </span>
-                {host.funFact}
-              </span>
-            </>
-          ) : (
-            <>
-              <span className="text-sm leading-snug text-muted">{host.bio}</span>
-              <span className="text-sm leading-snug">
-                <span aria-hidden="true">💡 </span>
-                {host.funFact}
-              </span>
-            </>
+          {host.stats && (
+            <ul className="flex flex-col gap-1.5">
+              {host.stats.map((line) => (
+                <li
+                  key={line}
+                  className={cn("flex items-start gap-2 leading-snug font-semibold", big ? "text-[15px]" : "text-[13px]")}
+                >
+                  <span aria-hidden="true" className="text-eyebrow">
+                    ▸
+                  </span>
+                  {line}
+                </li>
+              ))}
+            </ul>
+          )}
+          {(big || !host.stats) && <span className="text-sm leading-snug text-muted">{host.bio}</span>}
+          {host.funFact && (
+            <span className={cn("leading-snug", big ? "text-sm" : "text-[13px]")}>
+              <span aria-hidden="true">💡 </span>
+              {host.funFact}
+            </span>
           )}
         </span>
       </button>

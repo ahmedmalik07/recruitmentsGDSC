@@ -60,6 +60,9 @@ export type Host = {
   cardPhoto?: string;
   /** Optional profile link shown on the council card */
   linkedin?: string;
+  /** Achievement lines on the back of the council card */
+  stats?: readonly string[];
+  /** Leave empty to hide */
   funFact: string;
   bio: string;
   accent: string;
@@ -85,6 +88,7 @@ export const hosts: Record<HostId, Host> = {
     photo: "/team/ahmed.jpg",
     cardPhoto: "/team/ahmed-card.jpg",
     linkedin: "https://www.linkedin.com/in/ahhmedmalik",
+    stats: ["4× National Hackathon Winner", "Founder, Wyibe", "VP, GDGOC AU"],
     funFact: "PLACEHOLDER: Ahmed's fun fact goes here.",
     bio: "Your guide for this quest. Builds things, wins hackathons, drinks too much chai.",
     accent: "#4285F4",
@@ -96,29 +100,25 @@ export const hosts: Record<HostId, Host> = {
     role: "General Secretary",
     photo: "/team/rafay.jpg",
     linkedin: "https://www.linkedin.com/in/abdulrafayqar",
-    funFact: "PLACEHOLDER: Rafay's fun fact goes here.",
+    stats: ["International Gold Medalist Calligrapher", "3× National Art Contest Winner", "AI Researcher"],
+    funFact: "An Indian newspaper called him the “Youngest Calligrapher of Pakistan”.",
     bio: "Keeps everything on track. Knows where every file, form and chair is.",
     accent: "#34A853",
   },
 };
 
 /** Ahmed's stat lines on his council card (Level 2). */
-export const ahmedStats = [
-  "4× National Hackathon Winner",
-  "Founder, Wyibe",
-  "VP, GDGOC AU",
-] as const;
-
 /** Ahmed's intro video for Level 4. Keep it ~15 sec, muted friendly, under 2 MB. */
 export const ahmedVideo = {
   src: "/team/ahmed-intro.mp4",
   poster: "/team/ahmed-intro-poster.jpg",
   /** Captions shown on top of the muted video. Times in seconds. */
   captions: [
-    { start: 0, end: 4, text: "Salam! Ahmed here, VP of GDGOC AU." },
-    { start: 4, end: 8, text: "We have 4 houses. Each one runs a different part of the chapter." },
-    { start: 8, end: 12, text: "Pick the one that actually sounds like you, not the one that sounds cool." },
-    { start: 12, end: 16, text: "Doors are below. Choose wisely 👇" },
+    { start: 0, end: 3, text: "Salam! Ahmed here, VP of GDGOC AU 👋" },
+    { start: 3, end: 7, text: "GDGOC AU has 4 houses: Technical, Marketing & Partnerships, Visual Media and Ops." },
+    { start: 7, end: 11, text: "Each one runs a different part of the chapter: events, hackathons, baithaqs, sab kuch." },
+    { start: 11, end: 15, text: "Pick the one that actually sounds like you, not the one that sounds cool." },
+    { start: 15, end: 18, text: "Doors neeche hain. Choose wisely 👇" },
   ],
 } as const;
 
