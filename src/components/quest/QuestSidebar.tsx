@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { domains, hosts, levelNames, sidebar, site, ui } from "@/content";
 import { cn } from "@/lib/cn";
-import { Avatar, avatarParts } from "./Avatar";
+import { avatarParts } from "./Avatar";
+import { PokeAvatar } from "./PokeAvatar";
 import { computeXp } from "./progress";
-import { useInstant, useQuest } from "./state";
+import { useQuest } from "./state";
 
 /**
  * Desktop-only side panel: live character, quest map, help link.
@@ -13,7 +14,6 @@ import { useInstant, useQuest } from "./state";
  */
 export function QuestSidebar() {
   const { state, dispatch, quizScore } = useQuest();
-  const instant = useInstant();
   const parts = avatarParts(state.draft);
   const house = state.draft.domain ? domains[state.draft.domain] : null;
   const { xp } = computeXp(state, quizScore);
@@ -35,9 +35,7 @@ export function QuestSidebar() {
 
         <section className="flex flex-col items-center gap-2 rounded-3xl border border-line bg-surface p-5 shadow-sm">
           <h2 className="self-start text-xs font-bold tracking-wide text-eyebrow uppercase">{sidebar.title}</h2>
-          <div className={instant ? undefined : "avatar-bob"}>
-            <Avatar parts={parts} size={190} animated={!instant} />
-          </div>
+          <PokeAvatar parts={parts} size={190} />
           {house ? (
             <span
               className="rounded-full px-3 py-1 text-xs font-bold"

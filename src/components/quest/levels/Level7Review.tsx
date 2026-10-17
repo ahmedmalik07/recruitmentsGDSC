@@ -2,8 +2,19 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { m } from "framer-motion";
-import { domains, errors as errorCopy, hoursLabels, level3, level5, level7, site, success, positionLabel } from "@/content";
-import { fieldErrors, submitSchema, type ApplyResponse } from "@/lib/schema";
+import {
+  domains,
+  errors as errorCopy,
+  hoursLabels,
+  level3,
+  level5,
+  level7,
+  linkKinds,
+  site,
+  success,
+  positionLabel,
+} from "@/content";
+import { fieldErrors, filledLinks, normalizeLink, submitSchema, type ApplyResponse } from "@/lib/schema";
 import { Button } from "@/components/ui/Button";
 import { ApplicantCard } from "../ApplicantCard";
 import { FollowLinks } from "../FollowLinks";
@@ -27,7 +38,7 @@ const FIELD_LEVEL: Record<string, number> = {
   experience: 5,
   achievements: 5,
   whyJoin: 5,
-  portfolioUrl: 5,
+  links: 5,
   teamRole: 5,
   hoursPerWeek: 5,
   excitedAbout: 5,
@@ -42,7 +53,7 @@ const FIELD_LABEL: Record<string, string> = {
   experience: "Experience",
   achievements: "Achievements",
   whyJoin: "Why GDGOC AU",
-  portfolioUrl: "Portfolio link",
+  links: "Links",
   teamRole: "Team role",
   hoursPerWeek: "Hours per week",
   excitedAbout: "Excited about",
@@ -80,6 +91,7 @@ export function Level7Review() {
       domain: d.domain ?? undefined,
       teamRole: d.teamRole ?? undefined,
       hoursPerWeek: d.hoursPerWeek ?? undefined,
+      links: filledLinks(d.links).map((l) => ({ kind: l.kind, url: normalizeLink(l.kind, l.url) })),
       quizScore,
       website: state.website,
       turnstileToken: token ?? "",
@@ -188,7 +200,15 @@ export function Level7Review() {
           <Row label="Experience" value={d.experience} long />
           <Row label="Achievements" value={d.achievements || "None added"} long />
           <Row label="Why GDGOC AU" value={d.whyJoin} long />
-          <Row label={house?.portfolioLabel ?? "Portfolio"} value={d.portfolioUrl || "Not added"} />
+          <Row
+            label={level5.links.label}
+            value={
+              filledLinks(d.links)
+                .map((l) => `${linkKinds[l.kind].icon} ${l.url}`)
+                .join("\n") || "Not added"
+            }
+            long
+          />
         </Section>
 
         <Section title={level7.sections.extras} onEdit={() => edit(5)}>
@@ -358,6 +378,21 @@ function Success({ parts }: { parts: AvatarParts }) {
         <FollowLinks />
       </div>
       </div>
+
+      {/* Quiet bonus at the very end */}
+      <a
+        href={success.gift.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 self-center rounded-2xl border-2 border-dashed border-line bg-surface/70 px-4 py-2.5 text-center text-sm hover:border-g-blue"
+      >
+        <span className="font-bold whitespace-nowrap">{success.gift.title}</span>
+        <span className="text-muted">{success.gift.text}</span>
+        <span className="font-bold whitespace-nowrap text-link group-hover:underline">
+          {success.gift.cta} <span aria-hidden="true">→</span>
+          <span className="sr-only"> (opens ahmadmalik.wyibe.com in a new tab)</span>
+        </span>
+      </a>
     </section>
   );
 }

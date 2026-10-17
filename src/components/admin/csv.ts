@@ -1,4 +1,5 @@
-import { domains, positionLabel } from "@/content";
+import { domains, linkKinds, positionLabel } from "@/content";
+import { linksOf } from "@/lib/links";
 import type { Row } from "./types";
 
 /** Quote every cell and neutralise spreadsheet formulas (=, +, -, @). */
@@ -25,7 +26,7 @@ const COLUMNS: Array<[string, (r: Row) => unknown]> = [
   ["Team role", (r) => r.teamRole],
   ["Hours/week", (r) => r.hoursPerWeek],
   ["Excited about", (r) => r.excitedAbout?.join(", ")],
-  ["Portfolio", (r) => r.portfolioUrl],
+  ["Links", (r) => linksOf(r).map((l) => `${linkKinds[l.kind]?.label ?? l.kind}: ${l.url}`).join("\n")],
   ["Quiz", (r) => r.quizScore],
   ["Time taken (sec)", (r) => r.timeTakenSec],
   ["Applied at", (r) => (r.createdAt ? new Date(r.createdAt).toISOString() : "")],

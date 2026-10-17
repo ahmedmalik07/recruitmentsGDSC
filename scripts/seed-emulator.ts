@@ -60,7 +60,17 @@ async function seed() {
       skillTags: skills[domain].slice(0, (i % 3) + 1),
       experience: "Built a few side projects, helped run a society event and did some freelancing over the summer. Want to get better at shipping with a team.",
       whyJoin: "I want to learn from people who actually build things, and help make GDGOC AU events bigger and better for everyone.",
-      portfolioUrl: i % 3 ? `https://github.com/student${i}` : "",
+      // A few use the old single-link field so the admin fallback stays tested
+      ...(i % 5 === 0
+        ? { portfolioUrl: `https://github.com/student${i}` }
+        : {
+            links: i % 3
+              ? [
+                  { kind: "github", url: `https://github.com/student${i}` },
+                  { kind: "instagram", url: `https://www.instagram.com/student${i}` },
+                ]
+              : [],
+          }),
       teamRole: ["Planner", "Builder", "Hype Person", "Problem Solver", "Creative"][i % 5],
       hoursPerWeek: ["2-4", "5-8", "8+"][i % 3],
       excitedAbout: ["Events", "Hackathons", "Workshops"].slice(0, (i % 3) + 1),

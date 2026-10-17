@@ -1,4 +1,5 @@
 import type { DomainId } from "@/content";
+import type { PortfolioLink } from "@/lib/links";
 import type { Status } from "@/lib/schema";
 
 export type Claims = { role: "core" | "lead"; domain?: DomainId };
@@ -21,7 +22,9 @@ export type ApplicationDoc = {
   experience: string;
   achievements?: string;
   whyJoin: string;
-  portfolioUrl: string;
+  links?: PortfolioLink[];
+  /** Applications from before multiple links have this instead */
+  portfolioUrl?: string;
   teamRole: string;
   hoursPerWeek: string;
   excitedAbout: string[];

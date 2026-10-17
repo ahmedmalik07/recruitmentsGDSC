@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { m } from "framer-motion";
-import { level7, ui } from "@/content";
+import { level7, levelStyle, ui } from "@/content";
 import { Button } from "@/components/ui/Button";
 import { LevelBanner } from "./LevelBanner";
 import { NpcChat, type Line } from "./NpcChat";
 import { useInstant, useQuest } from "./state";
+
+/** Darker shade of a hex color for the pressed-down edge of the 3D button */
+function edgeOf(hex: string): string {
+  const n = parseInt(hex.slice(1), 16);
+  const d = (v: number) => Math.round(v * 0.7);
+  return `rgb(${d(n >> 16)} ${d((n >> 8) & 255)} ${d(n & 255)})`;
+}
 
 type Props = {
   chatId: string;
@@ -41,6 +48,11 @@ export function LevelShell({
   const { state, next, back } = useQuest();
   const instant = useInstant();
   const [ready, setReady] = useState(instant);
+  const st = levelStyle[state.level];
+  // Next button wears the level's Google color (yellow levels get dark text)
+  const nextStyle = st
+    ? ({ background: st.solid, color: st.onSolid, "--btn-edge": edgeOf(st.solid) } as CSSProperties)
+    : undefined;
 
   function handleNext() {
     if (onNext && onNext() === false) return;
@@ -79,7 +91,7 @@ export function LevelShell({
               </Button>
             )}
             <div className="flex flex-1 flex-col items-stretch">
-              <Button block onClick={handleNext} disabled={!canNext || !(ready || instant)}>
+              <Button block onClick={handleNext} disabled={!canNext || !(ready || instant)} style={nextStyle}>
                 {state.editingFromReview ? level7.backToReview : nextLabel} →
               </Button>
             </div>

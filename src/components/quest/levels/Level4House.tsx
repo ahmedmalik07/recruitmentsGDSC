@@ -8,6 +8,7 @@ import { Avatar, avatarParts } from "../Avatar";
 import { IntroStory } from "../IntroStory";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, say } from "../NpcChat";
+import { Tilt } from "../Tilt";
 import { toast } from "../toast";
 import { useInstant, useQuest } from "../state";
 
@@ -26,7 +27,8 @@ export function Level4House() {
   }
 
   function onKey(e: KeyboardEvent, i: number) {
-    const dir = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    const dir =
+      e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
     if (!dir) return;
     e.preventDefault();
     const n = (i + dir + DOMAIN_IDS.length) % DOMAIN_IDS.length;
@@ -68,47 +70,48 @@ export function Level4House() {
             const dom = domains[id];
             const checked = d.domain === id;
             return (
-              <button
-                key={id}
-                ref={(el) => {
-                  doorRefs.current[i] = el;
-                }}
-                type="button"
-                role="radio"
-                aria-checked={checked}
-                tabIndex={checked || (selectedIndex === -1 && i === 0) ? 0 : -1}
-                onClick={() => pick(id)}
-                onKeyDown={(e) => onKey(e, i)}
-                className="door relative flex min-h-[200px] flex-col overflow-hidden rounded-t-[48px] rounded-b-2xl border-2 bg-surface text-left"
-                style={{ borderColor: checked ? dom.color : "var(--color-line)" }}
-              >
-                {/* Door panel swings open when picked */}
-                <span
-                  aria-hidden="true"
-                  className="door-panel absolute inset-0 rounded-t-[46px]"
-                  style={{ background: dom.color, opacity: checked ? 0.18 : 0.1 }}
-                />
-                <span className="relative flex flex-1 flex-col gap-1.5 p-3 pt-5">
+              <Tilt key={id} className="flex">
+                <button
+                  ref={(el) => {
+                    doorRefs.current[i] = el;
+                  }}
+                  type="button"
+                  role="radio"
+                  aria-checked={checked}
+                  tabIndex={checked || (selectedIndex === -1 && i === 0) ? 0 : -1}
+                  onClick={() => pick(id)}
+                  onKeyDown={(e) => onKey(e, i)}
+                  className="door relative flex min-h-[200px] w-full flex-col overflow-hidden rounded-t-[48px] rounded-b-2xl border-[3px] bg-surface text-left"
+                  style={{ borderColor: checked ? dom.color : `${dom.color}66` }}
+                >
+                  {/* Door panel swings open when picked */}
                   <span
-                    className="self-start rounded-full px-2.5 py-0.5 text-[11px] font-bold"
-                    style={{ background: dom.solid, color: dom.onColor }}
-                  >
-                    {dom.house}
+                    aria-hidden="true"
+                    className="door-panel absolute inset-0 rounded-t-[46px]"
+                    style={{ background: dom.color, opacity: checked ? 0.18 : 0.1 }}
+                  />
+                  <span className="relative flex flex-1 flex-col gap-1.5 p-3 pt-5">
+                    <span
+                      className="self-start rounded-full px-2.5 py-0.5 text-[11px] font-bold"
+                      style={{ background: dom.solid, color: dom.onColor }}
+                    >
+                      {dom.house}
+                    </span>
+                    <span className="text-[17px] leading-tight font-bold">{dom.label}</span>
+                    <span className="text-[13px] leading-snug text-muted">{dom.description[0]}</span>
+                    <span className="text-[13px] leading-snug text-muted">{dom.description[1]}</span>
+                    {dom.lead && <span className="mt-auto text-xs text-muted">Lead: {dom.lead}</span>}
                   </span>
-                  <span className="text-[17px] leading-tight font-bold">{dom.label}</span>
-                  <span className="text-[13px] leading-snug text-muted">{dom.description[0]}</span>
-                  <span className="text-[13px] leading-snug text-muted">{dom.description[1]}</span>
-                  {dom.lead && <span className="mt-auto text-xs text-muted">Lead: {dom.lead}</span>}
-                </span>
-                {checked && (
-                  <span
-                    className="relative py-1.5 text-center text-xs font-bold"
-                    style={{ background: dom.solid, color: dom.onColor }}
-                  >
-                    ✓ {level4.chosen}
-                  </span>
-                )}
-              </button>
+                  {checked && (
+                    <span
+                      className="relative py-1.5 text-center text-xs font-bold"
+                      style={{ background: dom.solid, color: dom.onColor }}
+                    >
+                      ✓ {level4.chosen}
+                    </span>
+                  )}
+                </button>
+              </Tilt>
             );
           })}
         </div>
@@ -155,4 +158,3 @@ export function Level4House() {
     </LevelShell>
   );
 }
-

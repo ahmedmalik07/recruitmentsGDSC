@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { m } from "framer-motion";
 import { levelNames, ui } from "@/content";
-import { Avatar, avatarParts } from "./Avatar";
+import { avatarParts } from "./Avatar";
+import { PokeAvatar } from "./PokeAvatar";
 import { useInstant, useQuest } from "./state";
 import { computeXp } from "./progress";
 
@@ -26,15 +27,11 @@ export function Hud() {
   const showAvatar = state.level >= 3;
 
   return (
-    <header className="sticky top-0 z-40 -mx-4 border-b border-line/60 bg-bg/95 px-4 pt-2.5 pb-2.5 backdrop-saturate-150 md:-mx-6 md:px-6 lg:mx-0 lg:px-0 lg:pt-6">
+    <header className="sticky top-0 z-40 -mx-4 border-b border-line/60 bg-bg/95 px-4 pt-3.5 pb-2.5 backdrop-saturate-150 md:-mx-6 md:px-6 lg:mx-0 lg:px-0 lg:pt-6">
       <div className="flex items-center justify-between gap-2.5">
         {/* Live character on phones/tablets so every change is visible while filling the form */}
         {showAvatar && (
-          <div className="-my-1 shrink-0 lg:hidden" aria-hidden="true">
-            <div className="avatar-bob">
-              <Avatar parts={avatarParts(state.draft)} size={46} showName={false} animated={!instant} />
-            </div>
-          </div>
+          <PokeAvatar parts={avatarParts(state.draft)} size={46} showName={false} className="-my-1 shrink-0 lg:hidden" />
         )}
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">{ui.level(state.level)}</p>

@@ -11,11 +11,12 @@ import {
   level5,
   roleAccessory,
 } from "@/content";
-import { countWords, fieldErrors, normalizeUrl, storySchema } from "@/lib/schema";
+import { countWords, detectLinkKind, fieldErrors, filledLinks, normalizeLink, storySchema } from "@/lib/schema";
 import { describedBy, Field } from "@/components/ui/Field";
 import { ChipMulti, ChipRadio } from "@/components/ui/Chips";
 import { HostPhoto } from "../HostPhoto";
 import { LevelShell } from "../LevelShell";
+import { linkInputId, linkRowError, LinksEditor } from "../LinksEditor";
 import { say } from "../NpcChat";
 import { PowerMeter } from "../PowerMeter";
 import { toast } from "../toast";
@@ -25,7 +26,7 @@ type Key =
   | "experience"
   | "achievements"
   | "whyJoin"
-  | "portfolioUrl"
+  | "links"
   | "teamRole"
   | "hoursPerWeek"
   | "excitedAbout"
@@ -34,7 +35,7 @@ const ORDER: Key[] = [
   "experience",
   "achievements",
   "whyJoin",
-  "portfolioUrl",
+  "links",
   "teamRole",
   "hoursPerWeek",
   "excitedAbout",
@@ -49,25 +50,39 @@ export function Level5Story() {
   const [touched, setTouched] = useState<Partial<Record<Key, boolean>>>({});
   const [showAll, setShowAll] = useState(false);
 
-  const result = storySchema.safeParse({
-    ...d,
-    teamRole: d.teamRole ?? undefined,
-    hoursPerWeek: d.hoursPerWeek ?? undefined,
-  });
+  const check = (links = d.links) =>
+    storySchema.safeParse({
+      ...d,
+      links: filledLinks(links),
+      teamRole: d.teamRole ?? undefined,
+      hoursPerWeek: d.hoursPerWeek ?? undefined,
+    });
+  const result = check();
   const errors = result.success ? {} : fieldErrors(result.error);
   const err = (k: Key) => (showAll || touched[k] ? errors[k] : undefined);
   const blur = (k: Key) => () => setTouched((t) => ({ ...t, [k]: true }));
 
   function onNext() {
-    if (result.success) return true;
+    // Tidy links typed without leaving the field ("github.com/x", "@handle") and drop empty rows
+    const links = filledLinks(d.links).map((l) => {
+      const url = normalizeLink(l.kind, l.url);
+      return { kind: detectLinkKind(url) ?? l.kind, url };
+    });
+    set({ links });
+    const r = check(links);
+    if (r.success) return true;
     setShowAll(true);
-    const first = ORDER.find((k) => errors[k]);
-    if (first) document.getElementById(`f-${first}`)?.focus();
+    const errs = fieldErrors(r.error);
+    const first = ORDER.find((k) => errs[k]);
+    if (first === "links") {
+      const bad = links.findIndex((l) => linkRowError(l));
+      document.getElementById(linkInputId(Math.max(0, bad)))?.focus();
+    } else if (first) document.getElementById(`f-${first}`)?.focus();
     return false;
   }
 
   return (
-    <LevelShell chatId="l5" chat={say("ahmed", level5.npc)} onNext={onNext}>
+    <LevelShell chatId="l5" chat={[...say("ahmed", level5.npc), ...say("sumaiya", level5.npcSumaiya)]} onNext={onNext}>
       <StoryBox
         id="experience"
         label={level5.experience.label}
@@ -121,27 +136,14 @@ export function Level5Story() {
         }}
       />
 
-      <Field id="f-portfolioUrl" label={house.portfolioLabel} optional error={err("portfolioUrl")} help={level5.portfolioHelp}>
-        <input
-          id="f-portfolioUrl"
-          className="field-input"
-          type="url"
-          inputMode="url"
-          autoComplete="url"
-          autoCapitalize="none"
-          spellCheck={false}
-          maxLength={300}
-          placeholder={house.portfolioPlaceholder}
-          value={d.portfolioUrl}
-          onChange={(e) => set({ portfolioUrl: e.target.value })}
-          onBlur={(e) => {
-            set({ portfolioUrl: normalizeUrl(e.target.value) });
-            blur("portfolioUrl")();
-          }}
-          aria-invalid={Boolean(err("portfolioUrl"))}
-          aria-describedby={describedBy("f-portfolioUrl", err("portfolioUrl"), true)}
-        />
-      </Field>
+      <LinksEditor
+        links={d.links}
+        house={house}
+        showErrors={showAll}
+        touched={Boolean(touched.links)}
+        onChange={(links) => set({ links })}
+        onBlur={blur("links")}
+      />
 
       <ChipRadio
         label={level5.teamRoleLabel}

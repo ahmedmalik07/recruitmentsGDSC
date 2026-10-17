@@ -24,7 +24,7 @@ export function computeXp(state: QuestState, quizScore: number): { xp: number; p
     valid(Boolean(d.teamRole)) +
     valid(Boolean(d.hoursPerWeek)) +
     valid(d.excitedAbout.length > 0) +
-    valid(Boolean(d.portfolioUrl)) +
+    valid(d.links.some((l) => l.url.trim() !== "")) +
     valid(Boolean(d.funFact));
   const fullPower =
     valid(inSweetSpot(d.experience)) + valid(inSweetSpot(d.whyJoin));

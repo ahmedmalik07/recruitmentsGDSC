@@ -3,6 +3,8 @@ import {
   DOMAIN_IDS,
   EXCITED,
   HOURS,
+  LINK_KINDS,
+  MAX_LINKS,
   TEAM_ROLES,
   domains,
   quiz,
@@ -14,6 +16,8 @@ import {
 
 export { WORDS, countWords } from "./quick";
 import { WORDS, countWords } from "./quick";
+export { detectLinkKind, filledLinks, isHttpUrl, normalizeLink, type PortfolioLink } from "./links";
+import { isHttpUrl } from "./links";
 
 export const MAX_TEXT_CHARS = 2500;
 
@@ -22,22 +26,6 @@ export function normalizePhone(raw: string): string {
   let digits = raw.replace(/\D/g, "");
   if (digits.startsWith("92") && digits.length === 12) digits = "0" + digits.slice(2);
   return digits.slice(0, 11);
-}
-
-/** Add https:// when the user typed a bare domain. Leaves empty strings alone. */
-export function normalizeUrl(raw: string): string {
-  const value = raw.trim();
-  if (!value) return "";
-  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
-}
-
-function isHttpUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return (url.protocol === "https:" || url.protocol === "http:") && url.hostname.includes(".");
-  } catch {
-    return false;
-  }
 }
 
 const rollNoRe = new RegExp(site.rollNoRegex);
@@ -95,12 +83,19 @@ export const storyShape = {
     .refine((v) => countWords(v) <= 200, { error: "Keep it under 200 words" })
     .default(""),
   whyJoin: longText("Your answer"),
-  portfolioUrl: z
-    .string()
-    .trim()
-    .max(300, { error: "Link is too long" })
-    .refine((v) => v === "" || isHttpUrl(v), { error: "Enter a valid link (https://…)" })
-    .default(""),
+  links: z
+    .array(
+      z.object({
+        kind: z.enum(LINK_KINDS, { error: "Pick a link type" }),
+        url: z
+          .string()
+          .trim()
+          .max(300, { error: "Link is too long" })
+          .refine(isHttpUrl, { error: "One of your links doesn't look right (https://…)" }),
+      }),
+    )
+    .max(MAX_LINKS, { error: `Up to ${MAX_LINKS} links` })
+    .default([]),
   teamRole: z.enum(TEAM_ROLES, { error: "Pick one" }),
   hoursPerWeek: z.enum(HOURS, { error: "Pick one" }),
   excitedAbout: z
@@ -150,6 +145,8 @@ export const submitSchema = z
     ...storyShape,
     ...quizShape,
     website: z.string().max(200).default(""),
+    /** Sent by older cached clients; /api/apply turns it into a link */
+    portfolioUrl: z.string().trim().max(300).optional(),
     turnstileToken: z.string().min(1, { error: "Bot check missing" }).max(2048),
     timeTakenSec: z.number().int().min(0).max(60 * 60 * 24 * 30),
   })

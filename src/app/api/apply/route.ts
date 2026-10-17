@@ -1,7 +1,7 @@
 import { after } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { errors as copy, site } from "@/content";
-import { fieldErrors, submitSchema, type ApplyResponse } from "@/lib/schema";
+import { detectLinkKind, fieldErrors, isHttpUrl, normalizeLink, submitSchema, type ApplyResponse } from "@/lib/schema";
 import { adminDb } from "@/lib/server/firebaseAdmin";
 import { sendConfirmationEmail } from "@/lib/server/email";
 import { verifyTurnstile } from "@/lib/server/turnstile";
@@ -60,7 +60,12 @@ export async function POST(req: Request) {
   }
   // Honeypot + token are checked, never stored
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { website, turnstileToken, ...application } = parsed.data;
+  const { website, turnstileToken, portfolioUrl, ...application } = parsed.data;
+  // A page cached from before multiple links sends one portfolioUrl instead
+  const legacyUrl = portfolioUrl ? normalizeLink("website", portfolioUrl) : "";
+  if (application.links.length === 0 && isHttpUrl(legacyUrl)) {
+    application.links = [{ kind: detectLinkKind(legacyUrl) ?? "website", url: legacyUrl }];
+  }
 
   // 5. Turnstile
   if (!(await verifyTurnstile(turnstileToken, clientIp(req)))) {

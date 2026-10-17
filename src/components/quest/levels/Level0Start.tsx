@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { m } from "framer-motion";
-import { hosts, levelNames, levelStyle, site, titleScreen } from "@/content";
+import { hosts, levelNames, levelStyle, site, titleScreen, type HostId } from "@/content";
 import { Button } from "@/components/ui/Button";
 import { HostPhoto } from "../HostPhoto";
 import { NpcChat, say } from "../NpcChat";
 import { QuestHero } from "../QuestHero";
+import { Tilt } from "../Tilt";
 import { useInstant, useQuest } from "../state";
 
 const FACTS = ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"];
@@ -39,9 +40,25 @@ export function Level0Start() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
         >
-          <span className="text-g-blue">G</span>
-          <span className="text-g-red">D</span>
-          <span className="text-g-green-strong">G</span> <span>Quest</span>
+          {/* Letters hop when hovered or tapped */}
+          {(
+            [
+              ["G", "text-g-blue"],
+              ["D", "text-g-red"],
+              ["G", "text-g-green-strong"],
+            ] as const
+          ).map(([ch, cls], i) => (
+            <m.span
+              key={i}
+              className={`inline-block cursor-default ${cls}`}
+              whileHover={instant ? undefined : { y: -8, rotate: i % 2 ? 6 : -6 }}
+              whileTap={instant ? undefined : { scale: 1.2, y: -4 }}
+              transition={{ type: "spring", stiffness: 500, damping: 12 }}
+            >
+              {ch}
+            </m.span>
+          ))}{" "}
+          <span>Quest</span>
         </m.h1>
         <p className="text-base text-muted sm:text-lg">{titleScreen.subtitle}</p>
         <ul className="flex flex-wrap gap-2" aria-label="Quick facts">
@@ -53,25 +70,28 @@ export function Level0Start() {
         </ul>
       </div>
 
-      {/* Hosts: Sumaiya first, Ahmed as the guide */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center gap-2.5 rounded-2xl border-2 border-line bg-surface p-2.5">
-          <HostPhoto id="sumaiya" size={48} priority />
-          <div className="min-w-0">
-            <p className="leading-tight font-bold">{hosts.sumaiya.name}</p>
-            <p className="text-xs text-muted">{hosts.sumaiya.role}</p>
-          </div>
-        </div>
-        <div className="relative flex items-center gap-2.5 rounded-2xl border-2 border-g-blue bg-tint-blue p-2.5">
-          <span className="absolute -top-2.5 right-2 rounded-full bg-g-blue-strong px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white uppercase">
-            ⭐ Your guide
-          </span>
-          <HostPhoto id="ahmed" size={48} priority />
-          <div className="min-w-0">
-            <p className="leading-tight font-bold">{hosts.ahmed.name}</p>
-            <p className="text-xs text-muted">{hosts.ahmed.role}</p>
-          </div>
-        </div>
+      {/* Hosts: the President and the guide, side by side and equal */}
+      <div className="grid grid-cols-2 gap-3 pt-1">
+        {(["sumaiya", "ahmed"] as HostId[]).map((id) => (
+          <Tilt key={id} className="h-full">
+            <div
+              className="relative flex h-full items-center gap-2.5 rounded-2xl border-2 p-2.5"
+              style={{ borderColor: hosts[id].accent, background: `${hosts[id].accent}14` }}
+            >
+              <span
+                className="absolute -top-2.5 right-2 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-wide whitespace-nowrap text-white uppercase"
+                style={{ background: hosts[id].badge.bg }}
+              >
+                {hosts[id].badge.text}
+              </span>
+              <HostPhoto id={id} size={48} priority />
+              <div className="min-w-0">
+                <p className="leading-tight font-bold">{hosts[id].name}</p>
+                <p className="text-xs text-muted">{hosts[id].role}</p>
+              </div>
+            </div>
+          </Tilt>
+        ))}
       </div>
 
       <NpcChat id="l0" lines={[...say("sumaiya", titleScreen.npc), ...say("ahmed", titleScreen.npcAhmed)]} />

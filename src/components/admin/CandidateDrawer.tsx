@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { User } from "firebase/auth";
-import { domains, positionLabel, hoursLabels, type Hours } from "@/content";
+import { domains, linkKinds, positionLabel, hoursLabels, type Hours } from "@/content";
+import { linksOf } from "@/lib/links";
 import type { Status } from "@/lib/schema";
 import { adminFetch, ApiError, ERROR_TEXT } from "./api";
 import { Button } from "@/components/ui/Button";
@@ -83,7 +84,7 @@ export function CandidateDrawer({
     }
   }
 
-  const portfolioSafe = /^https?:\/\//i.test(row.portfolioUrl ?? "");
+  const links = linksOf(row);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -187,15 +188,23 @@ export function CandidateDrawer({
                 {row.phone}
               </a>
             </Info>
-            <Info label="Portfolio">
-              {row.portfolioUrl ? (
-                portfolioSafe ? (
-                  <a className="break-all text-link underline" href={row.portfolioUrl} target="_blank" rel="noopener noreferrer nofollow">
-                    {row.portfolioUrl}
-                  </a>
-                ) : (
-                  <span className="break-all">{row.portfolioUrl}</span>
-                )
+            <Info label="Links">
+              {links.length ? (
+                <ul className="flex flex-col gap-1">
+                  {links.map((l, i) => (
+                    <li key={i} className="flex gap-1.5">
+                      <span aria-hidden="true">{linkKinds[l.kind]?.icon ?? "🔗"}</span>
+                      <span className="sr-only">{linkKinds[l.kind]?.label ?? l.kind}: </span>
+                      {/^https?:\/\//i.test(l.url) ? (
+                        <a className="break-all text-link underline" href={l.url} target="_blank" rel="noopener noreferrer nofollow">
+                          {l.url}
+                        </a>
+                      ) : (
+                        <span className="break-all">{l.url}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               ) : (
                 <span className="text-muted">Not added</span>
               )}

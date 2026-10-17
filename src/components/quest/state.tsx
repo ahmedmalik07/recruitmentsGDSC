@@ -12,7 +12,19 @@ import {
   type ReactNode,
 } from "react";
 import { useReducedMotion } from "framer-motion";
-import { DOMAIN_IDS, EXCITED, domains, quiz, type DomainId, type Excited, type Hours, type TeamRole } from "@/content";
+import {
+  DOMAIN_IDS,
+  EXCITED,
+  LINK_KINDS,
+  MAX_LINKS,
+  domains,
+  quiz,
+  type DomainId,
+  type Excited,
+  type Hours,
+  type TeamRole,
+} from "@/content";
+import { detectLinkKind, type PortfolioLink } from "@/lib/links";
 import { readJSON, removeKey, writeJSON } from "@/lib/storage";
 
 export const STORAGE_KEY = "gdg-quest:v1";
@@ -32,7 +44,8 @@ export type Draft = {
   experience: string;
   achievements: string;
   whyJoin: string;
-  portfolioUrl: string;
+  /** Portfolio links; rows with an empty url are ignored on submit */
+  links: PortfolioLink[];
   teamRole: TeamRole | null;
   hoursPerWeek: Hours | null;
   excitedAbout: Excited[];
@@ -70,7 +83,7 @@ export const emptyDraft: Draft = {
   experience: "",
   achievements: "",
   whyJoin: "",
-  portfolioUrl: "",
+  links: [],
   teamRole: null,
   hoursPerWeek: null,
   excitedAbout: [],
@@ -114,8 +127,17 @@ type Action =
   | { type: "reset" };
 
 /** Drop saved values that no longer exist (e.g. a house that was renamed) */
-function sanitizeDraft(saved: Partial<Draft> | undefined): Draft {
-  const draft = { ...emptyDraft, ...(saved ?? {}) };
+function sanitizeDraft(saved: (Partial<Draft> & { portfolioUrl?: string }) | undefined): Draft {
+  const { portfolioUrl, ...rest } = saved ?? {};
+  const draft = { ...emptyDraft, ...rest };
+  // Drafts saved before multiple links existed had a single portfolioUrl
+  if (!Array.isArray(draft.links)) draft.links = [];
+  if (portfolioUrl && draft.links.length === 0) {
+    draft.links = [{ kind: detectLinkKind(portfolioUrl) ?? "website", url: portfolioUrl }];
+  }
+  draft.links = draft.links
+    .filter((l) => l && typeof l.url === "string" && (LINK_KINDS as readonly string[]).includes(l.kind))
+    .slice(0, MAX_LINKS);
   if (draft.domain && !(DOMAIN_IDS as readonly string[]).includes(draft.domain)) {
     draft.domain = null;
     draft.position = "";

@@ -73,6 +73,8 @@ export type Host = {
   funFact: string;
   bio: string;
   accent: string;
+  /** Pill on their cards. bg is a strong shade so white text passes WCAG AA */
+  badge: { text: string; bg: string };
 };
 
 export const hosts: Record<HostId, Host> = {
@@ -87,6 +89,7 @@ export const hosts: Record<HostId, Host> = {
     funFact: "Spent 5 days camping in the lower Himalayas without her phone. A real-life survival challenge.",
     bio: "Wears many hats, but keeps coming back to one: building inclusive spaces. Innovation grows when everyone belongs.",
     accent: "#EA4335",
+    badge: { text: "👑 President", bg: "#C5221F" },
   },
   ahmed: {
     id: "ahmed",
@@ -100,6 +103,7 @@ export const hosts: Record<HostId, Host> = {
     funFact: "Builds video games in Unreal Engine for fun, in between shipping AI agents at Wyibe.",
     bio: "Your guide for this quest. Builds things, wins hackathons, ships AI agents.",
     accent: "#4285F4",
+    badge: { text: "⭐ Your Guide", bg: "#1967D2" },
   },
   rafay: {
     id: "rafay",
@@ -117,10 +121,10 @@ export const hosts: Record<HostId, Host> = {
     funFact: "Goes from calligraphy qalam to Python notebook in the same afternoon.",
     bio: "Keeps everything on track. Knows where every file, form and chair is.",
     accent: "#34A853",
+    badge: { text: "📜 Gen Sec", bg: "#188038" },
   },
 };
 
-/** Ahmed's stat lines on his council card (Level 2). */
 /** Level 4 intro: an animated story starring the council (no video needed) */
 export const introStory = {
   label: "GDGOC AU council intro",
@@ -204,11 +208,9 @@ export const level2 = {
       "Meet the council first. Tap each card to flip it. All 3, no skipping.",
     ],
   },
-  guideBadge: "Your Guide",
   flipHint: "Tap to flip",
   progress: (n: number) => `${n}/3 flipped`,
   linkedin: "Connect on LinkedIn",
-  linkedinShort: "LinkedIn",
 };
 
 /** Desktop side panel (only shown on wide screens) */
@@ -303,6 +305,81 @@ export const jerseyColors = [
 ] as const;
 
 // ---------------------------------------------------------------------------
+// Portfolio links (Level 5). Candidates can add up to MAX_LINKS of any kind.
+// ---------------------------------------------------------------------------
+
+export const LINK_KINDS = ["github", "linkedin", "behance", "dribbble", "instagram", "youtube", "drive", "website"] as const;
+export type LinkKind = (typeof LINK_KINDS)[number];
+export const MAX_LINKS = 4;
+
+export type LinkKindInfo = {
+  label: string;
+  icon: string;
+  placeholder: string;
+  /** A bare handle like "@ahmed" becomes this + "ahmed" */
+  handleBase?: string;
+  /** Hostnames used to auto-detect the kind of a pasted link */
+  hosts: readonly string[];
+};
+
+export const linkKinds: Record<LinkKind, LinkKindInfo> = {
+  github: {
+    label: "GitHub",
+    icon: "🐙",
+    placeholder: "github.com/yourname",
+    handleBase: "https://github.com/",
+    hosts: ["github.com"],
+  },
+  linkedin: {
+    label: "LinkedIn",
+    icon: "💼",
+    placeholder: "linkedin.com/in/yourname",
+    handleBase: "https://www.linkedin.com/in/",
+    hosts: ["linkedin.com"],
+  },
+  behance: {
+    label: "Behance",
+    icon: "🎨",
+    placeholder: "behance.net/yourname",
+    handleBase: "https://www.behance.net/",
+    hosts: ["behance.net"],
+  },
+  dribbble: {
+    label: "Dribbble",
+    icon: "🏀",
+    placeholder: "dribbble.com/yourname",
+    handleBase: "https://dribbble.com/",
+    hosts: ["dribbble.com"],
+  },
+  instagram: {
+    label: "Instagram",
+    icon: "📸",
+    placeholder: "@yourhandle or a post link",
+    handleBase: "https://www.instagram.com/",
+    hosts: ["instagram.com"],
+  },
+  youtube: {
+    label: "YouTube",
+    icon: "🎬",
+    placeholder: "youtube.com/@yourchannel",
+    handleBase: "https://www.youtube.com/@",
+    hosts: ["youtube.com", "youtu.be"],
+  },
+  drive: {
+    label: "Drive / Docs",
+    icon: "📁",
+    placeholder: "Drive link (set to anyone with the link)",
+    hosts: ["drive.google.com", "docs.google.com"],
+  },
+  website: {
+    label: "Website / other",
+    icon: "🔗",
+    placeholder: "Any link: site, Figma, Notion, Medium…",
+    hosts: [],
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Level 4: Choose your House (Ahmed)
 // ---------------------------------------------------------------------------
 
@@ -327,8 +404,8 @@ export type Domain = {
   /** Positions candidates can apply for in this team */
   positions: readonly Position[];
   skills: readonly string[];
-  portfolioLabel: string;
-  portfolioPlaceholder: string;
+  /** Link types offered first in Level 5 (the first one is the default) */
+  linkKinds: readonly LinkKind[];
 };
 
 const LEAD: Position = { id: "lead", label: "Lead" };
@@ -350,8 +427,7 @@ export const domains: Record<DomainId, Domain> = {
     lead: "",
     positions: [LEAD, CO_LEAD, MEMBER],
     skills: ["Web", "App", "AI/ML", "Cloud", "Game Dev"],
-    portfolioLabel: "GitHub",
-    portfolioPlaceholder: "https://github.com/yourname",
+    linkKinds: ["github", "linkedin", "website"],
   },
   marketing_partnerships: {
     id: "marketing_partnerships",
@@ -367,8 +443,7 @@ export const domains: Record<DomainId, Domain> = {
     lead: "",
     positions: [LEAD, CO_LEAD, MEMBER],
     skills: ["Sponsorships", "Outreach", "Copywriting", "Campaigns", "Brand Deals"],
-    portfolioLabel: "LinkedIn / past campaign",
-    portfolioPlaceholder: "https://linkedin.com/in/yourname",
+    linkKinds: ["linkedin", "drive", "website"],
   },
   creatives: {
     id: "creatives",
@@ -388,8 +463,7 @@ export const domains: Record<DomainId, Domain> = {
       { id: "graphics", label: "Graphics" },
     ],
     skills: ["Photography", "Videography", "Graphic Design", "Video Editing", "UI/UX"],
-    portfolioLabel: "Behance / Drive / IG portfolio",
-    portfolioPlaceholder: "https://behance.net/yourname",
+    linkKinds: ["behance", "instagram", "drive", "dribbble", "youtube"],
   },
   media: {
     id: "media",
@@ -405,8 +479,7 @@ export const domains: Record<DomainId, Domain> = {
     lead: "",
     positions: [LEAD, MEMBER],
     skills: ["Social Media", "Content Writing", "Reels", "Event Coverage", "Hosting/Anchoring"],
-    portfolioLabel: "IG / LinkedIn / content samples",
-    portfolioPlaceholder: "https://instagram.com/yourpage",
+    linkKinds: ["instagram", "linkedin", "youtube", "drive"],
   },
   ops: {
     id: "ops",
@@ -422,8 +495,7 @@ export const domains: Record<DomainId, Domain> = {
     lead: "",
     positions: [LEAD, CO_LEAD, MEMBER],
     skills: ["Event Management", "Logistics", "Hosting/Anchoring", "Documentation"],
-    portfolioLabel: "LinkedIn / past events",
-    portfolioPlaceholder: "https://linkedin.com/in/yourname",
+    linkKinds: ["linkedin", "drive", "website"],
   },
 };
 
@@ -470,6 +542,7 @@ export const level5 = {
     "Story time. This is the part we actually read, so be real 🙌",
     "No essays needed. Just honest answers.",
   ],
+  npcSumaiya: ["And no experience is totally okay. We care more about who you are than your CV 💛"],
   experience: {
     label: "Your past experience",
     helper:
@@ -499,7 +572,14 @@ export const level5 = {
     long: "Strong, but keep it tight",
     tooLong: "Over 250 words, trim it a bit",
   },
-  portfolioHelp: "Optional, but it helps a lot",
+  links: {
+    label: "Show us your work",
+    help: "Optional, but it helps a lot. GitHub, Behance, Instagram, Drive, anything. Handles like @yourname work too.",
+    add: "Add another link",
+    remove: "Remove link",
+    kind: "Link type",
+    url: "Link",
+  },
   teamRoleLabel: "In a team, you're usually the…",
   hoursLabel: "Hours per week you can give",
   excitedLabel: "What are you excited about? (pick any)",
@@ -594,7 +674,24 @@ export const success = {
   joinGroup: "Join the GDG Recruitment WhatsApp group",
   joinGroupNote: "Shortlist, interview slots and updates land here first.",
   shortlistLabel: "Shortlist",
+  /** Small bonus at the very end. Kept quiet on purpose so it doesn't steal focus. */
+  gift: {
+    title: "🎁 Bonus level",
+    text: "Ahmed also built a little game. Play it whenever you're bored.",
+    cta: "Play",
+    url: "https://ahmadmalik.wyibe.com",
+  },
 };
+
+/** Lines when someone pokes their character */
+export const avatarQuips = [
+  "Hehe, that tickles 😆",
+  "Looking sharp 😎",
+  "Boing! 🦘",
+  "Ready for the next level 💪",
+  "Main character energy ✨",
+  "Okay okay, back to the quest 😅",
+];
 
 export const closed = {
   title: "Quest closed",
@@ -658,7 +755,7 @@ export const levelStyle: Record<number, { color: string; solid: string; onSolid:
   2: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "👑", hosts: ["ahmed"] },
   3: { color: "#FBBC04", solid: "#FBBC04", onSolid: "#202124", emoji: "🧑‍🎨", hosts: ["rafay", "ahmed"] },
   4: { color: "#34A853", solid: "#188038", onSolid: "#FFFFFF", emoji: "🚪", hosts: ["ahmed"] },
-  5: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "📝", hosts: ["ahmed"] },
+  5: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "📝", hosts: ["ahmed", "sumaiya"] },
   6: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "🧠", hosts: ["rafay", "ahmed"] },
   7: { color: "#FBBC04", solid: "#FBBC04", onSolid: "#202124", emoji: "🎁", hosts: ["ahmed", "sumaiya", "rafay"] },
 };
