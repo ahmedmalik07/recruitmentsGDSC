@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { levelStyle, levelUp } from "@/content";
+import { music } from "@/lib/music";
 import { useInstant, useQuest } from "./state";
 
 /** "Level 3 cleared! +50 XP" burst when moving forward to a new level */
@@ -16,7 +17,9 @@ export function LevelUp() {
     const from = prev.current;
     prev.current = state.level;
     // Only forward steps from a real level (not the title screen, not resuming)
-    if (!state.hydrated || instant || state.level !== from + 1 || from < 1) return;
+    if (!state.hydrated || state.level !== from + 1 || from < 1) return;
+    music.sfx("levelUp");
+    if (instant) return;
     const show = window.setTimeout(() => setShown(from), 0);
     const hide = window.setTimeout(() => setShown(null), 1300);
     import("canvas-confetti")

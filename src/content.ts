@@ -157,7 +157,7 @@ export const introStory = {
 };
 
 /**
- * Level 4 intro video: a 30 s trailer with the council, made in code (no filming needed).
+ * Level 4 intro video: a 23 s trailer with the council and our own song, made in code (no filming needed).
  * Edit scripts/intro-video/trailer.html and run `node scripts/intro-video/render.mjs` to change it.
  */
 export const introVideo = {
@@ -165,14 +165,14 @@ export const introVideo = {
   /** Same video for browsers without H.264 */
   srcWebm: "/intro/gdg-quest-intro.webm",
   poster: "/intro/poster.jpg",
-  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 30 seconds, no sound",
+  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 23 seconds, with music",
   /** Read by screen readers instead of the burned-in text */
   transcript:
     "Yeh koi form nahi hai, yeh game hai. Air University, Islamabad: GDG on Campus Air University presents GDG Quest, Recruitment 2026. " +
     "Sumaiya, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
     "Abdul Rafay, General Secretary. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
-    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com.",
-  caption: "🎬 30 sec intro with the council",
+    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com. Upbeat game music plays throughout.",
+  caption: "🎬 23 sec intro with the council",
   play: "Play intro",
   showStory: "Tap through it instead",
   showVideo: "Watch the video instead",
@@ -802,6 +802,10 @@ export const ui = {
   skipChat: "Skip chat",
   poke: "Poke your character",
   pokeTitle: "Poke me",
+  sound: "Sound",
+  soundOn: "Sound on: music and effects",
+  soundOff: "Sound off",
+  soundHint: "🎵 Music on. Tap 🔊 at the top to mute",
 };
 
 export const levelNames = [

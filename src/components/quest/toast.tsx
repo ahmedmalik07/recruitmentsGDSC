@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
+import { music } from "@/lib/music";
 
 type Toast = { id: number; text: string; xp?: number };
 
@@ -10,6 +11,7 @@ const listeners = new Set<(t: Toast) => void>();
 
 /** Fire a small "+XP / unlocked" toast from anywhere in the quest. */
 export function toast(text: string, xp?: number) {
+  if (xp) music.sfx("coin");
   const t = { id: ++counter, text, xp };
   listeners.forEach((l) => l(t));
 }

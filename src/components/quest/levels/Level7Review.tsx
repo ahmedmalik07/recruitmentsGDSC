@@ -14,6 +14,7 @@ import {
   success,
   positionLabel,
 } from "@/content";
+import { music } from "@/lib/music";
 import { fieldErrors, filledLinks, normalizeLink, submitSchema, type ApplyResponse } from "@/lib/schema";
 import { Button } from "@/components/ui/Button";
 import { ApplicantCard } from "../ApplicantCard";
@@ -321,6 +322,11 @@ function Row({ label, value, long }: { label: string; value: string; long?: bool
 
 function Success({ parts }: { parts: AvatarParts }) {
   const instant = useInstant();
+
+  useEffect(() => {
+    music.setLevel(8);
+    music.sfx("fanfare");
+  }, []);
 
   useEffect(() => {
     if (instant) return;

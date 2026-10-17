@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  GDG Quest intro video, 1080x1920, 30 s. Rendered frame by frame by render.mjs.
+  GDG Quest intro video, 1080x1920, 23 s, with music from soundtrack.ts. Rendered frame by frame by render.mjs.
   Every animation runs on one 30 s timeline, so any frame can be drawn by setting the time.
   Open this file in Chrome to preview it live.
 -->
@@ -105,6 +105,8 @@
   #s9 .url .pill { background: var(--ink); color: #fff; font-size: 66px; padding: 30px 60px; }
   #s9 .facts { top: 1330px; font-size: 48px; font-weight: 700; color: #56608a; }
   #s9 .logo { top: 1500px; left: 190px; width: 700px; }
+  #s9 .confetti { position: absolute; left: 540px; top: 1200px; border-radius: 4px; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
 </style>
 </head>
 <body>
@@ -218,14 +220,19 @@
     <p class="abs center url"><span class="pill">recruitments.wyibe.com</span></p>
     <p class="abs center facts">No sign-in · ~5 minutes · all AU students</p>
     <img class="abs logo" src="../../public/brand/gdgoc-au-logo.png" alt="" />
+    <div id="flash"></div>
   </section>
 
   <div id="wipe"><i style="background:#4285f4"></i><i style="background:#ea4335"></i><i style="background:#fbbc04"></i><i style="background:#34a853"></i></div>
 </div>
 
 <script>
-  const TOTAL = 30;
-  const CUTS = [2.9, 6.1, 8.9, 12.8, 17.0, 20.8, 24.6, 27.2];
+  // 120 BPM: every cut lands on a beat, and the final hit (20 s, bar 10) is when the link pops.
+  // Keep these in sync with soundtrack.ts.
+  const TOTAL = 23;
+  const BEAT = 0.5;
+  const HIT = 20;
+  const CUTS = [2.0, 4.0, 6.0, 8.5, 11.5, 14.0, 16.5, 18.0];
   const SCENES = ["#s1", "#s2", "#s3", "#s4", "#s5", "#s6", "#s7", "#s8", "#s9"];
   const OUT = "cubic-bezier(.2,.8,.2,1)";
   const POP = "cubic-bezier(.34,1.56,.64,1)";
@@ -243,9 +250,15 @@
     }
   }
   /** Enter at t from `from` and stay */
-  function enter(els, t, from, { d = 0.5, ease = OUT, to = "translate(0,0) scale(1) rotate(0deg)" } = {}) {
+  function enter(els, t, from, { d = 0.4, ease = OUT, to = "translate(0,0) scale(1) rotate(0deg)" } = {}) {
     tl(els, [[t, { opacity: 0, transform: from }, ease], [t + d, { opacity: 1, transform: to }]]);
   }
+  /** Beat times between a and b */
+  const beats = (a, b) => {
+    const out = [];
+    for (let t = Math.ceil(a / BEAT) * BEAT; t < b; t += BEAT) out.push(t);
+    return out;
+  };
 
   // Scenes: hard cuts hidden under the wipe
   SCENES.forEach((sel, i) => {
@@ -262,75 +275,117 @@
   $("#wipe i").forEach((bar, k) => {
     const f = [[0, { transform: "translateY(100%)" }]];
     for (const c of CUTS) {
-      const s = k * 0.035;
-      f.push([c - 0.3 + s, { transform: "translateY(100%)" }, "cubic-bezier(.6,0,.4,1)"]);
-      f.push([c - 0.02 + s, { transform: "translateY(0%)" }, "cubic-bezier(.6,0,.4,1)"]);
-      f.push([c + 0.26 + s, { transform: "translateY(-100%)" }]);
-      f.push([c + 0.261 + s, { transform: "translateY(100%)" }]);
+      const s = k * 0.03;
+      f.push([c - 0.2 + s, { transform: "translateY(100%)" }, "cubic-bezier(.6,0,.4,1)"]);
+      f.push([c - 0.01 + s, { transform: "translateY(0%)" }, "cubic-bezier(.6,0,.4,1)"]);
+      f.push([c + 0.2 + s, { transform: "translateY(-100%)" }]);
+      f.push([c + 0.201 + s, { transform: "translateY(100%)" }]);
     }
     tl(bar, f);
   });
 
   // 1. Hook
-  enter($("#s1 .l1"), 0.15, "translateY(80px)");
-  tl($("#s1 .l2"), [[1.0, { opacity: 0, transform: "scale(.4) rotate(-6deg)" }, POP], [1.45, { opacity: 1, transform: "scale(1) rotate(0deg)" }], [2.9, { opacity: 1, transform: "scale(1.08) rotate(0deg)" }]]);
-  enter($("#s1 .hint"), 1.7, "translateY(40px)");
+  enter($("#s1 .l1"), 0.05, "translateY(80px)", { d: 0.35 });
+  tl($("#s1 .l2"), [[0.45, { opacity: 0, transform: "scale(.4) rotate(-6deg)" }, POP], [0.8, { opacity: 1, transform: "scale(1) rotate(0deg)" }], [2.0, { opacity: 1, transform: "scale(1.07) rotate(0deg)" }]]);
+  enter($("#s1 .hint"), 0.9, "translateY(40px)");
   $("#s1 [data-burst]").forEach((el, i) => {
     const a = (i / 5) * Math.PI * 2 + 0.9;
     const r = 430 + (i % 2) * 120;
-    tl(el, [[1.05, { opacity: 0, transform: "translate(0,0) scale(.2) rotate(0deg)" }], [1.12, { opacity: 1, transform: "translate(0,0) scale(.6) rotate(0deg)" }],
-      [1.9, { opacity: 1, transform: `translate(${Math.cos(a) * r}px,${Math.sin(a) * r * 1.4}px) scale(1) rotate(${90 + i * 40}deg)` }],
-      [2.9, { opacity: 1, transform: `translate(${Math.cos(a) * r * 1.08}px,${Math.sin(a) * r * 1.5}px) scale(1) rotate(${140 + i * 40}deg)` }]]);
+    tl(el, [[0.5, { opacity: 0, transform: "translate(0,0) scale(.2) rotate(0deg)" }], [0.56, { opacity: 1, transform: "translate(0,0) scale(.6) rotate(0deg)" }],
+      [1.1, { opacity: 1, transform: `translate(${Math.cos(a) * r}px,${Math.sin(a) * r * 1.4}px) scale(1) rotate(${90 + i * 40}deg)` }],
+      [2.0, { opacity: 1, transform: `translate(${Math.cos(a) * r * 1.08}px,${Math.sin(a) * r * 1.5}px) scale(1) rotate(${140 + i * 40}deg)` }]]);
   });
 
   // 2. Air University
-  const s2 = 2.9;
-  tl($("#s2 .band img"), [[s2, { transform: "scale(1.04)" }, "linear"], [6.1, { transform: "scale(1.2) translateX(-3%)" }]]);
-  enter($("#s2 .aulogo"), s2 + 0.2, "translateY(-60px) scale(.6)", { ease: POP });
-  enter($("#s2 .h"), s2 + 0.35, "translateY(60px)");
-  enter($("#s2 .pin"), s2 + 0.55, "scale(.6)", { ease: POP });
-  enter($("#s2 .band"), s2 + 0.4, "translateY(120px) scale(.92)", { d: 0.6 });
-  enter($("#s2 .card"), s2 + 1.3, "translateY(160px)", { d: 0.6 });
+  const s2 = CUTS[0];
+  tl($("#s2 .band img"), [[s2, { transform: "scale(1.04)" }, "linear"], [CUTS[1], { transform: "scale(1.18) translateX(-3%)" }]]);
+  enter($("#s2 .aulogo"), s2 + 0.1, "translateY(-60px) scale(.6)", { ease: POP });
+  enter($("#s2 .h"), s2 + 0.15, "translateY(60px)");
+  enter($("#s2 .pin"), s2 + 0.3, "scale(.6)", { ease: POP });
+  enter($("#s2 .band"), s2 + 0.2, "translateY(120px) scale(.92)", { d: 0.45 });
+  enter($("#s2 .card"), s2 + 0.75, "translateY(160px)", { d: 0.45 });
 
   // 3. Title
-  const s3 = 6.1;
-  $("#s3 .gdg span").forEach((el, i) => enter(el, s3 + 0.15 + i * 0.14, "translateY(-420px) rotate(-12deg)", { ease: POP, d: 0.55 }));
-  enter($("#s3 .quest"), s3 + 0.65, "translateY(140px) scale(.9)", { d: 0.5 });
-  tl($("#s3 .stamp"), [[s3 + 1.15, { opacity: 0, transform: "scale(2.2) rotate(-14deg)" }, POP], [s3 + 1.5, { opacity: 1, transform: "scale(1) rotate(-4deg)" }]]);
-  enter($("#s3 .facts"), s3 + 1.7, "translateY(40px)");
+  const s3 = CUTS[1];
+  $("#s3 .gdg span").forEach((el, i) => enter(el, s3 + 0.08 + i * 0.1, "translateY(-420px) rotate(-12deg)", { ease: POP, d: 0.45 }));
+  enter($("#s3 .quest"), s3 + 0.45, "translateY(140px) scale(.9)");
+  tl($("#s3 .stamp"), [[s3 + 0.8, { opacity: 0, transform: "scale(2.2) rotate(-14deg)" }, POP], [s3 + 1.1, { opacity: 1, transform: "scale(1) rotate(-4deg)" }]]);
+  enter($("#s3 .facts"), s3 + 1.2, "translateY(40px)");
   $("#s3 [data-float]").forEach((el, i) =>
-    tl(el, [[s3, { opacity: 0, transform: "translateY(60px) rotate(0deg)" }], [s3 + 0.5, { opacity: 1, transform: "translateY(0px) rotate(0deg)" }], [8.9, { opacity: 1, transform: `translateY(-50px) rotate(${i % 2 ? 40 : -40}deg)` }, "linear"]]));
+    tl(el, [[s3, { opacity: 0, transform: "translateY(60px) rotate(0deg)" }], [s3 + 0.4, { opacity: 1, transform: "translateY(0px) rotate(0deg)" }], [CUTS[2], { opacity: 1, transform: `translateY(-50px) rotate(${i % 2 ? 40 : -40}deg)` }, "linear"]]));
 
-  // 4-6. Hosts
-  [["#s4", 8.9, 12.8], ["#s5", 12.8, 17.0], ["#s6", 17.0, 20.8]].forEach(([s, t, end]) => {
-    tl($(`${s} .photo`), [[t + 0.05, { opacity: 0, transform: "scale(.5) rotate(-10deg)" }, POP], [t + 0.6, { opacity: 1, transform: "scale(1) rotate(0deg)" }, "linear"], [end, { opacity: 1, transform: "scale(1.06) rotate(2deg)" }]]);
-    enter($(`${s} .badge`), t + 0.45, "translateY(30px) scale(.5)", { ease: POP });
-    enter($(`${s} .name`), t + 0.6, "translateX(-220px)", { d: 0.45 });
-    enter($(`${s} .role`), t + 0.85, "translateX(220px)", { d: 0.45 });
-    enter($(`${s} .chip`), t + 1.15, "translateY(40px)");
-    enter($(`${s} .quote`), t + 1.6, "translateY(50px)", { d: 0.55 });
+  // 4-6. Hosts: photos bounce on the beat
+  [["#s4", CUTS[2], CUTS[3]], ["#s5", CUTS[3], CUTS[4]], ["#s6", CUTS[4], CUTS[5]]].forEach(([s, t, end]) => {
+    const zoom = (b) => 1 + 0.05 * ((b - t) / (end - t));
+    const f = [[t + 0.02, { opacity: 0, transform: "scale(.5) rotate(-10deg)" }, POP], [t + 0.45, { opacity: 1, transform: "scale(1) rotate(0deg)" }]];
+    for (const b of beats(t + 0.5, end - 0.1)) {
+      f.push([b, { opacity: 1, transform: `scale(${(zoom(b) + 0.045).toFixed(3)}) rotate(0deg)` }, "ease-out"]);
+      f.push([b + 0.18, { opacity: 1, transform: `scale(${zoom(b).toFixed(3)}) rotate(0deg)` }]);
+    }
+    tl($(`${s} .photo`), f);
+    enter($(`${s} .badge`), t + 0.3, "translateY(30px) scale(.5)", { ease: POP, d: 0.35 });
+    enter($(`${s} .name`), t + 0.4, "translateX(-220px)", { d: 0.35 });
+    enter($(`${s} .role`), t + 0.55, "translateX(220px)", { d: 0.35 });
+    enter($(`${s} .chip`), t + 0.75, "translateY(40px)", { d: 0.35 });
+    enter($(`${s} .quote`), t + 1.0, "translateY(50px)", { d: 0.45 });
   });
 
   // 7. Teams
-  const s7 = 20.8;
-  enter($("#s7 .h"), s7 + 0.15, "translateY(-60px)");
-  enter($("#s7 .sub"), s7 + 0.4, "translateY(30px)");
-  $("#s7 .team").forEach((el, i) => enter(el, s7 + 0.55 + i * 0.22, `translateX(${i % 2 ? 1100 : -1100}px) rotate(${i % 2 ? 6 : -6}deg)`, { d: 0.5 }));
+  const s7 = CUTS[5];
+  enter($("#s7 .h"), s7 + 0.05, "translateY(-60px)");
+  enter($("#s7 .sub"), s7 + 0.2, "translateY(30px)");
+  $("#s7 .team").forEach((el, i) => enter(el, s7 + 0.3 + i * 0.14, `translateX(${i % 2 ? 1100 : -1100}px) rotate(${i % 2 ? 6 : -6}deg)`));
 
   // 8. Vibes
-  const s8 = 24.6;
-  tl($("#s8 .bg-photo"), [[s8, { transform: "scale(1)" }, "linear"], [27.2, { transform: "scale(1.15)" }]]);
-  $("#s8 .w").forEach((el, i) => enter(el, s8 + 0.15 + i * 0.3, "translateY(80px) scale(.8)", { ease: POP }));
-  $("#s8 .chips span").forEach((el, i) => enter(el, s8 + 1.1 + i * 0.12, "scale(0) rotate(-20deg)", { ease: POP, d: 0.4 }));
+  const s8 = CUTS[6];
+  tl($("#s8 .bg-photo"), [[s8, { transform: "scale(1)" }, "linear"], [CUTS[7], { transform: "scale(1.15)" }]]);
+  $("#s8 .w").forEach((el, i) => enter(el, s8 + 0.05 + i * 0.18, "translateY(80px) scale(.8)", { ease: POP, d: 0.35 }));
+  $("#s8 .chips span").forEach((el, i) => enter(el, s8 + 0.6 + i * 0.07, "scale(0) rotate(-20deg)", { ease: POP, d: 0.3 }));
 
-  // 9. Call to action
-  const s9 = 27.2;
-  $("#s9 [data-trio]").forEach((el, i) => enter(el, s9 + 0.1 + i * 0.15, "translateY(260px) scale(.6)", { ease: POP, d: 0.5 }));
-  enter($("#s9 .h"), s9 + 0.45, "translateY(70px)");
-  tl($("#s9 .url"), [[s9 + 0.8, { opacity: 0, transform: "scale(.6)" }, POP], [s9 + 1.2, { opacity: 1, transform: "scale(1)" }],
-    [s9 + 1.7, { opacity: 1, transform: "scale(1.07)" }], [s9 + 2.2, { opacity: 1, transform: "scale(1)" }], [s9 + 2.7, { opacity: 1, transform: "scale(1.07)" }]]);
-  enter($("#s9 .facts"), s9 + 1.1, "translateY(30px)");
-  enter($("#s9 .logo"), s9 + 1.3, "translateY(40px)");
+  // 9. "Your quest starts now": the big finish
+  const s9 = CUTS[7];
+  $("#s9 [data-trio]").forEach((el, i) => {
+    const f = [[s9 + 0.05 + i * 0.12, { opacity: 0, transform: "translateY(260px) scale(.6)" }, POP], [s9 + 0.5 + i * 0.12, { opacity: 1, transform: "translateY(0px) scale(1)" }]];
+    // Everyone jumps on the hit, then bobs to the beat
+    f.push([HIT, { opacity: 1, transform: "translateY(-40px) scale(1.08)" }, "ease-out"], [HIT + 0.25, { opacity: 1, transform: "translateY(0px) scale(1)" }]);
+    for (const b of beats(HIT + 0.5, TOTAL)) {
+      f.push([b + i * 0.04, { opacity: 1, transform: "translateY(-14px) scale(1.02)" }, "ease-out"], [b + 0.2 + i * 0.04, { opacity: 1, transform: "translateY(0px) scale(1)" }]);
+    }
+    tl(el, f);
+  });
+  enter($("#s9 .h"), s9 + 0.35, "translateY(70px)");
+  const urlF = [[HIT - 0.2, { opacity: 0, transform: "scale(.5)" }, POP], [HIT + 0.15, { opacity: 1, transform: "scale(1)" }]];
+  for (const b of beats(HIT + 0.5, TOTAL)) urlF.push([b, { opacity: 1, transform: "scale(1.07)" }, "ease-out"], [b + 0.2, { opacity: 1, transform: "scale(1)" }]);
+  tl($("#s9 .url"), urlF);
+  enter($("#s9 .facts"), HIT + 0.3, "translateY(30px)");
+  enter($("#s9 .logo"), HIT + 0.5, "translateY(40px)");
+  tl($("#flash"), [[HIT - 0.001, { opacity: 0 }], [HIT, { opacity: 0.7 }, "ease-out"], [HIT + 0.35, { opacity: 0 }]]);
+
+  // Confetti from the link on the hit (seeded, so every render is identical)
+  let seed = 7;
+  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const COLORS = ["#4285f4", "#ea4335", "#fbbc04", "#34a853"];
+  for (let i = 0; i < 72; i++) {
+    const c = document.createElement("i");
+    c.className = "confetti";
+    c.style.background = COLORS[i % 4];
+    c.style.width = `${24 + rand() * 18}px`;
+    c.style.height = `${14 + rand() * 14}px`;
+    document.querySelector("#s9").appendChild(c);
+    const angle = (-90 + (rand() - 0.5) * 150) * (Math.PI / 180);
+    const speed = 1100 + rand() * 1100;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    const spin = (rand() - 0.5) * 1440;
+    const f = [[HIT - 0.001, { opacity: 0, transform: "translate(0px,0px) rotate(0deg)" }]];
+    for (let k = 0; k <= 28; k++) {
+      const tau = k * 0.1;
+      const x = vx * tau;
+      const y = vy * tau + 0.5 * 1500 * tau * tau;
+      f.push([HIT + tau, { opacity: tau > 2.6 ? 0 : 1, transform: `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${(spin * tau).toFixed(1)}deg)` }, "linear"]);
+    }
+    tl(c, f);
+  }
 
   /** render.mjs calls this for every frame */
   window.seek = (t) => document.getAnimations().forEach((a) => { a.pause(); a.currentTime = t * 1000; });

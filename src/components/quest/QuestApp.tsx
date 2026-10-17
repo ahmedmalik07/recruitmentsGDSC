@@ -4,6 +4,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, LazyMotion, MotionConfig, domAnimation, m } from "framer-motion";
 import { site } from "@/content";
+import { music } from "@/lib/music";
 import { Hud } from "./Hud";
 import { QuestClosed } from "./QuestClosed";
 import { BackgroundFX } from "./BackgroundFX";
@@ -69,6 +70,10 @@ function Quest() {
   }, []);
 
   const Level = LEVELS[state.level] ?? Level0Start;
+
+  // The soundtrack follows the level (calm while typing, louder for the boss) and the sound toggle
+  useEffect(() => music.setLevel(state.level), [state.level]);
+  useEffect(() => music.setEnabled(state.soundOn), [state.soundOn]);
 
   // Warm the next level's code while the player reads this one
   useEffect(() => {

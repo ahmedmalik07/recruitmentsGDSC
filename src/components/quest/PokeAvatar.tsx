@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { m, useAnimationControls } from "framer-motion";
 import { avatarQuips, ui } from "@/content";
+import { music } from "@/lib/music";
 import { Avatar, type AvatarParts } from "./Avatar";
 import { toast } from "./toast";
 import { useInstant } from "./state";
@@ -24,6 +25,7 @@ export function PokeAvatar({
   const pokes = useRef(0);
 
   function poke() {
+    music.sfx("boing");
     toast(avatarQuips[pokes.current % avatarQuips.length]);
     pokes.current += 1;
     if (!instant) {

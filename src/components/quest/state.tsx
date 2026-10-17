@@ -61,6 +61,8 @@ export type QuestState = {
   quizAnswers: (number | null)[];
   startedAt: number | null;
   speedMode: boolean;
+  /** Music and sound effects (the toggle in the top bar) */
+  soundOn: boolean;
   /** Set when the user jumps from Review to edit a level */
   editingFromReview: boolean;
   /** Honeypot, never persisted */
@@ -98,6 +100,7 @@ const initialState: QuestState = {
   quizAnswers: quiz.map(() => null),
   startedAt: null,
   speedMode: false,
+  soundOn: true,
   editingFromReview: false,
   website: "",
   submitted: false,
@@ -106,7 +109,7 @@ const initialState: QuestState = {
 
 type Saved = Pick<
   QuestState,
-  "level" | "maxLevel" | "draft" | "flipped" | "quizAnswers" | "startedAt" | "speedMode"
+  "level" | "maxLevel" | "draft" | "flipped" | "quizAnswers" | "startedAt" | "speedMode" | "soundOn"
 >;
 
 type Action =
@@ -122,6 +125,7 @@ type Action =
   | { type: "flip"; id: string }
   | { type: "answer"; index: number; option: number }
   | { type: "speed"; on: boolean }
+  | { type: "sound"; on: boolean }
   | { type: "honeypot"; value: string }
   | { type: "submitted" }
   | { type: "reset" };
@@ -171,6 +175,7 @@ function reducer(state: QuestState, action: Action): QuestState {
             : initialState.quizAnswers,
         startedAt: typeof s.startedAt === "number" ? s.startedAt : null,
         speedMode: Boolean(s.speedMode),
+        soundOn: s.soundOn !== false,
       };
     }
     case "start":
@@ -180,6 +185,7 @@ function reducer(state: QuestState, action: Action): QuestState {
         ...initialState,
         hydrated: true,
         speedMode: state.speedMode,
+        soundOn: state.soundOn,
         level: 1,
         maxLevel: 1,
         startedAt: Date.now(),
@@ -223,12 +229,14 @@ function reducer(state: QuestState, action: Action): QuestState {
     }
     case "speed":
       return { ...state, speedMode: action.on };
+    case "sound":
+      return { ...state, soundOn: action.on };
     case "honeypot":
       return { ...state, website: action.value };
     case "submitted":
       return { ...state, submitted: true, editingFromReview: false };
     case "reset":
-      return { ...initialState, hydrated: true, speedMode: state.speedMode };
+      return { ...initialState, hydrated: true, speedMode: state.speedMode, soundOn: state.soundOn };
   }
 }
 
@@ -257,7 +265,7 @@ export function QuestProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!state.hydrated) return;
     if (skipSave.current) return;
-    if (state.maxLevel === 0 && !state.speedMode) return;
+    if (state.maxLevel === 0 && !state.speedMode && state.soundOn) return;
     const id = window.setTimeout(() => {
       const saved: Saved = {
         level: state.level,
@@ -267,6 +275,7 @@ export function QuestProvider({ children }: { children: ReactNode }) {
         quizAnswers: state.quizAnswers,
         startedAt: state.startedAt,
         speedMode: state.speedMode,
+        soundOn: state.soundOn,
       };
       writeJSON(STORAGE_KEY, saved);
     }, 300);

@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { introVideo } from "@/content";
+import { music } from "@/lib/music";
 import { IntroStory } from "./IntroStory";
-import { useInstant } from "./state";
+import { useInstant, useQuest } from "./state";
 
 /** Data saver on, or a 2G connection */
 function lowData(): boolean {
@@ -11,13 +12,26 @@ function lowData(): boolean {
   return Boolean(c?.saveData) || /(^|-)2g$/.test(c?.effectiveType ?? "");
 }
 
+/** Play with the soundtrack when sound is on; if the browser refuses, play muted instead */
+function playWithSound(el: HTMLVideoElement, sound: boolean, onFail?: () => void) {
+  el.muted = !sound;
+  el.play().catch(() => {
+    if (el.muted) return onFail?.();
+    el.muted = true;
+    el.play().catch(() => onFail?.());
+  });
+}
+
 /**
- * The council trailer. Nothing downloads until it's on screen (preload="none"), then it plays muted.
+ * The council trailer. Nothing downloads until it's on screen (preload="none"), then it plays,
+ * with its song if sound is on (the background music fades out meanwhile).
  * Speed mode, reduced motion and data saver get the poster and a play button instead.
  * If the video can't play, or they'd rather tap, the HTML story takes its place.
  */
 export function IntroVideo() {
   const instant = useInstant();
+  const { state } = useQuest();
+  const sound = state.soundOn;
   const video = useRef<HTMLVideoElement>(null);
   const [story, setStory] = useState(false);
   const [started, setStarted] = useState(false);
@@ -25,16 +39,25 @@ export function IntroVideo() {
   useEffect(() => {
     const el = video.current;
     if (!el) return;
+    if (!sound) el.muted = true;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) el.pause();
-        else if (!instant && !lowData() && el.currentTime === 0) void el.play().catch(() => {});
+        else if (!instant && !lowData() && el.currentTime === 0) playWithSound(el, sound);
       },
       { threshold: 0.6 },
     );
     io.observe(el);
-    return () => io.disconnect();
-  }, [instant, story]);
+    // Background music steps aside while the video is audible
+    const duck = () => music.duck(!el.paused && !el.ended && !el.muted);
+    const events = ["play", "pause", "ended", "volumechange"] as const;
+    events.forEach((e) => el.addEventListener(e, duck));
+    return () => {
+      io.disconnect();
+      events.forEach((e) => el.removeEventListener(e, duck));
+      music.duck(false);
+    };
+  }, [instant, story, sound]);
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -62,7 +85,7 @@ export function IntroVideo() {
           {!started && (
             <button
               type="button"
-              onClick={() => void video.current?.play().catch(() => setStory(true))}
+              onClick={() => video.current && playWithSound(video.current, sound, () => setStory(true))}
               className="absolute inset-x-0 bottom-[10%] mx-auto flex w-max items-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-extrabold text-white shadow-lg"
             >
               <span aria-hidden="true">▶</span> {introVideo.play}

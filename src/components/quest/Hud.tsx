@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { m } from "framer-motion";
 import { levelNames, ui } from "@/content";
+import { music } from "@/lib/music";
 import { avatarParts } from "./Avatar";
 import { PokeAvatar } from "./PokeAvatar";
 import { useInstant, useQuest } from "./state";
@@ -55,6 +56,22 @@ export function Hud() {
             {xp}
             <span className="sr-only">{ui.xp}</span>
           </m.span>
+          <button
+            type="button"
+            aria-pressed={state.soundOn}
+            onClick={() => {
+              const on = !state.soundOn;
+              dispatch({ type: "sound", on });
+              music.setEnabled(on);
+              // Clicks are the only time browsers allow sound to start
+              if (on) music.start();
+            }}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-line bg-surface text-base"
+            title={state.soundOn ? ui.soundOn : ui.soundOff}
+          >
+            <span aria-hidden="true">{state.soundOn ? "🔊" : "🔇"}</span>
+            <span className="sr-only">{ui.sound}</span>
+          </button>
           <button
             type="button"
             aria-pressed={state.speedMode}

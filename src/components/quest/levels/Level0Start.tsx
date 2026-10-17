@@ -2,18 +2,34 @@
 
 import Image from "next/image";
 import { m } from "framer-motion";
-import { hosts, levelNames, levelStyle, site, titleScreen, type HostId } from "@/content";
+import { hosts, levelNames, levelStyle, site, titleScreen, ui, type HostId } from "@/content";
 import { Button } from "@/components/ui/Button";
+import { music } from "@/lib/music";
 import { HostPhoto } from "../HostPhoto";
 import { NpcChat, say } from "../NpcChat";
 import { QuestHero } from "../QuestHero";
 import { Tilt } from "../Tilt";
+import { toast } from "../toast";
 import { useInstant, useQuest } from "../state";
+
+/** The "music on, tap to mute" tip shows once per visit */
+let soundHintShown = false;
 
 export function Level0Start() {
   const { state, dispatch } = useQuest();
   const instant = useInstant();
   const canResume = state.hydrated && state.maxLevel > 1;
+
+  /** Start the soundtrack with the click (browsers block sound before one) */
+  function begin(action: Parameters<typeof dispatch>[0]) {
+    if (state.soundOn) {
+      music.setEnabled(true);
+      music.start();
+      if (!soundHintShown) toast(ui.soundHint);
+      soundHintShown = true;
+    }
+    dispatch(action);
+  }
 
   return (
     <section className="flex flex-col gap-6 pt-5 pb-6" aria-labelledby="title">
@@ -121,15 +137,15 @@ export function Level0Start() {
       <div className="flex flex-col gap-3">
         {canResume ? (
           <>
-            <Button block onClick={() => dispatch({ type: "go", level: state.maxLevel })} className="min-h-14 text-lg">
+            <Button block onClick={() => begin({ type: "go", level: state.maxLevel })} className="min-h-14 text-lg">
               ▶ {titleScreen.resume(state.maxLevel)}
             </Button>
-            <Button block variant="secondary" onClick={() => dispatch({ type: "restart" })}>
+            <Button block variant="secondary" onClick={() => begin({ type: "restart" })}>
               {titleScreen.restart}
             </Button>
           </>
         ) : (
-          <Button block onClick={() => dispatch({ type: "start" })} className="min-h-14 text-xl">
+          <Button block onClick={() => begin({ type: "start" })} className="min-h-14 text-xl">
             ▶ {titleScreen.start}
           </Button>
         )}
