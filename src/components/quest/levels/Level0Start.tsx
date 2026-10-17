@@ -10,8 +10,6 @@ import { QuestHero } from "../QuestHero";
 import { Tilt } from "../Tilt";
 import { useInstant, useQuest } from "../state";
 
-const FACTS = ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"];
-
 export function Level0Start() {
   const { state, dispatch } = useQuest();
   const instant = useInstant();
@@ -62,7 +60,7 @@ export function Level0Start() {
         </m.h1>
         <p className="text-base text-muted sm:text-lg">{titleScreen.subtitle}</p>
         <ul className="flex flex-wrap gap-2" aria-label="Quick facts">
-          {FACTS.map((f) => (
+          {titleScreen.facts.map((f) => (
             <li key={f} className="rounded-full border-2 border-line bg-surface px-3 py-1 text-sm font-semibold">
               {f}
             </li>

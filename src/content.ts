@@ -131,19 +131,51 @@ export const introStory = {
   slides: [
     { hosts: ["sumaiya", "ahmed", "rafay"], text: "Salam! We're the GDGOC AU council 👋", sub: "Sumaiya · Ahmed · Rafay" },
     { teams: true, text: "5 teams run the chapter", sub: "Every single one matters." },
-    { hosts: ["sumaiya"], text: "Innovation grows when everyone belongs. There's a seat for you here 💛", sub: "Sumaiya, President" },
+    {
+      hosts: ["sumaiya"],
+      backdrop: "/team/sumaiya.jpg",
+      text: "Innovation grows when everyone belongs. There's a seat for you here 💛",
+      sub: "Sumaiya, President",
+    },
     {
       hosts: ["ahmed"],
       backdrop: "/team/ahmed-intro-poster.jpg",
       text: "Pick the team that actually sounds like you, not the one that sounds cool.",
       sub: "Ahmed, Vice President",
     },
-    { hosts: ["rafay"], text: "Then choose your position. Doors are right below 👇", sub: "Rafay, General Secretary" },
+    {
+      hosts: ["rafay"],
+      backdrop: "/team/rafay.jpg",
+      text: "Then choose your position. Doors are right below 👇",
+      sub: "Rafay, General Secretary",
+    },
   ] as ReadonlyArray<{ hosts?: HostId[]; teams?: boolean; backdrop?: string; text: string; sub: string }>,
   secondsPerSlide: 4,
   pause: "Pause",
   play: "Play",
   replay: "Replay",
+};
+
+/**
+ * Level 4 intro video: a 30 s trailer with the council, made in code (no filming needed).
+ * Edit scripts/intro-video/trailer.html and run `node scripts/intro-video/render.mjs` to change it.
+ */
+export const introVideo = {
+  src: "/intro/gdg-quest-intro.mp4",
+  /** Same video for browsers without H.264 */
+  srcWebm: "/intro/gdg-quest-intro.webm",
+  poster: "/intro/poster.jpg",
+  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 30 seconds, no sound",
+  /** Read by screen readers instead of the burned-in text */
+  transcript:
+    "Yeh koi form nahi hai, yeh game hai. Air University, Islamabad: GDG on Campus Air University presents GDG Quest, Recruitment 2026. " +
+    "Sumaiya, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
+    "Abdul Rafay, General Secretary. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
+    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com.",
+  caption: "🎬 30 sec intro with the council",
+  play: "Play intro",
+  showStory: "Tap through it instead",
+  showVideo: "Watch the video instead",
 };
 
 // ---------------------------------------------------------------------------
@@ -158,6 +190,7 @@ export const titleScreen = {
   resume: (level: number) => `Continue from Level ${level}`,
   restart: "Start over",
   joinGroup: "Join the recruitment WhatsApp group for updates",
+  facts: ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"],
   npc: [
     "Hey hey! I'm Sumaiya, President of GDGOC AU 👋",
     "Welcome to GDG Quest. Yeh koi boring form nahi hai, it's a mini game.",
@@ -195,6 +228,17 @@ export const level1 = {
   handover: "Ab tumhara guide Ahmed hai. He'll take it from here. Good luck! ✨",
   ahmedReply: "Shukriya Sumaiya! Chalo, let's meet the council 🚀",
   swipeHint: "Swipe or use the arrows",
+  nextHint: "Swipe through all 3 cards first",
+};
+
+/** Real Air University photos (Level 1 and the hero badge) */
+export const campus = {
+  name: "Air University · Islamabad",
+  photo: "/campus/au-day.jpg",
+  photoSize: { width: 588, height: 210 },
+  photoAlt: "The Air University main building in Islamabad",
+  logo: "/campus/au-logo.jpg",
+  caption: "Home base: Air University, Islamabad",
 };
 
 // ---------------------------------------------------------------------------
@@ -207,7 +251,10 @@ export const level2 = {
       "Ahmed here, your guide for the rest of the quest 🫡",
       "Meet the council first. Tap each card to flip it. All 3, no skipping.",
     ],
+    sumaiya: ["Psst, mine has a Himalayas story in it 🏔️"],
   },
+  nextHint: "Flip all 3 cards to continue",
+  unlocked: (firstName: string) => `${firstName} unlocked`,
   flipHint: "Tap to flip",
   progress: (n: number) => `${n}/3 flipped`,
   linkedin: "Connect on LinkedIn",
@@ -263,8 +310,8 @@ export const level3 = {
 };
 
 /**
- * Department is free text. These only show up as autocomplete suggestions while typing,
- * so candidates can write anything. Add or remove freely.
+ * Department is free text. These show up as tap-to-fill chips and autocomplete while typing,
+ * so candidates can still write anything. Add or remove freely.
  */
 export const departmentSuggestions = [
   "Computer Science",
@@ -510,6 +557,8 @@ export const level4 = {
     "Okay, the big one. Choosing your house 🏠",
     "Watch our quick intro, then pick exactly one door.",
   ],
+  pickDoor: "Pick one door to continue",
+  emblem: (house: string) => `${house} emblem unlocked`,
   doorsTitle: "Pick your door",
   chosen: "Your house",
   positionTitle: "Which position are you applying for?",
@@ -579,7 +628,10 @@ export const level5 = {
     remove: "Remove link",
     kind: "Link type",
     url: "Link",
+    addShort: "+ Add",
+    invalid: "That link doesn't look right",
   },
+  equipped: (item: string) => `${item} equipped`,
   teamRoleLabel: "In a team, you're usually the…",
   hoursLabel: "Hours per week you can give",
   excitedLabel: "What are you excited about? (pick any)",
@@ -609,6 +661,9 @@ export const level6 = {
   correct: ["Sahi jawab! 🎯", "Easy money ✅"],
   wrong: ["Close, but nope 😅", "Oof. Plot twist 🙃"],
   answerWas: "Correct answer:",
+  question: (n: number, total: number) => `Boss question ${n}/${total}`,
+  hit: "Boss hit!",
+  nextHint: "Answer both to continue",
 };
 
 export const quiz = [
@@ -652,6 +707,12 @@ export const level7 = {
   submit: "Submit application",
   submitting: "Submitting…",
   botCheck: "Quick bot check",
+  needBotCheck: "Complete the bot check first.",
+  needConsent: "Tick the consent box to submit",
+  missing: "Missing",
+  nonePicked: "None picked",
+  noneAdded: "None added",
+  notAdded: "Not added",
 };
 
 export const success = {
@@ -714,6 +775,8 @@ export const follow = {
 };
 
 export const errors = {
+  turnstileLoad: "Bot check couldn't load. Check your connection and refresh.",
+  cardFailed: "Couldn't make the card on this device. Try a screenshot instead 📸",
   duplicate: "Is roll no se already apply ho chuka hai. Masla ho to WhatsApp karo",
   closed: "Applications are closed now. The deadline passed.",
   bot: "Bot check failed. Refresh the page and try again.",
@@ -736,6 +799,9 @@ export const ui = {
   skip: "Skip",
   required: "Required",
   optional: "Optional",
+  skipChat: "Skip chat",
+  poke: "Poke your character",
+  pokeTitle: "Poke me",
 };
 
 export const levelNames = [
@@ -752,7 +818,7 @@ export const levelNames = [
 /** Per-level look: badge color (AA with its text color), emoji, and who hosts it */
 export const levelStyle: Record<number, { color: string; solid: string; onSolid: string; emoji: string; hosts: HostId[] }> = {
   1: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "🌍", hosts: ["sumaiya", "ahmed"] },
-  2: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "👑", hosts: ["ahmed"] },
+  2: { color: "#EA4335", solid: "#C5221F", onSolid: "#FFFFFF", emoji: "👑", hosts: ["ahmed", "sumaiya"] },
   3: { color: "#FBBC04", solid: "#FBBC04", onSolid: "#202124", emoji: "🧑‍🎨", hosts: ["rafay", "ahmed"] },
   4: { color: "#34A853", solid: "#188038", onSolid: "#FFFFFF", emoji: "🚪", hosts: ["ahmed"] },
   5: { color: "#4285F4", solid: "#1967D2", onSolid: "#FFFFFF", emoji: "📝", hosts: ["ahmed", "sumaiya"] },

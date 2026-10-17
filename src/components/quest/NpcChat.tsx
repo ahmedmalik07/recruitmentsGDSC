@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
-import { hosts, type HostId } from "@/content";
+import { hosts, ui, type HostId } from "@/content";
 import { HostPhoto } from "./HostPhoto";
 import { useInstant } from "./state";
 
@@ -88,7 +88,7 @@ export function NpcChat({
           onClick={() => setShown(lines.length)}
           className="self-start px-1 text-xs text-muted underline underline-offset-2"
         >
-          Skip chat
+          {ui.skipChat}
         </button>
       )}
     </div>

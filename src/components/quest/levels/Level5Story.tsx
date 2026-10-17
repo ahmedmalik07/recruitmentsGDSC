@@ -151,7 +151,7 @@ export function Level5Story() {
         options={TEAM_ROLES.map((r) => ({ value: r, label: r }))}
         value={d.teamRole}
         onChange={(v) => {
-          if (v !== d.teamRole) toast(`${roleAccessory[v]} equipped`, 10);
+          if (v !== d.teamRole) toast(level5.equipped(roleAccessory[v]), 10);
           set({ teamRole: v });
         }}
         color={house.solid}

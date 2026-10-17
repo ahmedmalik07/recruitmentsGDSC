@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
+import { campus } from "@/content";
 import { useInstant } from "./state";
 
 const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
@@ -67,7 +68,7 @@ export function QuestHero() {
       </svg>
       {show3D && <HeroScene onReady={onReady} />}
       <span className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-extrabold tracking-wide text-ink shadow-sm">
-        🏛️ Air University · Islamabad
+        🏛️ {campus.name}
       </span>
     </div>
   );

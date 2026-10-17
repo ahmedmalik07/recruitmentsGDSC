@@ -1,0 +1,346 @@
+<!doctype html>
+<!--
+  GDG Quest intro video, 1080x1920, 30 s. Rendered frame by frame by render.mjs.
+  Every animation runs on one 30 s timeline, so any frame can be drawn by setting the time.
+  Open this file in Chrome to preview it live.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>GDG Quest intro</title>
+<style>
+  @font-face {
+    font-family: Outfit;
+    src: url(outfit-latin.woff2) format("woff2");
+    font-weight: 100 900;
+  }
+  :root {
+    --blue: #4285f4; --blue-s: #1967d2; --red: #ea4335; --red-s: #c5221f;
+    --yellow: #fbbc04; --green: #34a853; --green-s: #188038;
+    --ink: #1d2a5c; --paper: #fbf8f1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: Outfit, "Noto Color Emoji", sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .abs { position: absolute; }
+  .center { left: 0; right: 0; text-align: center; }
+  .pill { display: inline-block; border-radius: 999px; padding: 18px 40px; font-weight: 800; font-size: 46px; }
+  .round { border-radius: 50%; object-fit: cover; }
+  .bg-photo { position: absolute; inset: -80px; width: calc(100% + 160px); height: calc(100% + 160px); object-fit: cover; filter: blur(34px) saturate(1.2); }
+  .shape { position: absolute; }
+
+  /* top color strip */
+  #strip { position: absolute; top: 0; left: 0; right: 0; height: 16px; display: flex; z-index: 50; }
+  #strip i { flex: 1; }
+  /* wipe between scenes */
+  #wipe { position: absolute; inset: 0; display: flex; z-index: 40; pointer-events: none; }
+  #wipe i { flex: 1; transform: translateY(100%); }
+
+  /* 1. hook */
+  #s1 { background: var(--blue-s); }
+  #s1 .l1 { top: 600px; font-size: 92px; font-weight: 700; line-height: 1.1; }
+  #s1 .l2 { top: 800px; font-size: 180px; font-weight: 900; line-height: 1.05; }
+  #s1 .l2 b { color: var(--yellow); }
+  #s1 .hint { top: 1290px; font-size: 44px; font-weight: 600; opacity: .9; }
+
+  /* 2. Air University */
+  #s2 { background: #0b1f4a; }
+  #s2 .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,31,74,.55), rgba(11,31,74,.85)); }
+  #s2 .aulogo { top: 250px; left: 450px; width: 180px; height: 180px; border-radius: 36px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+  #s2 .h { top: 470px; font-size: 128px; font-weight: 900; letter-spacing: -2px; }
+  #s2 .pin { top: 640px; }
+  #s2 .band { top: 790px; left: 50px; width: 980px; height: 350px; border-radius: 44px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.45); border: 8px solid #fff; }
+  #s2 .band img { width: 100%; height: 100%; object-fit: cover; }
+  #s2 .card { top: 1250px; left: 90px; width: 900px; padding: 46px 50px 40px; background: #fff; border-radius: 40px; text-align: center; color: var(--ink); }
+  #s2 .card img { width: 760px; }
+  #s2 .card p { margin-top: 18px; font-size: 44px; font-weight: 700; }
+
+  /* 3. title */
+  #s3 { background: var(--paper); color: var(--ink); }
+  #s3 .gdg { top: 560px; font-size: 330px; font-weight: 900; letter-spacing: -8px; line-height: 1; }
+  #s3 .gdg span { display: inline-block; }
+  #s3 .quest { top: 900px; font-size: 230px; font-weight: 900; letter-spacing: -6px; line-height: 1; }
+  #s3 .stamp { top: 1200px; }
+  #s3 .facts { top: 1370px; font-size: 50px; font-weight: 700; color: #56608a; }
+
+  /* 4-6. hosts */
+  .host .photo { top: 330px; left: 240px; width: 600px; height: 600px; border: 18px solid #fff; box-shadow: 0 30px 80px rgba(0,0,0,.3); }
+  .host .badge { top: 960px; }
+  .host .badge .pill { background: #fff; font-size: 52px; }
+  .host .name { top: 1090px; font-size: 150px; font-weight: 900; letter-spacing: -3px; line-height: 1; }
+  .host .role { top: 1265px; font-size: 54px; font-weight: 700; opacity: .95; }
+  .host .chip { top: 1370px; }
+  .host .chip span { display: inline-block; background: rgba(255,255,255,.18); border: 4px solid rgba(255,255,255,.6); border-radius: 28px; padding: 16px 34px; font-size: 44px; font-weight: 700; }
+  .host .quote { top: 1500px; left: 90px; right: 90px; font-size: 56px; font-weight: 800; line-height: 1.2; text-align: center; }
+  #s4 { background: linear-gradient(160deg, var(--red-s), var(--red) 70%); }
+  #s4 .badge .pill { color: var(--red-s); }
+  #s5 { background: linear-gradient(160deg, var(--blue-s), var(--blue) 70%); }
+  #s5 .badge .pill { color: var(--blue-s); }
+  #s6 { background: linear-gradient(160deg, var(--green-s), var(--green) 70%); }
+  #s6 .badge .pill { color: var(--green-s); }
+
+  /* 7. teams */
+  #s7 { background: var(--paper); color: var(--ink); }
+  #s7 .h { top: 250px; font-size: 120px; font-weight: 900; letter-spacing: -3px; }
+  #s7 .sub { top: 400px; font-size: 48px; font-weight: 600; color: #56608a; }
+  #s7 .team { left: 70px; width: 940px; height: 200px; border-radius: 40px; padding: 0 50px; color: #fff; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 16px 40px rgba(29,42,92,.18); }
+  #s7 .team b { font-size: 62px; font-weight: 800; line-height: 1.1; }
+  #s7 .team span { font-size: 38px; font-weight: 600; opacity: .9; margin-top: 6px; }
+
+  /* 8. vibes */
+  #s8 { background: #0b1020; }
+  #s8 .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,12,30,.55), rgba(8,12,30,.88)); }
+  #s8 .w { left: 0; right: 0; text-align: center; font-size: 170px; font-weight: 900; letter-spacing: -4px; line-height: 1; }
+  #s8 .chips { top: 1240px; left: 60px; right: 60px; display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
+  #s8 .chips span { border-radius: 999px; padding: 20px 40px; font-size: 48px; font-weight: 800; }
+
+  /* 9. call to action */
+  #s9 { background: var(--paper); color: var(--ink); }
+  #s9 .trio { top: 300px; left: 0; right: 0; height: 460px; }
+  #s9 .trio img { position: absolute; border: 14px solid #fff; box-shadow: 0 24px 60px rgba(29,42,92,.25); }
+  #s9 .h { top: 830px; font-size: 128px; font-weight: 900; letter-spacing: -3px; line-height: 1.02; }
+  #s9 .url { top: 1150px; }
+  #s9 .url .pill { background: var(--ink); color: #fff; font-size: 66px; padding: 30px 60px; }
+  #s9 .facts { top: 1330px; font-size: 48px; font-weight: 700; color: #56608a; }
+  #s9 .logo { top: 1500px; left: 190px; width: 700px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="strip"><i style="background:#4285f4"></i><i style="background:#ea4335"></i><i style="background:#fbbc04"></i><i style="background:#34a853"></i></div>
+
+  <!-- 1. Hook -->
+  <section class="scene" id="s1">
+    <div class="shape" data-burst style="left:470px;top:960px;width:120px;height:120px;border-radius:50%;background:var(--yellow)"></div>
+    <div class="shape" data-burst style="left:480px;top:960px;width:110px;height:110px;border-radius:24px;background:var(--red)"></div>
+    <div class="shape" data-burst style="left:490px;top:960px;width:100px;height:100px;border-radius:50%;background:var(--green)"></div>
+    <div class="shape" data-burst style="left:500px;top:960px;width:80px;height:80px;border-radius:50%;background:var(--yellow)"></div>
+    <div class="shape" data-burst style="left:470px;top:960px;width:100px;height:100px;border-radius:22px;background:var(--green)"></div>
+    <p class="abs center l1">Yeh koi form nahi hai…</p>
+    <p class="abs center l2">yeh <b>GAME</b><br />hai 🎮</p>
+    <p class="abs center hint">GDG on Campus Air University recruitment</p>
+  </section>
+
+  <!-- 2. Air University -->
+  <section class="scene" id="s2">
+    <img class="bg-photo" src="../../public/campus/au-day.jpg" alt="" />
+    <div class="shade"></div>
+    <img class="abs aulogo" src="../../public/campus/au-logo.jpg" alt="" />
+    <p class="abs center h">Air University</p>
+    <p class="abs center pin"><span class="pill" style="background:#fff;color:var(--ink)">📍 Islamabad</span></p>
+    <div class="abs band"><img src="../../public/campus/au-day.jpg" alt="" /></div>
+    <div class="abs card">
+      <img src="../../public/brand/gdgoc-au-logo.png" alt="" />
+      <p>presents</p>
+    </div>
+  </section>
+
+  <!-- 3. Title -->
+  <section class="scene" id="s3">
+    <div class="shape" data-float style="left:90px;top:300px;width:110px;height:110px;border-radius:50%;background:var(--blue)"></div>
+    <div class="shape" data-float style="left:860px;top:360px;width:120px;height:120px;border-radius:28px;background:var(--red);transform:rotate(14deg)"></div>
+    <div class="shape" data-float style="left:120px;top:1600px;width:130px;height:130px;border-radius:50%;border:22px solid var(--green)"></div>
+    <div class="shape" data-float style="left:840px;top:1560px;width:100px;height:100px;border-radius:22px;background:var(--yellow)"></div>
+    <p class="abs center gdg"><span style="color:var(--blue)">G</span><span style="color:var(--red)">D</span><span style="color:var(--green-s)">G</span></p>
+    <p class="abs center quest">QUEST</p>
+    <p class="abs center stamp"><span class="pill" style="background:var(--red-s);color:#fff;font-size:58px">Recruitment 2026</span></p>
+    <p class="abs center facts">7 levels · ~5 minutes · no sign-in</p>
+  </section>
+
+  <!-- 4. Sumaiya -->
+  <section class="scene host" id="s4">
+    <img class="abs photo round" src="../../public/team/sumaiya.jpg" alt="" />
+    <p class="abs center badge"><span class="pill">👑 President</span></p>
+    <p class="abs center name">Sumaiya</p>
+    <p class="abs center role">Debater · writer · mentor</p>
+    <p class="abs center chip"><span>Top 5, national wilderness leadership camp</span></p>
+    <p class="abs quote">“Innovation grows when everyone belongs.”</p>
+  </section>
+
+  <!-- 5. Ahmed -->
+  <section class="scene host" id="s5">
+    <img class="abs photo round" src="../../public/team/ahmed-card.jpg" alt="" />
+    <p class="abs center badge"><span class="pill">⭐ Vice President · Your guide</span></p>
+    <p class="abs center name">Ahmed Malik</p>
+    <p class="abs center role">Founder, Wyibe</p>
+    <p class="abs center chip"><span>4× National Hackathon Winner</span></p>
+    <p class="abs quote">“I built this quest. I’ll guide you through every level.”</p>
+  </section>
+
+  <!-- 6. Rafay -->
+  <section class="scene host" id="s6">
+    <img class="abs photo round" src="../../public/team/rafay.jpg" alt="" />
+    <p class="abs center badge"><span class="pill">📜 General Secretary</span></p>
+    <p class="abs center name">Abdul Rafay</p>
+    <p class="abs center role">AI researcher · calligrapher</p>
+    <p class="abs center chip"><span>International Gold Medalist Calligrapher</span></p>
+    <p class="abs quote">“From calligraphy qalam to Python notebook.”</p>
+  </section>
+
+  <!-- 7. Teams -->
+  <section class="scene" id="s7">
+    <p class="abs center h">Pick your house</p>
+    <p class="abs center sub">5 teams. Leads, co-leads and members.</p>
+    <div class="abs team" style="top:540px;background:var(--blue-s)"><b>💻 Technical</b><span>Lead · Co-lead · Member</span></div>
+    <div class="abs team" style="top:780px;background:var(--yellow);color:#202124"><b>📣 Marketing & Partnerships</b><span>Lead · Co-lead · Member</span></div>
+    <div class="abs team" style="top:1020px;background:var(--red-s)"><b>🎨 Creatives</b><span>Photographer · Videographer · Graphics</span></div>
+    <div class="abs team" style="top:1260px;background:#8430ce"><b>🎬 Media</b><span>Lead · Member</span></div>
+    <div class="abs team" style="top:1500px;background:var(--green-s)"><b>🛠️ Operations</b><span>Lead · Co-lead · Member</span></div>
+  </section>
+
+  <!-- 8. Vibes -->
+  <section class="scene" id="s8">
+    <img class="bg-photo" src="../../public/campus/au-night.jpg" alt="" style="filter:blur(26px) saturate(1.3)" />
+    <div class="shade"></div>
+    <p class="abs w" style="top:420px;color:var(--blue)">Build.</p>
+    <p class="abs w" style="top:620px;color:var(--red)">Learn.</p>
+    <p class="abs w" style="top:820px;color:var(--yellow)">Belong.</p>
+    <div class="abs chips">
+      <span style="background:var(--blue-s)">Hackathons</span>
+      <span style="background:var(--red-s)">Workshops</span>
+      <span style="background:var(--yellow);color:#202124">Baithaqs</span>
+      <span style="background:var(--green-s)">Events</span>
+      <span style="background:#8430ce">Networking</span>
+      <span style="background:#fff;color:var(--ink)">Google tech</span>
+    </div>
+  </section>
+
+  <!-- 9. Call to action -->
+  <section class="scene" id="s9">
+    <div class="abs trio">
+      <img class="round" data-trio src="../../public/team/sumaiya.jpg" alt="" style="left:110px;top:90px;width:330px;height:330px;border-color:#fff;outline:10px solid var(--red)" />
+      <img class="round" data-trio src="../../public/team/rafay.jpg" alt="" style="left:640px;top:90px;width:330px;height:330px;outline:10px solid var(--green)" />
+      <img class="round" data-trio src="../../public/team/ahmed-card.jpg" alt="" style="left:335px;top:0;width:410px;height:410px;outline:10px solid var(--blue)" />
+    </div>
+    <p class="abs center h">Your quest<br />starts now</p>
+    <p class="abs center url"><span class="pill">recruitments.wyibe.com</span></p>
+    <p class="abs center facts">No sign-in · ~5 minutes · all AU students</p>
+    <img class="abs logo" src="../../public/brand/gdgoc-au-logo.png" alt="" />
+  </section>
+
+  <div id="wipe"><i style="background:#4285f4"></i><i style="background:#ea4335"></i><i style="background:#fbbc04"></i><i style="background:#34a853"></i></div>
+</div>
+
+<script>
+  const TOTAL = 30;
+  const CUTS = [2.9, 6.1, 8.9, 12.8, 17.0, 20.8, 24.6, 27.2];
+  const SCENES = ["#s1", "#s2", "#s3", "#s4", "#s5", "#s6", "#s7", "#s8", "#s9"];
+  const OUT = "cubic-bezier(.2,.8,.2,1)";
+  const POP = "cubic-bezier(.34,1.56,.64,1)";
+  const $ = (s, root = document) => [...root.querySelectorAll(s)];
+
+  /** One animation per element over the whole timeline. frames: [time, props, easing?] */
+  function tl(els, frames) {
+    for (const el of [].concat(els)) {
+      const kf = [];
+      const clamp = (t) => Math.min(Math.max(t / TOTAL, 0), 1);
+      if (frames[0][0] > 0) kf.push({ offset: 0, ...frames[0][1] });
+      for (const [t, props, ease] of frames) kf.push({ offset: clamp(t), easing: ease || OUT, ...props });
+      if (frames[frames.length - 1][0] < TOTAL) kf.push({ offset: 1, ...frames[frames.length - 1][1] });
+      el.animate(kf, { duration: TOTAL * 1000, fill: "both" });
+    }
+  }
+  /** Enter at t from `from` and stay */
+  function enter(els, t, from, { d = 0.5, ease = OUT, to = "translate(0,0) scale(1) rotate(0deg)" } = {}) {
+    tl(els, [[t, { opacity: 0, transform: from }, ease], [t + d, { opacity: 1, transform: to }]]);
+  }
+
+  // Scenes: hard cuts hidden under the wipe
+  SCENES.forEach((sel, i) => {
+    const start = i === 0 ? 0 : CUTS[i - 1];
+    const end = i === SCENES.length - 1 ? TOTAL : CUTS[i];
+    const f = [];
+    if (start > 0) f.push([start - 0.001, { opacity: 0 }], [start, { opacity: 1 }]);
+    else f.push([0, { opacity: 1 }]);
+    if (end < TOTAL) f.push([end, { opacity: 1 }], [end + 0.001, { opacity: 0 }]);
+    tl($(sel), f);
+  });
+
+  // Wipe: four Google-color bars sweep up over every cut
+  $("#wipe i").forEach((bar, k) => {
+    const f = [[0, { transform: "translateY(100%)" }]];
+    for (const c of CUTS) {
+      const s = k * 0.035;
+      f.push([c - 0.3 + s, { transform: "translateY(100%)" }, "cubic-bezier(.6,0,.4,1)"]);
+      f.push([c - 0.02 + s, { transform: "translateY(0%)" }, "cubic-bezier(.6,0,.4,1)"]);
+      f.push([c + 0.26 + s, { transform: "translateY(-100%)" }]);
+      f.push([c + 0.261 + s, { transform: "translateY(100%)" }]);
+    }
+    tl(bar, f);
+  });
+
+  // 1. Hook
+  enter($("#s1 .l1"), 0.15, "translateY(80px)");
+  tl($("#s1 .l2"), [[1.0, { opacity: 0, transform: "scale(.4) rotate(-6deg)" }, POP], [1.45, { opacity: 1, transform: "scale(1) rotate(0deg)" }], [2.9, { opacity: 1, transform: "scale(1.08) rotate(0deg)" }]]);
+  enter($("#s1 .hint"), 1.7, "translateY(40px)");
+  $("#s1 [data-burst]").forEach((el, i) => {
+    const a = (i / 5) * Math.PI * 2 + 0.9;
+    const r = 430 + (i % 2) * 120;
+    tl(el, [[1.05, { opacity: 0, transform: "translate(0,0) scale(.2) rotate(0deg)" }], [1.12, { opacity: 1, transform: "translate(0,0) scale(.6) rotate(0deg)" }],
+      [1.9, { opacity: 1, transform: `translate(${Math.cos(a) * r}px,${Math.sin(a) * r * 1.4}px) scale(1) rotate(${90 + i * 40}deg)` }],
+      [2.9, { opacity: 1, transform: `translate(${Math.cos(a) * r * 1.08}px,${Math.sin(a) * r * 1.5}px) scale(1) rotate(${140 + i * 40}deg)` }]]);
+  });
+
+  // 2. Air University
+  const s2 = 2.9;
+  tl($("#s2 .band img"), [[s2, { transform: "scale(1.04)" }, "linear"], [6.1, { transform: "scale(1.2) translateX(-3%)" }]]);
+  enter($("#s2 .aulogo"), s2 + 0.2, "translateY(-60px) scale(.6)", { ease: POP });
+  enter($("#s2 .h"), s2 + 0.35, "translateY(60px)");
+  enter($("#s2 .pin"), s2 + 0.55, "scale(.6)", { ease: POP });
+  enter($("#s2 .band"), s2 + 0.4, "translateY(120px) scale(.92)", { d: 0.6 });
+  enter($("#s2 .card"), s2 + 1.3, "translateY(160px)", { d: 0.6 });
+
+  // 3. Title
+  const s3 = 6.1;
+  $("#s3 .gdg span").forEach((el, i) => enter(el, s3 + 0.15 + i * 0.14, "translateY(-420px) rotate(-12deg)", { ease: POP, d: 0.55 }));
+  enter($("#s3 .quest"), s3 + 0.65, "translateY(140px) scale(.9)", { d: 0.5 });
+  tl($("#s3 .stamp"), [[s3 + 1.15, { opacity: 0, transform: "scale(2.2) rotate(-14deg)" }, POP], [s3 + 1.5, { opacity: 1, transform: "scale(1) rotate(-4deg)" }]]);
+  enter($("#s3 .facts"), s3 + 1.7, "translateY(40px)");
+  $("#s3 [data-float]").forEach((el, i) =>
+    tl(el, [[s3, { opacity: 0, transform: "translateY(60px) rotate(0deg)" }], [s3 + 0.5, { opacity: 1, transform: "translateY(0px) rotate(0deg)" }], [8.9, { opacity: 1, transform: `translateY(-50px) rotate(${i % 2 ? 40 : -40}deg)` }, "linear"]]));
+
+  // 4-6. Hosts
+  [["#s4", 8.9, 12.8], ["#s5", 12.8, 17.0], ["#s6", 17.0, 20.8]].forEach(([s, t, end]) => {
+    tl($(`${s} .photo`), [[t + 0.05, { opacity: 0, transform: "scale(.5) rotate(-10deg)" }, POP], [t + 0.6, { opacity: 1, transform: "scale(1) rotate(0deg)" }, "linear"], [end, { opacity: 1, transform: "scale(1.06) rotate(2deg)" }]]);
+    enter($(`${s} .badge`), t + 0.45, "translateY(30px) scale(.5)", { ease: POP });
+    enter($(`${s} .name`), t + 0.6, "translateX(-220px)", { d: 0.45 });
+    enter($(`${s} .role`), t + 0.85, "translateX(220px)", { d: 0.45 });
+    enter($(`${s} .chip`), t + 1.15, "translateY(40px)");
+    enter($(`${s} .quote`), t + 1.6, "translateY(50px)", { d: 0.55 });
+  });
+
+  // 7. Teams
+  const s7 = 20.8;
+  enter($("#s7 .h"), s7 + 0.15, "translateY(-60px)");
+  enter($("#s7 .sub"), s7 + 0.4, "translateY(30px)");
+  $("#s7 .team").forEach((el, i) => enter(el, s7 + 0.55 + i * 0.22, `translateX(${i % 2 ? 1100 : -1100}px) rotate(${i % 2 ? 6 : -6}deg)`, { d: 0.5 }));
+
+  // 8. Vibes
+  const s8 = 24.6;
+  tl($("#s8 .bg-photo"), [[s8, { transform: "scale(1)" }, "linear"], [27.2, { transform: "scale(1.15)" }]]);
+  $("#s8 .w").forEach((el, i) => enter(el, s8 + 0.15 + i * 0.3, "translateY(80px) scale(.8)", { ease: POP }));
+  $("#s8 .chips span").forEach((el, i) => enter(el, s8 + 1.1 + i * 0.12, "scale(0) rotate(-20deg)", { ease: POP, d: 0.4 }));
+
+  // 9. Call to action
+  const s9 = 27.2;
+  $("#s9 [data-trio]").forEach((el, i) => enter(el, s9 + 0.1 + i * 0.15, "translateY(260px) scale(.6)", { ease: POP, d: 0.5 }));
+  enter($("#s9 .h"), s9 + 0.45, "translateY(70px)");
+  tl($("#s9 .url"), [[s9 + 0.8, { opacity: 0, transform: "scale(.6)" }, POP], [s9 + 1.2, { opacity: 1, transform: "scale(1)" }],
+    [s9 + 1.7, { opacity: 1, transform: "scale(1.07)" }], [s9 + 2.2, { opacity: 1, transform: "scale(1)" }], [s9 + 2.7, { opacity: 1, transform: "scale(1.07)" }]]);
+  enter($("#s9 .facts"), s9 + 1.1, "translateY(30px)");
+  enter($("#s9 .logo"), s9 + 1.3, "translateY(40px)");
+
+  /** render.mjs calls this for every frame */
+  window.seek = (t) => document.getAnimations().forEach((a) => { a.pause(); a.currentTime = t * 1000; });
+  window.TOTAL = TOTAL;
+  window.ready = Promise.all([document.fonts.ready, ...$("img").map((i) => i.decode().catch(() => {}))]);
+  // Live preview when opened directly in a browser
+  if (!navigator.webdriver) {
+    const t0 = performance.now();
+    (function loop() { window.seek(((performance.now() - t0) / 1000) % TOTAL); requestAnimationFrame(loop); })();
+  }
+</script>
+</body>
+</html>

@@ -16,7 +16,7 @@ export function Level6Boss() {
       chatId="l6"
       chat={[...say("rafay", level6.npc), ...say("ahmed", level6.npcAhmed)]}
       canNext={answeredAll}
-      nextHint="Answer both to continue"
+      nextHint={level6.nextHint}
     >
       {quiz.map((q, qi) => {
         const picked = state.quizAnswers[qi];
@@ -25,7 +25,7 @@ export function Level6Boss() {
         return (
           <fieldset key={qi} className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-4">
             <legend className="sr-only">Question {qi + 1}</legend>
-            <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">Boss question {qi + 1}/{quiz.length}</p>
+            <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">{level6.question(qi + 1, quiz.length)}</p>
             <p className="text-lg leading-snug font-bold">{q.question}</p>
             <div className="flex flex-col gap-2">
               {q.options.map((opt, oi) => {
@@ -39,7 +39,7 @@ export function Level6Boss() {
                     aria-pressed={isPicked}
                     onClick={() => {
                       dispatch({ type: "answer", index: qi, option: oi });
-                      if (oi === q.answer) toast("Boss hit!", 20);
+                      if (oi === q.answer) toast(level6.hit, 20);
                     }}
                     className={cn(
                       "min-h-12 rounded-2xl border-[1.5px] px-4 text-left text-[15px] font-medium transition-colors disabled:cursor-default",

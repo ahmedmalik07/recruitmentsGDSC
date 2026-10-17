@@ -22,16 +22,16 @@ export function Level2Council() {
     setFaceUp((f) => ({ ...f, [id]: !f[id] }));
     if (!state.flipped.includes(id)) {
       dispatch({ type: "flip", id });
-      toast(`${hosts[id].firstName} unlocked`, 10);
+      toast(level2.unlocked(hosts[id].firstName), 10);
     }
   }
 
   return (
     <LevelShell
       chatId="l2"
-      chat={say("ahmed", level2.npc.ahmed)}
+      chat={[...say("ahmed", level2.npc.ahmed), ...say("sumaiya", level2.npc.sumaiya)]}
       canNext={flippedCount === 3}
-      nextHint="Flip all 3 cards to continue"
+      nextHint={level2.nextHint}
     >
       <p className="text-sm font-semibold text-muted" aria-live="polite">
         {level2.progress(flippedCount)}

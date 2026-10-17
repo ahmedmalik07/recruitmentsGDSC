@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { m, useAnimationControls } from "framer-motion";
-import { avatarQuips } from "@/content";
+import { avatarQuips, ui } from "@/content";
 import { Avatar, type AvatarParts } from "./Avatar";
 import { toast } from "./toast";
 import { useInstant } from "./state";
@@ -39,8 +39,8 @@ export function PokeAvatar({
     <button
       type="button"
       onClick={poke}
-      aria-label="Poke your character"
-      title="Poke me"
+      aria-label={ui.poke}
+      title={ui.pokeTitle}
       className={`cursor-pointer rounded-full ${className ?? ""}`}
     >
       <m.span animate={controls} className="block">

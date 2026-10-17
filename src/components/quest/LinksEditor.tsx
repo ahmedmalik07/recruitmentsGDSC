@@ -19,7 +19,7 @@ export const linkInputId = (i: number) => `f-link-${i}`;
 export function linkRowError(link: PortfolioLink): string | undefined {
   const url = link.url.trim();
   if (!url) return undefined;
-  return isHttpUrl(normalizeLink(link.kind, url)) ? undefined : "That link doesn't look right";
+  return isHttpUrl(normalizeLink(link.kind, url)) ? undefined : level5.links.invalid;
 }
 
 /**
@@ -139,7 +139,7 @@ export function LinksEditor({ links, house, showErrors, touched, onChange, onBlu
 
       {!full && (
         <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={level5.links.add}>
-          <span className="mr-0.5 text-xs font-bold tracking-wide text-muted uppercase">+ Add</span>
+          <span className="mr-0.5 text-xs font-bold tracking-wide text-muted uppercase">{level5.links.addShort}</span>
           {order.map((k) => (
             <button
               key={k}

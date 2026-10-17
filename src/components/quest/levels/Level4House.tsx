@@ -5,7 +5,7 @@ import { DOMAIN_IDS, domains, level4, type DomainId } from "@/content";
 import { fieldErrors, houseSchema } from "@/lib/schema";
 import { ChipMulti, ChipRadio } from "@/components/ui/Chips";
 import { Avatar, avatarParts } from "../Avatar";
-import { IntroStory } from "../IntroStory";
+import { IntroVideo } from "../IntroVideo";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, say } from "../NpcChat";
 import { Tilt } from "../Tilt";
@@ -21,7 +21,7 @@ export function Level4House() {
   const doorRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   function pick(id: DomainId) {
-    if (d.domain !== id) toast(`${domains[id].house} emblem unlocked`, 10);
+    if (d.domain !== id) toast(level4.emblem(domains[id].house), 10);
     set({ domain: id });
     setError(undefined);
   }
@@ -41,7 +41,7 @@ export function Level4House() {
     if (r.success) return true;
     const errs = fieldErrors(r.error);
     if (errs.domain) {
-      setError("Pick one door to continue");
+      setError(level4.pickDoor);
       doorRefs.current[0]?.focus();
     } else if (errs.position) {
       setPositionError(errs.position);
@@ -55,7 +55,7 @@ export function Level4House() {
 
   return (
     <LevelShell chatId="l4" chat={say("ahmed", level4.npc)} onNext={onNext}>
-      <IntroStory />
+      <IntroVideo />
 
       <div className="flex flex-col gap-3">
         <h2 id="doors-label" className="text-lg font-bold">

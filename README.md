@@ -32,13 +32,31 @@ Assets (keep the filenames, or update the paths in `content.ts`):
 |---|---|
 | `public/team/sumaiya.jpg`, `ahmed.jpg`, `rafay.jpg` | Square photos used everywhere |
 | `public/team/ahmed-card.jpg` | Bigger portrait on Ahmed's council card |
-| `public/team/ahmed-intro-poster.jpg` | Backdrop of one intro story slide |
+| `public/team/ahmed-intro-poster.jpg` | Backdrop of Ahmed's slide in the tap-through story |
 | `public/brand/gdgoc-au-logo.png` | Chapter wordmark (title screen, share card) |
 | `public/brand/gdgoc-au-full.png`, `gdgoc-au-art.png` | AU building artwork (desktop sidebar) |
 | `src/app/icon.png`, `apple-icon.png` | Favicon and home-screen icon (GDG chevrons) |
+| `public/campus/au-day.jpg`, `au-night.jpg`, `au-logo.jpg` | Real Air University photos (Level 1 card, intro video) |
+| `public/intro/gdg-quest-intro.mp4`, `poster.jpg` | The Level 4 intro video (generated, see below) |
 
-There is no recorded video: Level 4 opens with an Instagram-style story starring the council (5 slides,
-tap to skip, hold to pause), so nothing has to be filmed.
+### Intro video (no filming needed)
+
+Level 4 plays a 30 second vertical trailer: a "yeh GAME hai" hook, Air University, the GDG Quest title,
+Sumaiya, Ahmed and Rafay each with their photo, badge and a line, the 5 teams, and the call to action.
+It's made in code: `scripts/intro-video/trailer.html` is the scene (open it in Chrome to preview it live),
+and `render.mjs` draws it frame by frame and encodes it with ffmpeg:
+
+```bash
+npm i -D playwright && npx playwright install chromium   # once
+node scripts/intro-video/render.mjs --stills 4,10,15     # quick PNG checks
+node scripts/intro-video/render.mjs                      # full render, about 3 minutes
+```
+
+It writes the small web version (`public/intro/`, about 1 MB) and a full-quality 1080x1920 copy for
+Instagram Reels and WhatsApp status in `scripts/intro-video/out/` (not committed). The video has no sound,
+so add a trending audio track when posting. On the site it loads only when scrolled into view, plays muted,
+and stays paused in speed mode, with reduced motion or on data saver. "Tap through it instead" switches to
+the HTML story version.
 
 ## 2. Run it locally
 
@@ -185,10 +203,10 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 | Level | Host | |
 |---|---|---|
 | 0 Press Start | Sumaiya + Ahmed | Title screen with the 3D AU building. Returning players get "Continue from Level N" |
-| 1 Welcome to GDG | Sumaiya → Ahmed | 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
-| 2 Meet the Council | Ahmed | 3 equal flip cards: Sumaiya (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
+| 1 Welcome to GDG | Sumaiya → Ahmed | Air University photo, 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
+| 2 Meet the Council | Ahmed + Sumaiya | 3 equal flip cards: Sumaiya (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
 | 3 Build your Character | Abdul Rafay | Personal info, department with tap-to-fill suggestions. Each valid field unlocks an avatar part |
-| 4 Choose your House | Ahmed | Council intro story, 5 doors (teams), the position they're applying for, optional skills |
+| 4 Choose your House | Ahmed | 30 sec intro video with the council, 5 doors (teams), the position they're applying for, optional skills |
 | 5 Your Story | Ahmed + Sumaiya | Experience, achievements, why GDGOC AU, up to 4 portfolio links, quick taps |
 | 6 Boss Check | Abdul Rafay | 2 MCQs, just for fun (score stored, not used for selection) |
 | 7 Review + Loot | All 3 | Character sheet, consent, Turnstile, submit, confetti, shareable 1080x1920 card |
@@ -204,8 +222,8 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
   department → jersey color, house → emblem, team role → accessory.
 - **Duplicate roll numbers:** the API uses Firestore `create()` on `applications/{rollNo}`, so a second attempt
   gets "Is roll no se already apply ho chuka hai…" plus a WhatsApp button.
-- **Department** is free text (candidates write it themselves); `departmentSuggestions` in `content.ts` only
-  powers autocomplete. The admin Department filter matches by "contains".
+- **Department** is free text (candidates write it themselves); `departmentSuggestions` in `content.ts` shows up
+  as tap-to-fill chips and autocomplete. The admin Department filter matches by "contains".
 - **Deadline is optional.** Leave `NEXT_PUBLIC_APPLICATIONS_DEADLINE` empty and applications stay open.
   Once set and passed, the quest shows "Quest closed" and the API returns 403.
 
@@ -295,7 +313,7 @@ position they get (`assignedPosition`), so a Lead applicant can be selected as C
   It pauses when off-screen or the tab is hidden.
 - Firebase (auth only) loads only on `/admin`; html-to-image and confetti load on demand;
   Turnstile loads only on Level 7.
-- The Level 4 intro story is plain HTML and CSS (no video download).
+- The Level 4 intro video is about 1 MB and downloads only when it scrolls into view (`preload="none"`).
 - Outfit is self-hosted via `next/font`. Team photos go through `next/image`.
 
 ## 5. Project layout

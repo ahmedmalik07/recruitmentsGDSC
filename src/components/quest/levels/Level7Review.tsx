@@ -102,7 +102,7 @@ export function Level7Review() {
     if (!local.success) {
       const fields = fieldErrors(local.error);
       if (Object.keys(fields).length === 1 && fields.turnstileToken) {
-        showProblem({ code: "bot", message: "Complete the bot check first." });
+        showProblem({ code: "bot", message: level7.needBotCheck });
       } else {
         showProblem({ code: "validation", message: errorCopy.validation, fields });
       }
@@ -193,19 +193,19 @@ export function Level7Review() {
         <Section title={level7.sections.house} onEdit={() => edit(4)}>
           <Row label="House" value={house ? `${house.house} (${house.label})` : ""} />
           <Row label="Position" value={positionLabel(d.domain, d.position)} />
-          <Row label="Skills" value={d.skillTags.join(", ") || "None picked"} />
+          <Row label="Skills" value={d.skillTags.join(", ") || level7.nonePicked} />
         </Section>
 
         <Section title={level7.sections.story} onEdit={() => edit(5)}>
           <Row label="Experience" value={d.experience} long />
-          <Row label="Achievements" value={d.achievements || "None added"} long />
+          <Row label="Achievements" value={d.achievements || level7.noneAdded} long />
           <Row label="Why GDGOC AU" value={d.whyJoin} long />
           <Row
             label={level5.links.label}
             value={
               filledLinks(d.links)
                 .map((l) => `${linkKinds[l.kind].icon} ${l.url}`)
-                .join("\n") || "Not added"
+                .join("\n") || level7.notAdded
             }
             long
           />
@@ -215,7 +215,7 @@ export function Level7Review() {
           <Row label="Team role" value={d.teamRole ?? ""} />
           <Row label="Hours / week" value={d.hoursPerWeek ? hoursLabels[d.hoursPerWeek] : ""} />
           <Row label="Excited about" value={d.excitedAbout.join(", ")} />
-          <Row label={level5.funFactLabel.replace(" (optional)", "")} value={d.funFact || "Not added"} />
+          <Row label={level5.funFactLabel.replace(" (optional)", "")} value={d.funFact || level7.notAdded} />
           <Row label="Boss check" value={`${quizScore}/2`} />
         </Section>
       </article>
@@ -278,7 +278,7 @@ export function Level7Review() {
           {sending ? level7.submitting : `🚀 ${level7.submit}`}
         </Button>
       </div>
-      {!consent && <p className="-mt-3 text-center text-xs text-muted">Tick the consent box to submit</p>}
+      {!consent && <p className="-mt-3 text-center text-xs text-muted">{level7.needConsent}</p>}
     </LevelShell>
   );
 }
@@ -313,7 +313,7 @@ function Row({ label, value, long }: { label: string; value: string; long?: bool
             : "min-w-0 text-right text-[15px] font-medium break-words"
         }
       >
-        {value || <span className="text-danger">Missing</span>}
+        {value || <span className="text-danger">{level7.missing}</span>}
       </dd>
     </div>
   );

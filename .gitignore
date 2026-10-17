@@ -46,3 +46,6 @@ next-env.d.ts
 .firebase/
 .firebaserc
 gdg-quest-source.zip
+
+# Intro video render output (frames and the full-size copy)
+/scripts/intro-video/out/

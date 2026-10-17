@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { errors } from "@/content";
 
 type TurnstileApi = {
   render: (el: HTMLElement, opts: Record<string, unknown>) => string;
@@ -106,7 +107,7 @@ export const Turnstile = forwardRef<TurnstileHandle, { onToken: (t: string | nul
         <div ref={el} className="min-h-[1px]" />
         {failed && (
           <p role="alert" className="text-sm text-danger">
-            Bot check couldn&apos;t load. Check your connection and refresh.
+            {errors.turnstileLoad}
           </p>
         )}
       </div>

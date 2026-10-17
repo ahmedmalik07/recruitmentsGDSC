@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { domains, site, success } from "@/content";
+import { domains, errors, site, success } from "@/content";
 import { Button } from "@/components/ui/Button";
 import { Avatar, type AvatarParts } from "./Avatar";
 
@@ -49,7 +49,7 @@ export function ApplicantCard({ parts }: { parts: AvatarParts }) {
       }
       download(blob);
     } catch {
-      setError("Couldn't make the card on this device. Try a screenshot instead 📸");
+      setError(errors.cardFailed);
     } finally {
       setBusy(false);
     }
@@ -61,7 +61,7 @@ export function ApplicantCard({ parts }: { parts: AvatarParts }) {
     try {
       download(await makeBlob());
     } catch {
-      setError("Couldn't make the card on this device. Try a screenshot instead 📸");
+      setError(errors.cardFailed);
     } finally {
       setBusy(false);
     }

@@ -7,10 +7,12 @@
  *   npx tsx scripts/set-claims.ts --list
  *
  * The person must have signed in to /admin once (so their Firebase Auth user exists).
- * Reads FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY from .env.local.
+ * Reads the same credentials as the site from .env.local: FIREBASE_SERVICE_ACCOUNT (the whole key JSON)
+ * or FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY.
  */
 import { cert, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { readServiceAccount } from "../src/lib/server/serviceAccount";
 
 const DOMAINS = ["technical", "marketing_partnerships", "creatives", "media", "ops"] as const;
 
@@ -34,13 +36,13 @@ function fail(msg: string): never {
 }
 
 async function main() {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-  if (!projectId || !clientEmail || !privateKey) {
-    fail("Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY in .env.local");
+  let sa;
+  try {
+    sa = readServiceAccount();
+  } catch (err) {
+    fail(`${(err as Error).message.replace("in Vercel", "in .env.local")}. Put FIREBASE_SERVICE_ACCOUNT (the whole key JSON) in .env.local.`);
   }
-  initializeApp({ credential: cert({ projectId, clientEmail, privateKey }) });
+  initializeApp({ credential: cert(sa), projectId: sa.projectId });
   const auth = getAuth();
 
   if (has("list")) {

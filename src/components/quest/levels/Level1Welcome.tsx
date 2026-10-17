@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, m, type PanInfo } from "framer-motion";
-import { introCards, level1 } from "@/content";
+import { campus, introCards, level1 } from "@/content";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, say } from "../NpcChat";
 import { useInstant, useQuest } from "../state";
@@ -33,8 +34,23 @@ export function Level1Welcome() {
       chatId="l1"
       chat={say("sumaiya", level1.npcIntro)}
       canNext={seenAll}
-      nextHint="Swipe through all 3 cards first"
+      nextHint={level1.nextHint}
     >
+      <figure className="relative overflow-hidden rounded-3xl border-[3px] border-white shadow-md ring-1 ring-line">
+        <Image
+          src={campus.photo}
+          alt={campus.photoAlt}
+          width={campus.photoSize.width}
+          height={campus.photoSize.height}
+          sizes="(min-width: 768px) 588px, 100vw"
+          className="h-auto w-full"
+        />
+        <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/75 to-transparent px-3 pt-10 pb-2.5 text-sm font-bold text-white">
+          <Image src={campus.logo} alt="" width={28} height={28} className="rounded-md" />
+          {campus.caption}
+        </figcaption>
+      </figure>
+
       <div
         role="region"
         aria-roledescription="carousel"
