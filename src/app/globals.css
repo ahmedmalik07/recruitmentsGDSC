@@ -272,6 +272,21 @@ select.field-input {
 .trio-hop {
   animation: trio-hop 1s ease-in-out infinite;
 }
+
+/* Ring that bursts out of the character when a new part unlocks */
+@keyframes unlock-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(251 188 4 / 0.9), 0 0 0 0 rgb(66 133 244 / 0.6);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(251 188 4 / 0), 0 0 0 24px rgb(66 133 244 / 0);
+    opacity: 0;
+  }
+}
+.unlock-ring {
+  animation: unlock-ring 0.7s ease-out forwards;
+}
 @keyframes blink {
   0%,
   92%,

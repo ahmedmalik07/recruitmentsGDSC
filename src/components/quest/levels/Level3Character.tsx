@@ -50,9 +50,30 @@ export function Level3Character() {
 
   return (
     <LevelShell chatId="l3" chat={[...say("rafay", level3.npc), ...say("ahmed", level3.npcAhmed)]} onNext={onNext}>
-      <div className="flex justify-center rounded-3xl border border-line bg-surface py-3 lg:hidden">
-        <div className={instant ? undefined : "avatar-bob"}>
-          <Avatar parts={avatarParts(d)} size={130} animated={!instant} />
+      {/* Compact so the first field is on screen; the character also stays in the top bar while typing */}
+      <div className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 lg:hidden">
+        <div className={`shrink-0 ${instant ? "" : "avatar-bob"}`}>
+          <Avatar parts={avatarParts(d)} size={96} showName={false} animated={!instant} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="mb-1.5 text-xs font-bold tracking-wide text-eyebrow uppercase">{level3.parts.title}</p>
+          <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[13px] leading-tight">
+            {KEYS.map((k) => {
+              const done = !errors[k];
+              return (
+                <li key={k} className={`flex items-center gap-1.5 ${done ? "font-semibold text-ink" : "text-muted"}`}>
+                  <span
+                    aria-hidden="true"
+                    className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[10px] ${done ? "bg-g-green-strong text-white" : "border border-line"}`}
+                  >
+                    {done ? "✓" : ""}
+                  </span>
+                  {level3.parts[k]}
+                  <span className="sr-only">{done ? " unlocked" : " locked"}</span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
 

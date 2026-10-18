@@ -35,7 +35,11 @@ export function QuestSidebar() {
 
         <section className="flex flex-col items-center gap-2 rounded-3xl border border-line bg-surface p-5 shadow-sm">
           <h2 className="self-start text-xs font-bold tracking-wide text-eyebrow uppercase">{sidebar.title}</h2>
-          <PokeAvatar parts={parts} size={190} />
+          <PokeAvatar
+            parts={parts}
+            size={190}
+            unlocked={[parts.face, parts.lanyard, parts.number, parts.sneakers, parts.level, parts.domain, parts.role].filter(Boolean).length}
+          />
           {house ? (
             <span
               className="rounded-full px-3 py-1 text-xs font-bold"

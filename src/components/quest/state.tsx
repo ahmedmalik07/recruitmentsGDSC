@@ -152,6 +152,11 @@ function sanitizeDraft(saved: (Partial<Draft> & { portfolioUrl?: string }) | und
   return draft;
 }
 
+/** Drop focus from the input being typed in, which closes the phone keyboard */
+function blurActive() {
+  if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) document.activeElement.blur();
+}
+
 function clampLevel(n: number) {
   return Math.max(0, Math.min(LAST_LEVEL, Math.round(n)));
 }
@@ -283,8 +288,15 @@ export function QuestProvider({ children }: { children: ReactNode }) {
   }, [state]);
 
   const set = useCallback((patch: Partial<Draft>) => dispatch({ type: "set", patch }), []);
-  const next = useCallback(() => dispatch({ type: "next" }), []);
-  const back = useCallback(() => dispatch({ type: "back" }), []);
+  // Close the phone keyboard first, so the new level opens at the top instead of mid-page
+  const next = useCallback(() => {
+    blurActive();
+    dispatch({ type: "next" });
+  }, []);
+  const back = useCallback(() => {
+    blurActive();
+    dispatch({ type: "back" });
+  }, []);
   const clearSaved = useCallback(() => {
     skipSave.current = true;
     removeKey(STORAGE_KEY);
@@ -295,9 +307,31 @@ export function QuestProvider({ children }: { children: ReactNode }) {
     [state.quizAnswers],
   );
 
-  // Scroll to top on level change
+  // Every level opens at the top (its banner). Phones shift the page while the keyboard closes and the
+  // new level mounts, so scroll again once things settle.
   useEffect(() => {
-    if (state.hydrated) window.scrollTo({ top: 0 });
+    if (!state.hydrated) return;
+    const toTop = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    toTop();
+    const raf = requestAnimationFrame(toTop);
+    const timers = [150, 400, 750].map((ms) => window.setTimeout(toTop, ms));
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", toTop);
+    const stopListening = window.setTimeout(() => vv?.removeEventListener("resize", toTop), 900);
+    // Any scrolling by the person themselves wins
+    const cancel = () => {
+      timers.forEach(window.clearTimeout);
+      vv?.removeEventListener("resize", toTop);
+    };
+    window.addEventListener("touchmove", cancel, { once: true, passive: true });
+    window.addEventListener("wheel", cancel, { once: true, passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      cancel();
+      window.clearTimeout(stopListening);
+      window.removeEventListener("touchmove", cancel);
+      window.removeEventListener("wheel", cancel);
+    };
   }, [state.level, state.hydrated]);
 
   const api = useMemo(

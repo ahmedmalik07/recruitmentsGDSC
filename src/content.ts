@@ -45,9 +45,9 @@ export const site = {
     number: "923193608483",
     display: "0319 3608483",
   },
-  /** Roll number rule. Default: exactly 6 digits. */
-  rollNoRegex: "^\\d{6}$",
-  rollNoHint: "6 digit roll no, e.g. 231234",
+  /** Roll number rule: 5 to 12 digits (also the application document id, so digits only). */
+  rollNoRegex: "^\\d{5,12}$",
+  rollNoHint: "Digits only, e.g. 231234",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -302,6 +302,16 @@ export const level3 = {
     phone: "Pakistani mobile, 11 digits, starts with 03",
   },
   departmentHint: "Suggestions (or just type yours):",
+  /** The checklist next to the character: what each field unlocks */
+  parts: {
+    title: "Your character",
+    fullName: "Face",
+    email: "Lanyard",
+    rollNo: "Jersey no.",
+    phone: "Sneakers",
+    semester: "Level badge",
+    department: "Jersey color",
+  },
   /** Toasts when each field unlocks an avatar part */
   unlocks: {
     fullName: "Face unlocked",
