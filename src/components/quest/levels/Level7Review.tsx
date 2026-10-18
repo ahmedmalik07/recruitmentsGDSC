@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import { m } from "framer-motion";
 import {
   domains,
@@ -389,6 +390,22 @@ function Success({ parts }: { parts: AvatarParts }) {
         <FollowLinks />
       </div>
       </div>
+
+      {/* A small polaroid from the guide */}
+      <figure className="mx-auto w-44 -rotate-3 rounded-sm bg-white p-2 pb-3 shadow-md ring-1 ring-line">
+        <Image
+          src={success.polaroid.photo}
+          alt={success.polaroid.alt}
+          width={480}
+          height={360}
+          sizes="176px"
+          className="h-auto w-full rounded-[2px]"
+        />
+        <figcaption className="mt-2 text-center text-xs leading-snug text-ink">
+          {success.polaroid.caption}
+          <span className="mt-0.5 block font-bold">{success.polaroid.signed}</span>
+        </figcaption>
+      </figure>
 
       {/* Quiet bonus at the very end */}
       <a

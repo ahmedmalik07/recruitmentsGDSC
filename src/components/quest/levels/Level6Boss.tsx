@@ -2,6 +2,7 @@
 
 import { level6, quiz } from "@/content";
 import { cn } from "@/lib/cn";
+import { HostPhoto } from "../HostPhoto";
 import { LevelShell } from "../LevelShell";
 import { say } from "../NpcChat";
 import { toast } from "../toast";
@@ -58,7 +59,8 @@ export function Level6Boss() {
             </div>
             <div aria-live="polite">
               {done && (
-                <p className="text-[15px] font-semibold">
+                <p className="flex flex-wrap items-center gap-x-1.5 text-[15px] font-semibold">
+                  {q.options[q.answer] === "Ahmed" && <HostPhoto id="ahmed" size={24} />}
                   {right ? (
                     level6.correct[qi % level6.correct.length]
                   ) : (

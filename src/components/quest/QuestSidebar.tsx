@@ -4,6 +4,7 @@ import Image from "next/image";
 import { domains, hosts, levelNames, sidebar, site, ui } from "@/content";
 import { cn } from "@/lib/cn";
 import { avatarParts } from "./Avatar";
+import { HostPhoto } from "./HostPhoto";
 import { PokeAvatar } from "./PokeAvatar";
 import { computeXp } from "./progress";
 import { useQuest } from "./state";
@@ -98,9 +99,12 @@ export function QuestSidebar() {
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-2xl px-3 py-2 text-sm text-muted hover:text-ink"
+          className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm text-muted hover:text-ink"
         >
-          {sidebar.help} {hosts.ahmed.firstName}: <span className="font-semibold text-link">{site.whatsapp.display}</span>
+          <HostPhoto id="ahmed" size={22} />
+          <span>
+            {sidebar.help} {hosts.ahmed.firstName}: <span className="font-semibold text-link">{site.whatsapp.display}</span>
+          </span>
         </a>
       </div>
     </aside>

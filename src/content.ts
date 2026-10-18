@@ -753,6 +753,13 @@ export const success = {
   joinGroup: "Join the GDG Recruitment WhatsApp group (required)",
   joinGroupNote: "You have to join this group. The shortlist, interview slots and every recruitment update are shared only here.",
   shortlistLabel: "Shortlist",
+  /** Small tilted polaroid near the end */
+  polaroid: {
+    photo: "/team/ahmed-speaking.jpg",
+    alt: "Ahmed presenting at Air University",
+    caption: "See you at our next session 👋",
+    signed: "Ahmed",
+  },
   /** Small bonus at the very end. Kept quiet on purpose so it doesn't steal focus. */
   gift: {
     title: "🎁 Bonus level",

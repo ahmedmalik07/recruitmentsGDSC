@@ -1,4 +1,5 @@
 import { footer, hosts, site } from "@/content";
+import { HostPhoto } from "./HostPhoto";
 
 /** Help number, WhatsApp group and credit, on every quest screen */
 export function SiteFooter() {
@@ -24,7 +25,13 @@ export function SiteFooter() {
       </div>
       <p>
         {footer.builtBy} <span aria-label="love">❤️</span> by{" "}
-        <a href={hosts.ahmed.linkedin} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink hover:underline">
+        <a
+          href={hosts.ahmed.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-0.5 inline-flex items-center gap-1.5 align-middle font-semibold text-ink hover:underline"
+        >
+          <HostPhoto id="ahmed" size={22} />
           {footer.builtByName}
         </a>
         , {footer.builtByRole}
