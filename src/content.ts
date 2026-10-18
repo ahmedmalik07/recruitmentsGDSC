@@ -205,6 +205,8 @@ export const titleScreen = {
     "And I'm Ahmed, VP. I built this whole quest, so I'll be your guide 🫡",
     "7 levels, ~5 minutes. Finish them all and your application is in. Ready?",
   ],
+  /** Rafay says hi too */
+  npcRafay: ["And I'm Rafay, General Secretary. I'll take your details in Level 3 📋"],
 };
 
 export const introCards = [

@@ -109,31 +109,38 @@ export function Level0Start() {
         </ul>
       </div>
 
-      {/* Hosts: the President and the guide, side by side and equal */}
-      <div className="grid grid-cols-2 gap-3 pt-1">
-        {(["sumaiya", "ahmed"] as HostId[]).map((id) => (
+      {/* The council: President, guide, General Secretary, side by side and equal */}
+      <div className="grid grid-cols-3 gap-2.5 pt-2 sm:gap-3">
+        {(["sumaiya", "ahmed", "rafay"] as HostId[]).map((id) => (
           <Tilt key={id} className="h-full">
             <div
-              className="relative flex h-full items-center gap-2.5 rounded-2xl border-2 p-2.5"
+              className="relative flex h-full flex-col items-center gap-1.5 rounded-2xl border-2 px-1.5 pt-4 pb-2.5 text-center"
               style={{ borderColor: hosts[id].accent, background: `${hosts[id].accent}14` }}
             >
               <span
-                className="absolute -top-2.5 right-2 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-wide whitespace-nowrap text-white uppercase"
+                className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-wide whitespace-nowrap text-white uppercase"
                 style={{ background: hosts[id].badge.bg }}
               >
                 {hosts[id].badge.text}
               </span>
-              <HostPhoto id={id} size={48} priority />
+              <HostPhoto id={id} size={52} priority />
               <div className="min-w-0">
-                <p className="leading-tight font-bold">{hosts[id].name}</p>
-                <p className="text-xs text-muted">{hosts[id].role}</p>
+                <p className="text-[15px] leading-tight font-bold">{hosts[id].name}</p>
+                <p className="mt-0.5 text-xs leading-tight text-muted">{hosts[id].role}</p>
               </div>
             </div>
           </Tilt>
         ))}
       </div>
 
-      <NpcChat id="l0" lines={[...say("sumaiya", titleScreen.npc), ...say("ahmed", titleScreen.npcAhmed)]} />
+      <NpcChat
+        id="l0"
+        lines={[
+          ...say("sumaiya", titleScreen.npc),
+          ...say("ahmed", titleScreen.npcAhmed),
+          ...say("rafay", titleScreen.npcRafay),
+        ]}
+      />
 
       <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label="Quest levels">
         {levelNames.slice(1).map((name, i) => {
