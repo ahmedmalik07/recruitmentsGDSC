@@ -236,6 +236,8 @@ export const level1 = {
   ahmedReply: "Shukriya Sumaiya! Chalo, let's meet the council 🚀",
   swipeHint: "Swipe or use the arrows",
   nextHint: "Swipe through all 3 cards first",
+  /** Card that slides in when Sumaiya hands over to Ahmed */
+  guideCard: "Your guide from here",
 };
 
 /** Real Air University photos (Level 1 and the hero badge) */
@@ -609,6 +611,11 @@ export const level5 = {
     "No essays needed. Just honest answers.",
   ],
   npcSumaiya: ["And no experience is totally okay. We care more about who you are than your CV 💛"],
+  /** Small signed note above the questions */
+  ahmedTip: {
+    label: "Ahmed's tip",
+    text: "I read every one of these myself. Write like you talk, not like ChatGPT 😄",
+  },
   experience: {
     label: "Your past experience",
     helper:
@@ -741,6 +748,7 @@ export const success = {
     rafay: "Ab WhatsApp group join karo, it's a must. Everything gets announced there 📢",
   },
   cardLine: "I entered the GDG Quest",
+  cardGuide: "Guided by",
   share: "Share your card",
   download: "Download card",
   generating: "Making your card…",
@@ -858,6 +866,8 @@ export const levelStyle: Record<number, { color: string; solid: string; onSolid:
 export const levelUp = {
   cleared: (n: number) => `Level ${n} cleared!`,
   xp: "+50 XP",
+  /** Ahmed's one-liner on each cleared level (index = level cleared) */
+  cheers: ["", "Nice one 👍", "Kya baat hai 🔥", "Looking good 😎", "Great pick 🚪", "On a roll 🚀", "Last stop next 🎁"],
 };
 
 /** Confirmation email (only sent when RESEND_API_KEY is set) */

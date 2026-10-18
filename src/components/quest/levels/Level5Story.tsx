@@ -83,6 +83,13 @@ export function Level5Story() {
 
   return (
     <LevelShell chatId="l5" chat={[...say("ahmed", level5.npc), ...say("sumaiya", level5.npcSumaiya)]} onNext={onNext}>
+      <aside className="flex items-center gap-3 rounded-2xl border border-dashed border-g-blue/50 bg-tint-blue/60 p-3">
+        <HostPhoto id="ahmed" size={44} />
+        <p className="text-sm leading-snug">
+          <span className="font-bold">{level5.ahmedTip.label}: </span>
+          {level5.ahmedTip.text}
+        </p>
+      </aside>
       <StoryBox
         id="experience"
         label={level5.experience.label}

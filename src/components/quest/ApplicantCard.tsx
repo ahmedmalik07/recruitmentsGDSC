@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { domains, errors, site, success } from "@/content";
+import { domains, errors, hosts, site, success } from "@/content";
 import { Button } from "@/components/ui/Button";
 import { Avatar, type AvatarParts } from "./Avatar";
 
@@ -171,6 +171,20 @@ function CardArt({ parts }: { parts: AvatarParts }) {
       <div style={{ marginTop: "auto", textAlign: "center" }}>
         <div style={{ fontSize: 46, fontWeight: 700 }}>{site.igHandle}</div>
         <div style={{ marginTop: 10, fontSize: 34, color: "#56608A" }}>{site.link}</div>
+        <div
+          style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", gap: 14, fontSize: 28, color: "#56608A" }}
+        >
+          {success.cardGuide}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={hosts.ahmed.photo}
+            alt=""
+            width={52}
+            height={52}
+            style={{ width: 52, height: 52, borderRadius: 999, objectFit: "cover", boxShadow: `0 0 0 3px ${hosts.ahmed.accent}` }}
+          />
+          <span style={{ fontWeight: 700, color: "#1D2A5C" }}>{hosts.ahmed.name}</span>
+        </div>
       </div>
 
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", height: 22 }}>

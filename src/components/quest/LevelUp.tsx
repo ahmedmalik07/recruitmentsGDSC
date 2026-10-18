@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { levelStyle, levelUp } from "@/content";
 import { music } from "@/lib/music";
+import { HostPhoto } from "./HostPhoto";
 import { useInstant, useQuest } from "./state";
 
 /** "Level 3 cleared! +50 XP" burst when moving forward to a new level */
@@ -60,6 +61,12 @@ export function LevelUp() {
             <span className="flex flex-col">
               <span className="text-lg leading-tight font-extrabold">{levelUp.cleared(shown)}</span>
               <span className="text-sm font-bold text-good">{levelUp.xp}</span>
+              {levelUp.cheers[shown] && (
+                <span className="mt-1 flex items-center gap-1.5 text-sm font-semibold">
+                  <HostPhoto id="ahmed" size={22} />
+                  {levelUp.cheers[shown]}
+                </span>
+              )}
             </span>
           </m.div>
         )}

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, m, type PanInfo } from "framer-motion";
-import { campus, introCards, level1 } from "@/content";
+import { campus, hosts, introCards, level1 } from "@/content";
+import { HostPhoto } from "../HostPhoto";
 import { LevelShell } from "../LevelShell";
 import { NpcChat, say } from "../NpcChat";
 import { useInstant, useQuest } from "../state";
@@ -14,6 +15,7 @@ export function Level1Welcome() {
   const [index, setIndex] = useState(0);
   const [seenAll, setSeenAll] = useState(state.maxLevel > 1);
   const [dir, setDir] = useState(1);
+  const [handedOver, setHandedOver] = useState(false);
 
   function go(to: number) {
     const clamped = Math.max(0, Math.min(introCards.length - 1, to));
@@ -117,7 +119,27 @@ export function Level1Welcome() {
       </div>
 
       {seenAll && (
-        <NpcChat id="l1-handover" lines={[...say("sumaiya", [level1.handover]), ...say("ahmed", [level1.ahmedReply])]} />
+        <NpcChat
+          id="l1-handover"
+          lines={[...say("sumaiya", [level1.handover]), ...say("ahmed", [level1.ahmedReply])]}
+          onDone={() => setHandedOver(true)}
+        />
+      )}
+      {seenAll && (handedOver || instant) && (
+        <m.div
+          initial={instant ? false : { opacity: 0, x: 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          className="flex items-center gap-3 self-end rounded-2xl border-2 p-2.5 pr-4"
+          style={{ borderColor: hosts.ahmed.accent, background: `${hosts.ahmed.accent}14` }}
+        >
+          <HostPhoto id="ahmed" size={56} portrait />
+          <div className="min-w-0">
+            <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">⭐ {level1.guideCard}</p>
+            <p className="leading-tight font-bold">{hosts.ahmed.name}</p>
+            <p className="text-xs text-muted">{hosts.ahmed.stats?.[0]}</p>
+          </div>
+        </m.div>
       )}
     </LevelShell>
   );
