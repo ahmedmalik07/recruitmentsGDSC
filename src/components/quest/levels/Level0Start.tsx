@@ -214,6 +214,7 @@ export function Level0Start() {
         >
           👥 {titleScreen.joinGroup}
         </a>
+        <p className="-mt-1 text-center text-sm text-muted">{titleScreen.joinGroupNote}</p>
       </div>
     </section>
   );

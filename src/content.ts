@@ -189,7 +189,8 @@ export const titleScreen = {
   start: "Press Start",
   resume: (level: number) => `Continue from Level ${level}`,
   restart: "Start over",
-  joinGroup: "Join the recruitment WhatsApp group for updates",
+  joinGroup: "Join the recruitment WhatsApp group (required)",
+  joinGroupNote: "You have to join it. The shortlist, interview slots and every recruitment update are shared there.",
   /** The "Your quest starts now" block above Press Start (same as the intro video's ending) */
   cta: "Your quest starts now",
   ctaNames: "Sumaiya · Ahmed · Rafay",
@@ -718,6 +719,7 @@ export const level7 = {
   backToReview: "Back to review",
   consent:
     "I confirm these details are correct and I'm okay with GDGOC AU using them to review my application and contact me.",
+  groupNote: "Heads up: after submitting, you have to join the recruitment WhatsApp group. All recruitment updates are shared only there.",
   submit: "Submit application",
   submitting: "Submitting…",
   botCheck: "Quick bot check",
@@ -734,7 +736,7 @@ export const success = {
   npc: {
     sumaiya: "You're in the pool! Thanks for applying.",
     ahmed: "Proud of you for finishing. Now go flex your card 😎",
-    rafay: "We'll be in touch. Phone pe nazar rakhna.",
+    rafay: "Ab WhatsApp group join karo, it's a must. Everything gets announced there 📢",
   },
   cardLine: "I entered the GDG Quest",
   share: "Share your card",
@@ -742,12 +744,12 @@ export const success = {
   generating: "Making your card…",
   nextTitle: "What happens next",
   next: [
-    "Join the recruitment WhatsApp group (green button above). Saari updates wahin aayengi.",
+    "Join the recruitment WhatsApp group (green button above). It's required: saari recruitment updates wahin aayengi.",
     "We review every application, one by one.",
     "Shortlisted folks get a WhatsApp + email for an interview. Interviews are short and chill. Promise.",
   ],
-  joinGroup: "Join the GDG Recruitment WhatsApp group",
-  joinGroupNote: "Shortlist, interview slots and updates land here first.",
+  joinGroup: "Join the GDG Recruitment WhatsApp group (required)",
+  joinGroupNote: "You have to join this group. The shortlist, interview slots and every recruitment update are shared only here.",
   shortlistLabel: "Shortlist",
   /** Small bonus at the very end. Kept quiet on purpose so it doesn't steal focus. */
   gift: {
@@ -859,7 +861,7 @@ export const email = {
       `Your GDG Quest application for ${house} is in. Nice work.`,
       "If you're shortlisted, we'll reach out on WhatsApp and email for a short interview.",
       "",
-      `Join the recruitment WhatsApp group so you don't miss updates: ${site.whatsappGroup}`,
+      `You have to join the recruitment WhatsApp group. The shortlist, interview slots and every update are shared there: ${site.whatsappGroup}`,
       "",
       `Questions? WhatsApp ${site.whatsapp.name} at ${site.whatsapp.display}.`,
       "",

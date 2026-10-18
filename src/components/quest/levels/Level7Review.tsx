@@ -221,6 +221,11 @@ export function Level7Review() {
         </Section>
       </article>
 
+      <p className="flex items-start gap-2.5 rounded-2xl border-2 border-[#9fd5b0] bg-tint-green p-4 text-[15px] leading-snug font-semibold text-good">
+        <span aria-hidden="true">📢</span>
+        <span>{level7.groupNote}</span>
+      </p>
+
       <label className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-4 text-[15px] leading-snug">
         <input
           type="checkbox"
