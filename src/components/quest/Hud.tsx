@@ -35,13 +35,14 @@ export function Hud() {
           <PokeAvatar parts={avatarParts(state.draft)} size={46} showName={false} className="-my-1 shrink-0 lg:hidden" />
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold tracking-wide text-eyebrow uppercase">{ui.level(state.level)}</p>
+          <p className="text-xs font-bold tracking-wide whitespace-nowrap text-eyebrow uppercase">{ui.level(state.level)}</p>
+          {/* Wraps to a second line on narrow phones instead of cutting the name off */}
           {state.level > 0 ? (
-            <h1 ref={heading} tabIndex={-1} className="truncate text-sm font-semibold outline-none">
+            <h1 ref={heading} tabIndex={-1} className="line-clamp-2 text-sm leading-tight font-semibold outline-none">
               {levelNames[state.level]}
             </h1>
           ) : (
-            <p className="truncate text-sm font-semibold">{levelNames[state.level]}</p>
+            <p className="line-clamp-2 text-sm leading-tight font-semibold">{levelNames[state.level]}</p>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -81,7 +82,9 @@ export function Hud() {
           >
             <span aria-hidden="true">⚡</span>
             <span className="sr-only">{ui.speedMode}</span>
-            <span aria-hidden="true">{ui.speedShort}</span>
+            <span aria-hidden="true" className="hidden min-[440px]:inline">
+              {ui.speedShort}
+            </span>
             <span
               aria-hidden="true"
               className={`relative h-4 w-7 rounded-full transition-colors ${state.speedMode ? "bg-g-green" : "bg-line"}`}

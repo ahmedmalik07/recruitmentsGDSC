@@ -24,7 +24,7 @@ export function LevelBanner({ level }: { level: number }) {
         <p className="text-xs font-bold tracking-wide text-muted uppercase">
           {style.emoji} Level {level} of 7
         </p>
-        <p className="truncate text-xl leading-tight font-extrabold">{levelNames[level]}</p>
+        <p className="text-xl leading-tight font-extrabold text-balance">{levelNames[level]}</p>
       </div>
       <div className="flex shrink-0 -space-x-2">
         {style.hosts.map((h) => (
