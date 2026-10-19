@@ -6,7 +6,7 @@ Core team and domain leads review, rate and shortlist from `/admin`.
 
 | Route | Who | What |
 |---|---|---|
-| `/` | Candidates | The quest: 7 levels hosted by Sumaiya, Ahmed and Abdul Rafay |
+| `/` | Candidates | The quest: 7 levels hosted by Sumaiyyah, Ahmed and Abdul Rafay |
 | `/admin` | Core + leads (Google sign-in) | Table, filters, ratings, status, CSV export, stats |
 | `POST /api/apply` | The quest | Validates, checks Turnstile, writes with the Admin SDK |
 
@@ -23,7 +23,7 @@ deploys automatically.
 
 Everything a candidate reads lives in **`src/content.ts`**: NPC lines, intro cards, council cards (stats, bios,
 fun facts, badges, LinkedIn), the Level 4 intro story slides, hints, teams and positions, portfolio link types,
-department suggestions, roll number regex, WhatsApp help number and recruitment group link, Instagram/LinkedIn,
+department suggestions, roll number regex, help contacts (gdscair@gmail.com first, then the President's and Ahmed's WhatsApp), recruitment group link, Instagram/LinkedIn,
 the shortlist note, the Boss Check questions and the bonus game link on the success screen.
 
 Assets (keep the filenames, or update the paths in `content.ts`):
@@ -42,7 +42,7 @@ Assets (keep the filenames, or update the paths in `content.ts`):
 ### Intro video (no filming needed)
 
 Level 4 plays a 23 second vertical trailer with our own song: a "yeh GAME hai" hook, Air University, the
-GDG Quest title, Sumaiya, Ahmed and Rafay each with their photo, badge and a line, the 5 teams, and
+GDG Quest title, Sumaiyyah, Ahmed and Rafay each with their photo, badge and a line, the 5 teams, and
 "Your quest starts now" with confetti on the final beat. Every cut lands on a beat (120 BPM).
 It's made in code: `scripts/intro-video/trailer.html` is the picture (open it in Chrome to preview it live),
 the music is `trailerStep` in `src/lib/music.ts`, and `render.mjs` draws every frame, renders the music and
@@ -183,7 +183,7 @@ or fails a submission. Edit the text in `content.ts` → `email`.
 people listed get access automatically the first time they sign in to `/admin`:
 
 ```bash
-ADMIN_CORE_EMAILS=ahmed.usman7615@gmail.com,daniyalhero07@gmail.com
+ADMIN_CORE_EMAILS=ahmed.usman7615@gmail.com,daniyalhero07@gmail.com,gdscair@gmail.com,sumaiyyahmasood26@gmail.com
 ADMIN_LEAD_EMAILS=lead@gmail.com:technical,other@gmail.com:ops
 ```
 
@@ -227,12 +227,12 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 
 | Level | Host | |
 |---|---|---|
-| 0 Press Start | Sumaiya + Ahmed | Title screen with the 3D AU building and the "Your quest starts now" block (all three photos, confetti on Press Start). Returning players get "Continue from Level N" |
-| 1 Welcome to GDG | Sumaiya → Ahmed | Air University photo, 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
-| 2 Meet the Council | Ahmed + Sumaiya | 3 equal flip cards: Sumaiya (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
+| 0 Press Start | Sumaiyyah + Ahmed | Title screen with the 3D AU building and the "Your quest starts now" block (all three photos, confetti on Press Start). Returning players get "Continue from Level N" |
+| 1 Welcome to GDG | Sumaiyyah → Ahmed | Air University photo, 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
+| 2 Meet the Council | Ahmed + Sumaiyyah | 3 equal flip cards: Sumaiyyah (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
 | 3 Build your Character | Abdul Rafay | Personal info, department with tap-to-fill suggestions. Each valid field unlocks an avatar part |
 | 4 Choose your House | Ahmed | 30 sec intro video with the council, 5 doors (teams), the position they're applying for, optional skills |
-| 5 Your Story | Ahmed + Sumaiya | Experience, achievements, why GDGOC AU, up to 4 portfolio links, quick taps |
+| 5 Your Story | Ahmed + Sumaiyyah | Experience, achievements, why GDGOC AU, up to 4 portfolio links, quick taps |
 | 6 Boss Check | Abdul Rafay | 2 MCQs, just for fun (score stored, not used for selection) |
 | 7 Review + Loot | All 3 | Character sheet, consent, Turnstile, submit, confetti, shareable 1080x1920 card |
 

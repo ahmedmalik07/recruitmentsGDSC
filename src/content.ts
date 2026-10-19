@@ -40,6 +40,14 @@ export const site = {
   /** Recruitment WhatsApp group: updates, shortlist, interview slots */
   whatsappGroup: "https://chat.whatsapp.com/G1vkks6yNgaHT6pKYOJhen",
   /** WhatsApp contact for problems. Number in international format, digits only. */
+  /** Main help contact (shown first everywhere) */
+  helpEmail: "gdscair@gmail.com",
+  /** WhatsApp help numbers, in order */
+  president: {
+    name: "Sumaiyyah Masood",
+    number: "923220173439",
+    display: "0322 0173439",
+  },
   whatsapp: {
     name: "Ahmed Malik",
     number: "923193608483",
@@ -80,8 +88,8 @@ export type Host = {
 export const hosts: Record<HostId, Host> = {
   sumaiya: {
     id: "sumaiya",
-    name: "Sumaiya",
-    firstName: "Sumaiya",
+    name: "Sumaiyyah Masood",
+    firstName: "Sumaiyyah",
     role: "President",
     photo: "/team/sumaiya.jpg",
     linkedin: "https://www.linkedin.com/in/sumaiyyah-masood-b1b103308",
@@ -129,13 +137,13 @@ export const hosts: Record<HostId, Host> = {
 export const introStory = {
   label: "GDGOC AU council intro",
   slides: [
-    { hosts: ["sumaiya", "ahmed", "rafay"], text: "Salam! We're the GDGOC AU council 👋", sub: "Sumaiya · Ahmed · Rafay" },
+    { hosts: ["sumaiya", "ahmed", "rafay"], text: "Salam! We're the GDGOC AU council 👋", sub: "Sumaiyyah · Ahmed · Rafay" },
     { teams: true, text: "5 teams run the chapter", sub: "Every single one matters." },
     {
       hosts: ["sumaiya"],
       backdrop: "/team/sumaiya.jpg",
       text: "Innovation grows when everyone belongs. There's a seat for you here 💛",
-      sub: "Sumaiya, President",
+      sub: "Sumaiyyah, President",
     },
     {
       hosts: ["ahmed"],
@@ -165,11 +173,11 @@ export const introVideo = {
   /** Same video for browsers without H.264 */
   srcWebm: "/intro/gdg-quest-intro.webm",
   poster: "/intro/poster.jpg",
-  label: "GDG Quest intro video with Sumaiya, Ahmed and Rafay, 23 seconds",
+  label: "GDG Quest intro video with Sumaiyyah, Ahmed and Rafay, 23 seconds",
   /** Read by screen readers instead of the burned-in text */
   transcript:
     "Yeh koi form nahi hai, yeh game hai. Air University, Islamabad: GDG on Campus Air University presents GDG Quest, Recruitment 2026. " +
-    "Sumaiya, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
+    "Sumaiyyah, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
     "Abdul Rafay, General Secretary. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
     "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com. Upbeat music plays throughout.",
   caption: "🎬 23 sec intro with the council",
@@ -179,7 +187,7 @@ export const introVideo = {
 };
 
 // ---------------------------------------------------------------------------
-// Level 0 + 1: Sumaiya
+// Level 0 + 1: Sumaiyyah
 // ---------------------------------------------------------------------------
 
 export const titleScreen = {
@@ -193,14 +201,14 @@ export const titleScreen = {
   joinGroupNote: "You have to join it. The shortlist, interview slots and every recruitment update are shared there.",
   /** The "Your quest starts now" block above Press Start (same as the intro video's ending) */
   cta: "Your quest starts now",
-  ctaNames: "Sumaiya · Ahmed · Rafay",
+  ctaNames: "Sumaiyyah · Ahmed · Rafay",
   ctaSub: "No sign-in · ~5 minutes · all AU students",
   facts: ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"],
   npc: [
-    "Hey hey! I'm Sumaiya, President of GDGOC AU 👋",
+    "Hey hey! I'm Sumaiyyah, President of GDGOC AU 👋",
     "Welcome to GDG Quest. Yeh koi boring form nahi hai, it's a mini game.",
   ],
-  /** Ahmed joins right after Sumaiya's welcome */
+  /** Ahmed joins right after Sumaiyyah's welcome */
   npcAhmed: [
     "And I'm Ahmed, VP. I built this whole quest, so I'll be your guide 🫡",
     "7 levels, ~5 minutes. Finish them all and your application is in. Ready?",
@@ -233,10 +241,10 @@ export const level1 = {
     "Quick lore drop first. Swipe through these 3 cards 👉",
   ],
   handover: "Ab tumhara guide Ahmed hai. He'll take it from here. Good luck! ✨",
-  ahmedReply: "Shukriya Sumaiya! Chalo, let's meet the council 🚀",
+  ahmedReply: "Shukriya Sumaiyyah! Chalo, let's meet the council 🚀",
   swipeHint: "Swipe or use the arrows",
   nextHint: "Swipe through all 3 cards first",
-  /** Card that slides in when Sumaiya hands over to Ahmed */
+  /** Card that slides in when Sumaiyyah hands over to Ahmed */
   guideCard: "Your guide from here",
 };
 
@@ -274,7 +282,8 @@ export const sidebar = {
   title: "Your character",
   empty: "Your character builds up here as you play.",
   map: "Quest map",
-  help: "Stuck? WhatsApp",
+  help: "Stuck? Email",
+  orWhatsApp: "or WhatsApp",
 };
 
 // ---------------------------------------------------------------------------
@@ -703,7 +712,7 @@ export const quiz = [
   },
   {
     question: "Who's your guide on this quest?",
-    options: ["Sumaiya", "Ahmed", "Abdul Rafay", "Google Assistant"],
+    options: ["Sumaiyyah", "Ahmed", "Abdul Rafay", "Google Assistant"],
     answer: 1,
   },
 ] as const;
@@ -794,7 +803,9 @@ export const closed = {
 };
 
 export const footer = {
-  help: "Need help? WhatsApp",
+  help: "Need help? Email",
+  whatsappPresident: "WhatsApp the President",
+  whatsappVp: "or Ahmed (VP)",
   group: "Recruitment WhatsApp group",
   builtBy: "Built with",
   builtByName: "Ahmed Malik",
@@ -810,14 +821,15 @@ export const follow = {
 export const errors = {
   turnstileLoad: "Bot check couldn't load. Check your connection and refresh.",
   cardFailed: "Couldn't make the card on this device. Try a screenshot instead 📸",
-  duplicate: "Is roll no se already apply ho chuka hai. Masla ho to WhatsApp karo",
+  duplicate: "Is roll no se already apply ho chuka hai. Masla ho to email ya WhatsApp karo",
   closed: "Applications are closed now. The deadline passed.",
   bot: "Bot check failed. Refresh the page and try again.",
   validation: "Kuch fields theek nahi hain. Check the highlighted ones.",
   network: "Network issue. Check your connection and try again.",
   generic: "Something went wrong on our side. Your answers are saved on this device, so just try again in a minute.",
   busy: "Bohat rush hai abhi! Your answers are saved on this device. Try submitting again in a few minutes.",
-  whatsapp: "WhatsApp us",
+  whatsapp: "WhatsApp the President",
+  email: "Email us",
 };
 
 export const ui = {
@@ -882,7 +894,7 @@ export const email = {
       "",
       `You have to join the recruitment WhatsApp group. The shortlist, interview slots and every update are shared there: ${site.whatsappGroup}`,
       "",
-      `Questions? WhatsApp ${site.whatsapp.name} at ${site.whatsapp.display}.`,
+      `Questions? Email ${site.helpEmail}, or WhatsApp ${site.president.name} (President) at ${site.president.display}.`,
       "",
       `Team ${site.chapterShort}`,
     ].join("\n"),

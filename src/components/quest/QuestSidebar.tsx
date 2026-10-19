@@ -19,7 +19,7 @@ export function QuestSidebar() {
   const house = state.draft.domain ? domains[state.draft.domain] : null;
   const { xp } = computeXp(state, quizScore);
   const started = state.maxLevel > 0 || Boolean(state.draft.fullName);
-  const whatsapp = `https://wa.me/${site.whatsapp.number}`;
+  const whatsapp = `https://wa.me/${site.president.number}`;
 
   return (
     <aside className="hidden lg:block" aria-label="Quest panel">
@@ -95,17 +95,18 @@ export function QuestSidebar() {
           </ol>
         </nav>
 
-        <a
-          href={whatsapp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm text-muted hover:text-ink"
-        >
-          <HostPhoto id="ahmed" size={22} />
-          <span>
-            {sidebar.help} {hosts.ahmed.firstName}: <span className="font-semibold text-link">{site.whatsapp.display}</span>
-          </span>
-        </a>
+        <div className="flex flex-col gap-0.5 px-3 py-2 text-sm text-muted">
+          <a href={`mailto:${site.helpEmail}?subject=GDG%20Quest%20help`} className="hover:text-ink">
+            ✉️ {sidebar.help} <span className="font-semibold text-link">{site.helpEmail}</span>
+          </a>
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-ink">
+            <HostPhoto id="sumaiya" size={20} />
+            <span>
+              {sidebar.orWhatsApp} {hosts.sumaiya.firstName}:{" "}
+              <span className="font-semibold text-link">{site.president.display}</span>
+            </span>
+          </a>
+        </div>
       </div>
     </aside>
   );

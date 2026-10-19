@@ -4,7 +4,7 @@ Photos used across the quest (keep the filenames, or update the paths in `src/co
 
 | File | What | Size |
 |---|---|---|
-| `sumaiya.jpg` | Sumaiya's photo | 512x512 |
+| `sumaiya.jpg` | Sumaiyyah's photo | 512x512 |
 | `ahmed.jpg` | Ahmed's chat avatar | 360x360 |
 | `ahmed-card.jpg` | Ahmed's council card portrait | 640x640 |
 | `rafay.jpg` | Abdul Rafay's photo | 512x512 |

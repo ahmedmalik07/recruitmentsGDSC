@@ -6,14 +6,23 @@ export function SiteFooter() {
   return (
     <footer className="mt-6 flex flex-col items-center gap-2 border-t border-line pt-5 pb-8 text-center text-sm text-muted">
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-        <a
-          href={`https://wa.me/${site.whatsapp.number}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex min-h-11 items-center gap-1.5 hover:text-ink"
-        >
-          💬 {footer.help} <span className="font-semibold text-link">{site.whatsapp.display}</span>
+        <a href={`mailto:${site.helpEmail}?subject=GDG%20Quest%20help`} className="inline-flex min-h-11 items-center gap-1.5 hover:text-ink">
+          ✉️ {footer.help} <span className="font-semibold text-link">{site.helpEmail}</span>
         </a>
+        {[
+          { c: site.president, label: `💬 ${footer.whatsappPresident}` },
+          { c: site.whatsapp, label: footer.whatsappVp },
+        ].map(({ c, label }) => (
+          <a
+            key={c.number}
+            href={`https://wa.me/${c.number}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-1.5 hover:text-ink"
+          >
+            {label} <span className="font-semibold text-link">{c.display}</span>
+          </a>
+        ))}
         <a
           href={site.whatsappGroup}
           target="_blank"

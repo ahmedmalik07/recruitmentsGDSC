@@ -158,9 +158,9 @@ export function Level7Review() {
     { host: "sumaiya", text: level7.npc.sumaiya },
   ];
 
-  const whatsappUrl = `https://wa.me/${site.whatsapp.number}?text=${encodeURIComponent(
-    `Salam, GDG Quest issue. Roll no: ${d.rollNo}`,
-  )}`;
+  const helpText = `Salam, GDG Quest issue. Roll no: ${d.rollNo}`;
+  const emailUrl = `mailto:${site.helpEmail}?subject=${encodeURIComponent(`GDG Quest issue (roll no ${d.rollNo})`)}`;
+  const whatsappUrl = `https://wa.me/${site.president.number}?text=${encodeURIComponent(helpText)}`;
 
   return (
     <LevelShell chatId="l7" chat={chat} hideNav>
@@ -264,14 +264,22 @@ export function Level7Review() {
               </ul>
             )}
             {(problem.code === "duplicate" || problem.code === "server") && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-g-green-strong px-4 font-semibold text-white"
-              >
-                💬 {errorCopy.whatsapp} ({site.whatsapp.display})
-              </a>
+              <>
+                <a
+                  href={emailUrl}
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-g-blue-strong px-4 font-semibold text-white"
+                >
+                  ✉️ {errorCopy.email} ({site.helpEmail})
+                </a>
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-g-green-strong px-4 font-semibold text-white"
+                >
+                  💬 {errorCopy.whatsapp} ({site.president.display})
+                </a>
+              </>
             )}
           </div>
         )}
