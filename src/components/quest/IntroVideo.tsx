@@ -97,16 +97,17 @@ export function IntroVideo() {
       {story ? (
         <IntroStory />
       ) : (
-        <div className="relative w-full max-w-[340px]">
+        <div className="relative w-full max-w-[640px]">
           <video
             ref={video}
-            className="block w-full rounded-[1.75rem] bg-[#1967D2] shadow-xl ring-4 ring-white"
-            style={{ aspectRatio: "9 / 16" }}
+            className="block w-full rounded-2xl bg-[#1967D2] shadow-xl ring-4 ring-white"
+            style={{ aspectRatio: "16 / 9" }}
             poster={introVideo.poster}
             preload="none"
             muted
             playsInline
-            controls
+            // Until it starts, the big Play button is the only control (the bar would sit under it)
+            controls={started}
             aria-label={introVideo.label}
             aria-describedby="intro-transcript"
             onPlay={() => setStarted(true)}
@@ -119,7 +120,7 @@ export function IntroVideo() {
             <button
               type="button"
               onClick={tapPlay}
-              className="absolute inset-x-0 bottom-[10%] mx-auto flex w-max items-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-extrabold text-white shadow-lg"
+              className="absolute inset-x-0 bottom-[8%] mx-auto flex w-max items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-extrabold text-white shadow-lg sm:px-5 sm:py-3 sm:text-base"
             >
               <span aria-hidden="true">▶</span> {introVideo.play}
             </button>

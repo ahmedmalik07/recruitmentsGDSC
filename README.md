@@ -41,27 +41,28 @@ Assets (keep the filenames, or update the paths in `content.ts`):
 
 ### Intro video (no filming needed)
 
-Level 4 plays a 15 second vertical trailer with our own song: a "yeh GAME hai" hook, Air University, the
+Level 4 plays a 15 second horizontal (16:9) trailer with our own song: a "yeh GAME hai" hook, Air University, the
 GDG Quest title, Sumaiya, Ahmed and Rafay each with their photo and badge, the 5 teams, and
 "Your quest starts now" with confetti on the final beat. Every cut lands on a beat (120 BPM).
-There is also a horizontal 1920x1080 cut for LinkedIn, YouTube or a projector (`--land`).
+There is also a vertical 1080x1920 cut of the same video for Instagram Reels and WhatsApp status.
 It's made in code: `scripts/intro-video/trailer.html` is the picture (open it in Chrome to preview it live),
 the music is `trailerStep` in `src/lib/music.ts`, and `render.mjs` draws every frame, renders the music and
 encodes it all with ffmpeg:
 
 ```bash
 npm i -D playwright && npx playwright install chromium   # once
-node scripts/intro-video/render.mjs --stills 4,10,15     # quick PNG checks
+node scripts/intro-video/render.mjs --land --stills 4,10 # quick PNG checks (drop --land for the vertical cut)
 node scripts/intro-video/render.mjs --preview            # 36 s of the site music, out/music-preview.m4a
 node scripts/intro-video/render.mjs --audio              # just the video's music, as out/music.wav
-node scripts/intro-video/render.mjs --remux              # new music on the last render's frames (2 min)
-node scripts/intro-video/render.mjs                      # full render, about 2 minutes
-node scripts/intro-video/render.mjs --land               # the horizontal 1920x1080 cut
+node scripts/intro-video/render.mjs --land --remux       # new music on the last render's frames
+node scripts/intro-video/render.mjs --land               # the site's video, about 2 minutes
+node scripts/intro-video/render.mjs                      # the vertical 1080x1920 cut
 ```
 
-It writes the site's copies (`public/intro/`, about 1.2 MB each, MP4 plus WebM, no audio track) and a
-full-quality 1080x1920 copy with the music for Instagram Reels and WhatsApp status in
-`scripts/intro-video/out/` (not committed).
+`--land` writes the site's copies (`public/intro/`, 1280x720, about 1 MB each, MP4 plus WebM, no audio
+track) and a full-quality 1920x1080 copy with the music for LinkedIn, YouTube or a projector. The plain
+render writes a full-quality 1080x1920 copy with the music for Reels and WhatsApp status. Both full-quality
+files go in `scripts/intro-video/out/` (not committed).
 
 On the site the video starts by itself as soon as Level 4 shows it (only reduced motion and data saver wait
 for a tap), pauses when scrolled away or the tab is hidden, and downloads nothing before that. Its music is

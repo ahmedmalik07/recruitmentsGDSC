@@ -1,18 +1,20 @@
 // Renders trailer.html + soundtrack.ts into the intro video, frame by frame.
 //
-//   node scripts/intro-video/render.mjs               full render (about 3 minutes)
+//   node scripts/intro-video/render.mjs --land         the horizontal 1920x1080 cut, which the site uses
+//   node scripts/intro-video/render.mjs                the vertical 1080x1920 cut, for Reels and WhatsApp status
 //   node scripts/intro-video/render.mjs --stills 4,10  just PNG stills at those seconds, to check a layout
 //   node scripts/intro-video/render.mjs --audio        just the soundtrack, as out/music.wav
 //   node scripts/intro-video/render.mjs --remux        new soundtrack on the frames from the last render
-//   node scripts/intro-video/render.mjs --land         the horizontal 1920x1080 cut (out/gdg-quest-intro-1920x1080.mp4)
 //   node scripts/intro-video/render.mjs --preview      36 s of the site's background music, out/music-preview.m4a
 //
 // Needs ffmpeg and Playwright with Chromium (`npm i -D playwright && npx playwright install chromium`,
 // or point PLAYWRIGHT_MODULE at an existing install). Outputs:
-//   public/intro/gdg-quest-intro.mp4   720x1280, used by Level 4 (+ .webm for browsers without H.264). No audio
-//                                      track: the site plays the same music live, in sync (src/lib/music.ts)
+//   public/intro/gdg-quest-intro.mp4   1280x720 from --land, used by Level 4 (+ .webm for browsers without
+//                                      H.264). No audio track: the site plays the same music live, in sync
+//                                      (src/lib/music.ts)
 //   public/intro/poster.jpg            first frame the player shows
-//   scripts/intro-video/out/gdg-quest-intro-1080x1920.mp4   full quality, for Instagram / WhatsApp status
+//   scripts/intro-video/out/gdg-quest-intro-1920x1080.mp4   full quality with music, for LinkedIn / YouTube
+//   scripts/intro-video/out/gdg-quest-intro-1080x1920.mp4   full quality with music, for Instagram / WhatsApp status
 import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -127,16 +129,16 @@ await browser.close();
 const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "f%04d.jpg"), "-i", wavPath, "-shortest"];
 // The site's copies carry no audio: Level 4 plays the music live and in sync instead
 const silent = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "f%04d.jpg"), "-an"];
-const web = ["-vf", "scale=720:1280:flags=lanczos"];
+const web = ["-vf", "scale=1280:720:flags=lanczos"];
 execFileSync("ffmpeg", [
   ...input,
   "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
   "-c:a", "aac", "-b:a", "192k",
   join(out, land ? "gdg-quest-intro-1920x1080.mp4" : "gdg-quest-intro-1080x1920.mp4"),
 ]);
-// The horizontal cut is only for sharing (LinkedIn, YouTube, a projector); the site uses the vertical one
-if (land) {
-  console.log(`Done: ${join(out, "gdg-quest-intro-1920x1080.mp4")}`);
+// The vertical cut is only for sharing (Reels, WhatsApp status); the site uses the horizontal one
+if (!land) {
+  console.log(`Done: ${join(out, "gdg-quest-intro-1080x1920.mp4")}`);
   process.exit(0);
 }
 mkdirSync(join(root, "public/intro"), { recursive: true });
@@ -155,6 +157,6 @@ execFileSync("ffmpeg", [
 ]);
 execFileSync("ffmpeg", [
   "-y", "-loglevel", "error", "-i", join(frames, `f${String(Math.round(POSTER_AT * FPS)).padStart(4, "0")}.jpg`),
-  "-vf", "scale=540:960:flags=lanczos", "-q:v", "4", join(root, "public/intro/poster.jpg"),
+  "-vf", "scale=960:540:flags=lanczos", "-q:v", "4", join(root, "public/intro/poster.jpg"),
 ]);
-console.log("Done: public/intro/gdg-quest-intro.{mp4,webm}, public/intro/poster.jpg, scripts/intro-video/out/gdg-quest-intro-1080x1920.mp4");
+console.log("Done: public/intro/gdg-quest-intro.{mp4,webm}, public/intro/poster.jpg, scripts/intro-video/out/gdg-quest-intro-1920x1080.mp4");
