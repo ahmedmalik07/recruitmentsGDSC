@@ -4,6 +4,7 @@
 //   node scripts/intro-video/render.mjs --stills 4,10  just PNG stills at those seconds, to check a layout
 //   node scripts/intro-video/render.mjs --audio        just the soundtrack, as out/music.wav
 //   node scripts/intro-video/render.mjs --remux        new soundtrack on the frames from the last render
+//   node scripts/intro-video/render.mjs --land         the horizontal 1920x1080 cut (out/gdg-quest-intro-1920x1080.mp4)
 //   node scripts/intro-video/render.mjs --preview      36 s of the site's background music, out/music-preview.m4a
 //
 // Needs ffmpeg and Playwright with Chromium (`npm i -D playwright && npx playwright install chromium`,
@@ -21,10 +22,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../..");
 const out = join(here, "out");
-const frames = join(out, "frames");
+const land = process.argv.includes("--land");
+const frames = join(out, land ? "frames-land" : "frames");
 const wavPath = join(out, "music.wav");
 const FPS = 30;
-const POSTER_AT = 5.4; // the GDG QUEST title card
+const POSTER_AT = 4.6; // the GDG QUEST title card
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE ?? "playwright");
@@ -38,15 +40,15 @@ const preview = process.argv.includes("--preview");
 
 mkdirSync(out, { recursive: true });
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-await page.goto(pathToFileURL(join(here, "trailer.html")).href);
+const page = await browser.newPage({ viewport: land ? { width: 1920, height: 1080 } : { width: 1080, height: 1920 } });
+await page.goto(pathToFileURL(join(here, "trailer.html")).href + (land ? "?land" : ""));
 await page.evaluate(() => window.ready);
 const total = await page.evaluate(() => window.TOTAL);
 
 if (stills) {
   for (const t of stills) {
     await page.evaluate((s) => window.seek(s), t);
-    await page.screenshot({ path: join(out, `still-${t}.png`) });
+    await page.screenshot({ path: join(out, `still-${land ? "land-" : ""}${t}.png`) });
   }
   console.log(`Stills in ${out}`);
   await browser.close();
@@ -130,8 +132,13 @@ execFileSync("ffmpeg", [
   ...input,
   "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
   "-c:a", "aac", "-b:a", "192k",
-  join(out, "gdg-quest-intro-1080x1920.mp4"),
+  join(out, land ? "gdg-quest-intro-1920x1080.mp4" : "gdg-quest-intro-1080x1920.mp4"),
 ]);
+// The horizontal cut is only for sharing (LinkedIn, YouTube, a projector); the site uses the vertical one
+if (land) {
+  console.log(`Done: ${join(out, "gdg-quest-intro-1920x1080.mp4")}`);
+  process.exit(0);
+}
 mkdirSync(join(root, "public/intro"), { recursive: true });
 execFileSync("ffmpeg", [
   ...silent, ...web,

@@ -1,7 +1,8 @@
 <!doctype html>
 <!--
-  GDG Quest intro video, 1080x1920, 23 s, with music from soundtrack.ts. Rendered frame by frame by render.mjs.
-  Every animation runs on one 30 s timeline, so any frame can be drawn by setting the time.
+  GDG Quest intro video, 15 s, music from src/lib/music.ts (trailerStep). Rendered frame by frame by render.mjs.
+  Vertical 1080x1920 by default; open with ?land for the horizontal 1920x1080 cut.
+  Every animation runs on one timeline, so any frame can be drawn by setting the time.
   Open this file in Chrome to preview it live.
 -->
 <html lang="en">
@@ -73,7 +74,6 @@
   .host .role { top: 1265px; font-size: 54px; font-weight: 700; opacity: .95; }
   .host .chip { top: 1370px; }
   .host .chip span { display: inline-block; background: rgba(255,255,255,.18); border: 4px solid rgba(255,255,255,.6); border-radius: 28px; padding: 16px 34px; font-size: 44px; font-weight: 700; }
-  .host .quote { top: 1500px; left: 90px; right: 90px; font-size: 56px; font-weight: 800; line-height: 1.2; text-align: center; }
   #s4 { background: linear-gradient(160deg, var(--red-s), var(--red) 70%); }
   #s4 .badge .pill { color: var(--red-s); }
   #s5 { background: linear-gradient(160deg, var(--blue-s), var(--blue) 70%); }
@@ -89,13 +89,6 @@
   #s7 .team b { font-size: 62px; font-weight: 800; line-height: 1.1; }
   #s7 .team span { font-size: 38px; font-weight: 600; opacity: .9; margin-top: 6px; }
 
-  /* 8. vibes */
-  #s8 { background: #0b1020; }
-  #s8 .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,12,30,.55), rgba(8,12,30,.88)); }
-  #s8 .w { left: 0; right: 0; text-align: center; font-size: 170px; font-weight: 900; letter-spacing: -4px; line-height: 1; }
-  #s8 .chips { top: 1240px; left: 60px; right: 60px; display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
-  #s8 .chips span { border-radius: 999px; padding: 20px 40px; font-size: 48px; font-weight: 800; }
-
   /* 9. call to action */
   #s9 { background: var(--paper); color: var(--ink); }
   #s9 .trio { top: 300px; left: 0; right: 0; height: 460px; }
@@ -107,7 +100,56 @@
   #s9 .logo { top: 1500px; left: 190px; width: 700px; }
   #s9 .confetti { position: absolute; left: 540px; top: 1200px; border-radius: 4px; }
   #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+
+  /* ---------- Horizontal cut (?land): 1920x1080 ---------- */
+  .land, .land body, .land #stage { width: 1920px; height: 1080px; }
+  .land #s1 .l1 { top: 290px; }
+  .land #s1 .l2 { top: 420px; font-size: 170px; }
+  .land #s1 .l2 br { display: none; }
+  .land #s1 .hint { top: 690px; }
+  .land #s1 [data-burst] { left: 900px !important; top: 520px !important; }
+  .land #s2 .aulogo { top: 150px; left: 130px; }
+  .land #s2 .h { top: 360px; left: 130px; right: auto; text-align: left; font-size: 104px; }
+  .land #s2 .pin { top: 510px; left: 130px; right: auto; text-align: left; }
+  .land #s2 .card { top: 650px; left: 120px; width: 800px; padding: 34px 40px 30px; }
+  .land #s2 .card img { width: 640px; }
+  .land #s2 .band { top: 397px; left: 1010px; width: 800px; height: 286px; }
+  .land #s3 .gdg { top: 110px; font-size: 300px; }
+  .land #s3 .quest { top: 410px; font-size: 220px; }
+  .land #s3 .stamp { top: 670px; }
+  .land #s3 .facts { top: 830px; }
+  .land #s3 div:nth-of-type(1) { left: 220px !important; top: 170px !important; }
+  .land #s3 div:nth-of-type(2) { left: 1580px !important; top: 180px !important; }
+  .land #s3 div:nth-of-type(3) { left: 260px !important; top: 800px !important; }
+  .land #s3 div:nth-of-type(4) { left: 1560px !important; top: 780px !important; }
+  .land .host .photo { top: 210px; left: 220px; width: 640px; height: 640px; }
+  .land .host .badge, .land .host .name, .land .host .role, .land .host .chip { left: 960px; right: 80px; text-align: left; }
+  .land .host .badge { top: 270px; }
+  .land .host .name { top: 400px; font-size: 130px; }
+  .land .host .role { top: 560px; }
+  .land .host .chip { top: 660px; }
+  .land .host .chip span { font-size: 38px; }
+  .land #s7 .h { top: 90px; }
+  .land #s7 .sub { top: 225px; }
+  .land #s7 .team { width: 560px; height: 215px; padding: 0 44px; }
+  .land #s7 .team b { font-size: 52px; }
+  .land #s7 .team span { font-size: 32px; }
+  .land #s7 div:nth-of-type(1) { left: 80px; top: 335px !important; }
+  .land #s7 div:nth-of-type(2) { left: 680px; top: 335px !important; }
+  .land #s7 div:nth-of-type(3) { left: 1280px; top: 335px !important; }
+  .land #s7 div:nth-of-type(4) { left: 380px; top: 600px !important; }
+  .land #s7 div:nth-of-type(5) { left: 980px; top: 600px !important; }
+  .land #s9 .trio { top: 70px; left: 420px; right: auto; width: 1080px; }
+  .land #s9 .h { top: 560px; font-size: 120px; }
+  .land #s9 .h br { display: none; }
+  .land #s9 .url { top: 730px; }
+  .land #s9 .facts { top: 900px; }
+  .land #s9 .logo { top: 60px; left: 60px; width: 440px; }
+  .land #s9 .confetti { left: 960px; top: 790px; }
 </style>
+<script>
+  if (new URLSearchParams(location.search).has("land")) document.documentElement.classList.add("land");
+</script>
 </head>
 <body>
 <div id="stage">
@@ -121,7 +163,7 @@
     <div class="shape" data-burst style="left:500px;top:960px;width:80px;height:80px;border-radius:50%;background:var(--yellow)"></div>
     <div class="shape" data-burst style="left:470px;top:960px;width:100px;height:100px;border-radius:22px;background:var(--green)"></div>
     <p class="abs center l1">Yeh koi form nahi hai…</p>
-    <p class="abs center l2">yeh <b>GAME</b><br />hai 🎮</p>
+    <p class="abs center l2">yeh <b>GAME</b> <br />hai 🎮</p>
     <p class="abs center hint">GDG on Campus Air University recruitment</p>
   </section>
 
@@ -158,7 +200,6 @@
     <p class="abs center name">Sumaiya</p>
     <p class="abs center role">Debater · writer · mentor</p>
     <p class="abs center chip"><span>Top 5, national wilderness leadership camp</span></p>
-    <p class="abs quote">“Innovation grows when everyone belongs.”</p>
   </section>
 
   <!-- 5. Ahmed -->
@@ -168,7 +209,6 @@
     <p class="abs center name">Ahmed Malik</p>
     <p class="abs center role">Founder, Wyibe</p>
     <p class="abs center chip"><span>4× National Hackathon Winner</span></p>
-    <p class="abs quote">“I built this quest. I’ll guide you through every level.”</p>
   </section>
 
   <!-- 6. Rafay -->
@@ -178,7 +218,6 @@
     <p class="abs center name">Abdul Rafay</p>
     <p class="abs center role">AI researcher · calligrapher</p>
     <p class="abs center chip"><span>International Gold Medalist Calligrapher</span></p>
-    <p class="abs quote">“From calligraphy qalam to Python notebook.”</p>
   </section>
 
   <!-- 7. Teams -->
@@ -192,23 +231,6 @@
     <div class="abs team" style="top:1500px;background:var(--green-s)"><b>🛠️ Operations</b><span>Lead · Co-lead · Member</span></div>
   </section>
 
-  <!-- 8. Vibes -->
-  <section class="scene" id="s8">
-    <img class="bg-photo" src="../../public/campus/au-night.jpg" alt="" style="filter:blur(26px) saturate(1.3)" />
-    <div class="shade"></div>
-    <p class="abs w" style="top:420px;color:var(--blue)">Build.</p>
-    <p class="abs w" style="top:620px;color:var(--red)">Learn.</p>
-    <p class="abs w" style="top:820px;color:var(--yellow)">Belong.</p>
-    <div class="abs chips">
-      <span style="background:var(--blue-s)">Hackathons</span>
-      <span style="background:var(--red-s)">Workshops</span>
-      <span style="background:var(--yellow);color:#202124">Baithaqs</span>
-      <span style="background:var(--green-s)">Events</span>
-      <span style="background:#8430ce">Networking</span>
-      <span style="background:#fff;color:var(--ink)">Google tech</span>
-    </div>
-  </section>
-
   <!-- 9. Call to action -->
   <section class="scene" id="s9">
     <div class="abs trio">
@@ -216,7 +238,7 @@
       <img class="round" data-trio src="../../public/team/rafay.jpg" alt="" style="left:640px;top:90px;width:330px;height:330px;outline:10px solid var(--green)" />
       <img class="round" data-trio src="../../public/team/ahmed-card.jpg" alt="" style="left:335px;top:0;width:410px;height:410px;outline:10px solid var(--blue)" />
     </div>
-    <p class="abs center h">Your quest<br />starts now</p>
+    <p class="abs center h">Your quest <br />starts now</p>
     <p class="abs center url"><span class="pill">recruitments.wyibe.com</span></p>
     <p class="abs center facts">No sign-in · ~5 minutes · all AU students</p>
     <img class="abs logo" src="../../public/brand/gdgoc-au-logo.png" alt="" />
@@ -227,13 +249,13 @@
 </div>
 
 <script>
-  // 120 BPM: every cut lands on a beat, and the final hit (20 s, bar 10) is when the link pops.
+  // 120 BPM: every cut lands on a beat, and the final hit (12 s, bar 6) is when the link pops.
   // Keep these in sync with soundtrack.ts.
-  const TOTAL = 23;
+  const TOTAL = 15;
   const BEAT = 0.5;
-  const HIT = 20;
-  const CUTS = [2.0, 4.0, 6.0, 8.5, 11.5, 14.0, 16.5, 18.0];
-  const SCENES = ["#s1", "#s2", "#s3", "#s4", "#s5", "#s6", "#s7", "#s8", "#s9"];
+  const HIT = 12;
+  const CUTS = [2.0, 3.5, 5.0, 6.5, 8.0, 9.5, 11.0];
+  const SCENES = ["#s1", "#s2", "#s3", "#s4", "#s5", "#s6", "#s7", "#s9"];
   const OUT = "cubic-bezier(.2,.8,.2,1)";
   const POP = "cubic-bezier(.34,1.56,.64,1)";
   const $ = (s, root = document) => [...root.querySelectorAll(s)];
@@ -299,51 +321,44 @@
   // 2. Air University
   const s2 = CUTS[0];
   tl($("#s2 .band img"), [[s2, { transform: "scale(1.04)" }, "linear"], [CUTS[1], { transform: "scale(1.18) translateX(-3%)" }]]);
-  enter($("#s2 .aulogo"), s2 + 0.1, "translateY(-60px) scale(.6)", { ease: POP });
-  enter($("#s2 .h"), s2 + 0.15, "translateY(60px)");
-  enter($("#s2 .pin"), s2 + 0.3, "scale(.6)", { ease: POP });
-  enter($("#s2 .band"), s2 + 0.2, "translateY(120px) scale(.92)", { d: 0.45 });
-  enter($("#s2 .card"), s2 + 0.75, "translateY(160px)", { d: 0.45 });
+  enter($("#s2 .aulogo"), s2 + 0.08, "translateY(-60px) scale(.6)", { ease: POP, d: 0.35 });
+  enter($("#s2 .h"), s2 + 0.12, "translateY(60px)", { d: 0.35 });
+  enter($("#s2 .pin"), s2 + 0.25, "scale(.6)", { ease: POP, d: 0.35 });
+  enter($("#s2 .band"), s2 + 0.15, "translateY(120px) scale(.92)", { d: 0.4 });
+  enter($("#s2 .card"), s2 + 0.55, "translateY(160px)", { d: 0.4 });
 
   // 3. Title
   const s3 = CUTS[1];
-  $("#s3 .gdg span").forEach((el, i) => enter(el, s3 + 0.08 + i * 0.1, "translateY(-420px) rotate(-12deg)", { ease: POP, d: 0.45 }));
-  enter($("#s3 .quest"), s3 + 0.45, "translateY(140px) scale(.9)");
-  tl($("#s3 .stamp"), [[s3 + 0.8, { opacity: 0, transform: "scale(2.2) rotate(-14deg)" }, POP], [s3 + 1.1, { opacity: 1, transform: "scale(1) rotate(-4deg)" }]]);
-  enter($("#s3 .facts"), s3 + 1.2, "translateY(40px)");
+  $("#s3 .gdg span").forEach((el, i) => enter(el, s3 + 0.05 + i * 0.08, "translateY(-420px) rotate(-12deg)", { ease: POP, d: 0.4 }));
+  enter($("#s3 .quest"), s3 + 0.35, "translateY(140px) scale(.9)", { d: 0.35 });
+  tl($("#s3 .stamp"), [[s3 + 0.6, { opacity: 0, transform: "scale(2.2) rotate(-14deg)" }, POP], [s3 + 0.9, { opacity: 1, transform: "scale(1) rotate(-4deg)" }]]);
+  enter($("#s3 .facts"), s3 + 0.9, "translateY(40px)", { d: 0.35 });
   $("#s3 [data-float]").forEach((el, i) =>
     tl(el, [[s3, { opacity: 0, transform: "translateY(60px) rotate(0deg)" }], [s3 + 0.4, { opacity: 1, transform: "translateY(0px) rotate(0deg)" }], [CUTS[2], { opacity: 1, transform: `translateY(-50px) rotate(${i % 2 ? 40 : -40}deg)` }, "linear"]]));
 
   // 4-6. Hosts: photos bounce on the beat
   [["#s4", CUTS[2], CUTS[3]], ["#s5", CUTS[3], CUTS[4]], ["#s6", CUTS[4], CUTS[5]]].forEach(([s, t, end]) => {
     const zoom = (b) => 1 + 0.05 * ((b - t) / (end - t));
-    const f = [[t + 0.02, { opacity: 0, transform: "scale(.5) rotate(-10deg)" }, POP], [t + 0.45, { opacity: 1, transform: "scale(1) rotate(0deg)" }]];
+    const f = [[t + 0.02, { opacity: 0, transform: "scale(.5) rotate(-10deg)" }, POP], [t + 0.4, { opacity: 1, transform: "scale(1) rotate(0deg)" }]];
     for (const b of beats(t + 0.5, end - 0.1)) {
       f.push([b, { opacity: 1, transform: `scale(${(zoom(b) + 0.045).toFixed(3)}) rotate(0deg)` }, "ease-out"]);
       f.push([b + 0.18, { opacity: 1, transform: `scale(${zoom(b).toFixed(3)}) rotate(0deg)` }]);
     }
     tl($(`${s} .photo`), f);
-    enter($(`${s} .badge`), t + 0.3, "translateY(30px) scale(.5)", { ease: POP, d: 0.35 });
-    enter($(`${s} .name`), t + 0.4, "translateX(-220px)", { d: 0.35 });
-    enter($(`${s} .role`), t + 0.55, "translateX(220px)", { d: 0.35 });
-    enter($(`${s} .chip`), t + 0.75, "translateY(40px)", { d: 0.35 });
-    enter($(`${s} .quote`), t + 1.0, "translateY(50px)", { d: 0.45 });
+    enter($(`${s} .badge`), t + 0.2, "translateY(30px) scale(.5)", { ease: POP, d: 0.3 });
+    enter($(`${s} .name`), t + 0.3, "translateX(-220px)", { d: 0.3 });
+    enter($(`${s} .role`), t + 0.45, "translateX(220px)", { d: 0.3 });
+    enter($(`${s} .chip`), t + 0.6, "translateY(40px)", { d: 0.3 });
   });
 
   // 7. Teams
   const s7 = CUTS[5];
-  enter($("#s7 .h"), s7 + 0.05, "translateY(-60px)");
-  enter($("#s7 .sub"), s7 + 0.2, "translateY(30px)");
-  $("#s7 .team").forEach((el, i) => enter(el, s7 + 0.3 + i * 0.14, `translateX(${i % 2 ? 1100 : -1100}px) rotate(${i % 2 ? 6 : -6}deg)`));
-
-  // 8. Vibes
-  const s8 = CUTS[6];
-  tl($("#s8 .bg-photo"), [[s8, { transform: "scale(1)" }, "linear"], [CUTS[7], { transform: "scale(1.15)" }]]);
-  $("#s8 .w").forEach((el, i) => enter(el, s8 + 0.05 + i * 0.18, "translateY(80px) scale(.8)", { ease: POP, d: 0.35 }));
-  $("#s8 .chips span").forEach((el, i) => enter(el, s8 + 0.6 + i * 0.07, "scale(0) rotate(-20deg)", { ease: POP, d: 0.3 }));
+  enter($("#s7 .h"), s7 + 0.05, "translateY(-60px)", { d: 0.35 });
+  enter($("#s7 .sub"), s7 + 0.15, "translateY(30px)", { d: 0.35 });
+  $("#s7 .team").forEach((el, i) => enter(el, s7 + 0.25 + i * 0.1, `translateX(${i % 2 ? 1100 : -1100}px) rotate(${i % 2 ? 6 : -6}deg)`, { d: 0.35 }));
 
   // 9. "Your quest starts now": the big finish
-  const s9 = CUTS[7];
+  const s9 = CUTS[6];
   $("#s9 [data-trio]").forEach((el, i) => {
     const f = [[s9 + 0.05 + i * 0.12, { opacity: 0, transform: "translateY(260px) scale(.6)" }, POP], [s9 + 0.5 + i * 0.12, { opacity: 1, transform: "translateY(0px) scale(1)" }]];
     // Everyone jumps on the hit, then bobs to the beat

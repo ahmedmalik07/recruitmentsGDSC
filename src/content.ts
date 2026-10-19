@@ -165,7 +165,7 @@ export const introStory = {
 };
 
 /**
- * Level 4 intro video: a 23 s trailer with the council and our own song, made in code (no filming needed).
+ * Level 4 intro video: a 15 s trailer with the council and our own song, made in code (no filming needed).
  * Edit scripts/intro-video/trailer.html and run `node scripts/intro-video/render.mjs` to change it.
  */
 export const introVideo = {
@@ -173,14 +173,14 @@ export const introVideo = {
   /** Same video for browsers without H.264 */
   srcWebm: "/intro/gdg-quest-intro.webm",
   poster: "/intro/poster.jpg",
-  label: "GDG Quest intro video with Sumaiyyah, Ahmed and Rafay, 23 seconds",
+  label: "GDG Quest intro video with Sumaiyyah, Ahmed and Rafay, 15 seconds",
   /** Read by screen readers instead of the burned-in text */
   transcript:
     "Yeh koi form nahi hai, yeh game hai. Air University, Islamabad: GDG on Campus Air University presents GDG Quest, Recruitment 2026. " +
-    "Sumaiyyah, President: innovation grows when everyone belongs. Ahmed Malik, Vice President and your guide: I built this quest, I'll guide you through every level. " +
-    "Abdul Rafay, General Secretary. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
-    "Build, learn, belong: hackathons, workshops, baithaqs, events. Your quest starts now at recruitments.wyibe.com. Upbeat music plays throughout.",
-  caption: "🎬 23 sec intro with the council",
+    "Sumaiyyah, President. Ahmed Malik, Vice President and your guide, 4 times national hackathon winner. " +
+    "Abdul Rafay, General Secretary, international gold medalist calligrapher. Pick your house: Technical, Marketing and Partnerships, Creatives, Media, Operations. " +
+    "Your quest starts now at recruitments.wyibe.com. Upbeat music plays throughout.",
+  caption: "🎬 15 sec intro with the council",
   play: "Play intro",
   showStory: "Tap through it instead",
   showVideo: "Watch the video instead",

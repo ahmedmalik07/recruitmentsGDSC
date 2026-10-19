@@ -23,7 +23,7 @@ async function render(seconds: number, sampleRate: number, play: Play): Promise<
   return [buffer.getChannelData(0), buffer.getChannelData(1)];
 }
 
-/** The intro video's music: 23 s, final hit at 20 s */
+/** The intro video's music: 15 s, final hit at 12 s */
 export const renderTrailer = (sampleRate = 44100) => render(TRAILER_SECONDS, sampleRate, trailerStep);
 
 /** 36 s of the background music: the intro levels, then the calm typing mix, then the Boss Check */

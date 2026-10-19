@@ -377,9 +377,9 @@ export function loopStep(kit: Kit, step: number, t: number, mix: Mix) {
   }
 }
 
-/** The intro video's arrangement. Matches scripts/intro-video/trailer.html: 23 s, final hit at 20 s (bar 10). */
-export const TRAILER_SECONDS = 23;
-const TRAILER_HIT = 20;
+/** The intro video's arrangement. Matches scripts/intro-video/trailer.html: 15 s, final hit at 12 s (bar 6). */
+export const TRAILER_SECONDS = 15;
+const TRAILER_HIT = 12;
 const TRAILER_INTRO: Mix = { layers: ["keys", "pad", "lead"], groove: "half" };
 const TRAILER_FULL: Mix = { layers: ALL_LAYERS, groove: "full" };
 

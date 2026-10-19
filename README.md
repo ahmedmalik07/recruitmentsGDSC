@@ -41,9 +41,10 @@ Assets (keep the filenames, or update the paths in `content.ts`):
 
 ### Intro video (no filming needed)
 
-Level 4 plays a 23 second vertical trailer with our own song: a "yeh GAME hai" hook, Air University, the
-GDG Quest title, Sumaiyyah, Ahmed and Rafay each with their photo, badge and a line, the 5 teams, and
+Level 4 plays a 15 second vertical trailer with our own song: a "yeh GAME hai" hook, Air University, the
+GDG Quest title, Sumaiya, Ahmed and Rafay each with their photo and badge, the 5 teams, and
 "Your quest starts now" with confetti on the final beat. Every cut lands on a beat (120 BPM).
+There is also a horizontal 1920x1080 cut for LinkedIn, YouTube or a projector (`--land`).
 It's made in code: `scripts/intro-video/trailer.html` is the picture (open it in Chrome to preview it live),
 the music is `trailerStep` in `src/lib/music.ts`, and `render.mjs` draws every frame, renders the music and
 encodes it all with ffmpeg:
@@ -54,7 +55,8 @@ node scripts/intro-video/render.mjs --stills 4,10,15     # quick PNG checks
 node scripts/intro-video/render.mjs --preview            # 36 s of the site music, out/music-preview.m4a
 node scripts/intro-video/render.mjs --audio              # just the video's music, as out/music.wav
 node scripts/intro-video/render.mjs --remux              # new music on the last render's frames (2 min)
-node scripts/intro-video/render.mjs                      # full render, about 3 minutes
+node scripts/intro-video/render.mjs                      # full render, about 2 minutes
+node scripts/intro-video/render.mjs --land               # the horizontal 1920x1080 cut
 ```
 
 It writes the site's copies (`public/intro/`, about 1.2 MB each, MP4 plus WebM, no audio track) and a
@@ -231,7 +233,7 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
 | 1 Welcome to GDG | Sumaiyyah → Ahmed | Air University photo, 3 swipeable cards (mentions baithaqs), then the handover to Ahmed |
 | 2 Meet the Council | Ahmed + Sumaiyyah | 3 equal flip cards: Sumaiyyah (👑 President), Ahmed (⭐ Your Guide), Rafay (📜 Gen Sec) |
 | 3 Build your Character | Abdul Rafay | Personal info, department with tap-to-fill suggestions. Each valid field unlocks an avatar part |
-| 4 Choose your House | Ahmed | 30 sec intro video with the council, 5 doors (teams), the position they're applying for, optional skills |
+| 4 Choose your House | Ahmed | 15 sec intro video with the council, 5 doors (teams), the position they're applying for, optional skills |
 | 5 Your Story | Ahmed + Sumaiyyah | Experience, achievements, why GDGOC AU, up to 4 portfolio links, quick taps |
 | 6 Boss Check | Abdul Rafay | 2 MCQs, just for fun (score stored, not used for selection) |
 | 7 Review + Loot | All 3 | Character sheet, consent, Turnstile, submit, confetti, shareable 1080x1920 card |
