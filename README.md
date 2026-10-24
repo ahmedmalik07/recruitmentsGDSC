@@ -257,6 +257,8 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
   Once set and passed, the quest shows "Quest closed" and the API returns 403.
 - **Closing by hand:** `site.closed` in `content.ts` closes applications right away, whatever the deadline says
   (it's `true` now). Set it to `false` and push to reopen. People who already applied still see their card.
+  The closed page shows the interview date, the intro video (with its own sound button), Ahmed and his game,
+  about GDG, and the council. Its copy is `closed` in `content.ts`.
 
 ### Admin
 

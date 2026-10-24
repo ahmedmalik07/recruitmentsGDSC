@@ -92,7 +92,7 @@ function Quest() {
         <BackgroundFX />
         {/* Anyone who already applied keeps their success screen and card */}
         {isClosed && !(state.level === 7 && state.submitted) ? (
-          <main className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-xl">
+          <main className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-2xl">
             <QuestClosed />
           </main>
         ) : (

@@ -184,6 +184,9 @@ export const introVideo = {
     "Your quest starts now at recruitments.wyibe.com. Upbeat music plays throughout.",
   caption: "🎬 15 sec intro with the council",
   play: "Play intro",
+  /** Sound button on the closed page */
+  unmute: "Tap for sound",
+  mute: "Mute",
   showStory: "Tap through it instead",
   showVideo: "Watch the video instead",
 };
@@ -798,12 +801,28 @@ export const avatarQuips = [
   "Okay okay, back to the quest 😅",
 ];
 
+/** The page everyone sees once applications close */
 export const closed = {
-  title: "Quest closed",
-  body: "Applications for this round are closed. Follow us so you don't miss the next one.",
+  eyebrow: "Recruitment 2026",
+  title: "Applications are closed",
+  body: "Thank you to everyone who played the quest 💛 We're reading every application, one by one.",
+  interviews: {
+    title: "Interviews start Monday, 26 October",
+    body: "Shortlisted? You'll get a WhatsApp and an email with your slot. Interviews are short and chill. Promise.",
+  },
   joinGroup: "Applied already? Join the recruitment WhatsApp group",
   joinGroupNote: "The shortlist and interview slots are shared only there.",
-  follow: "Follow on Instagram",
+  video: "Watch our intro",
+  ahmed: {
+    eyebrow: "Built this quest",
+    about: "Vice President of GDGOC AU and founder of Wyibe. He built this whole quest, and a game too. Play it while you wait for your interview.",
+    play: "Play Ahmed's game",
+    url: success.gift.url,
+    domain: "ahmadmalik.wyibe.com",
+  },
+  about: "About us",
+  teams: "5 teams run the chapter",
+  council: "Meet the council",
 };
 
 export const footer = {

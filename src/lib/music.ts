@@ -485,10 +485,14 @@ class Player {
   private mix: Mix = LEVEL_MIX[1];
   private pending?: Mix;
   private trailer?: { scheduler: Scheduler; gain: GainNode };
+  private started = false;
   enabled = true;
 
-  /** Call from a click or tap: browsers only allow sound after one */
-  start() {
+  /**
+   * Call from a click or tap: browsers only allow sound after one.
+   * `withSong: false` only unlocks sound (for the intro video), without the background song.
+   */
+  start(withSong = true) {
     if (!this.enabled || typeof window === "undefined") return;
     if (!this.ctx) {
       const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -518,12 +522,14 @@ class Player {
       this.out = comp;
       document.addEventListener("visibilitychange", this.onVisibility);
     }
+    this.started = true;
     void this.ctx.resume();
-    if (!this.loop?.running) this.loop?.start(0, this.ctx.currentTime + 0.08);
+    if (withSong && !this.loop?.running) this.loop?.start(0, this.ctx.currentTime + 0.08);
     this.fadeMusic();
   }
 
   stop() {
+    this.started = false;
     this.loop?.stop();
     this.stopTrailer();
     void this.ctx?.suspend();
@@ -579,7 +585,7 @@ class Player {
   private onVisibility = () => {
     if (!this.ctx) return;
     if (document.hidden) void this.ctx.suspend();
-    else if (this.enabled && this.loop?.running) void this.ctx.resume();
+    else if (this.enabled && this.started) void this.ctx.resume();
   };
 }
 

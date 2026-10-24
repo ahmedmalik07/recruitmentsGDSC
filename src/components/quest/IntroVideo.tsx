@@ -18,14 +18,19 @@ function lowData(): boolean {
  * data saver wait for a tap). The video file is silent: its music is the site's own song, played
  * live in sync (music.playTrailer), so it works on every phone, iPhones included, and follows 🔊.
  * If the video can't play, or they'd rather tap, the HTML story takes its place.
+ *
+ * `standalone` is for a page without the quest around it (the closed page): no HUD sound toggle
+ * and no tap to start the music first, so the video gets its own sound button and no story link.
  */
-export function IntroVideo() {
+export function IntroVideo({ standalone = false }: { standalone?: boolean }) {
   const reduced = useReducedMotion();
-  const { state } = useQuest();
+  const { state, dispatch } = useQuest();
   const sound = state.soundOn;
   const video = useRef<HTMLVideoElement>(null);
   const [story, setStory] = useState(false);
   const [started, setStarted] = useState(false);
+  /** Standalone only: sound unlocked by a tap */
+  const [heard, setHeard] = useState(false);
 
   // Autoplay once on screen; pause when scrolled away or the tab is hidden
   useEffect(() => {
@@ -88,8 +93,29 @@ export function IntroVideo() {
   function tapPlay() {
     const el = video.current;
     if (!el) return;
-    if (sound) music.start();
-    el.play().catch(() => setStory(true));
+    if (sound) {
+      music.start(!standalone);
+      setHeard(true);
+    }
+    el.play().catch(() => setStory(!standalone));
+  }
+
+  function toggleSound() {
+    const el = video.current;
+    if (!el) return;
+    if (heard) {
+      dispatch({ type: "sound", on: false });
+      music.setEnabled(false);
+      setHeard(false);
+      return;
+    }
+    dispatch({ type: "sound", on: true });
+    music.setEnabled(true);
+    music.start(false);
+    setHeard(true);
+    // Back to the start, so the music comes in on the first beat
+    el.currentTime = 0;
+    void el.play().catch(() => {});
   }
 
   return (
@@ -114,8 +140,17 @@ export function IntroVideo() {
           >
             <source src={introVideo.src} type="video/mp4" />
             {/* An error on the last source means nothing could play */}
-            <source src={introVideo.srcWebm} type="video/webm" onError={() => setStory(true)} />
+            <source src={introVideo.srcWebm} type="video/webm" onError={() => setStory(!standalone)} />
           </video>
+          {standalone && started && (
+            <button
+              type="button"
+              onClick={toggleSound}
+              className="absolute top-2.5 right-2.5 flex items-center gap-1.5 rounded-full bg-ink/85 px-3 py-1.5 text-sm font-bold text-white shadow-md backdrop-blur-sm"
+            >
+              <span aria-hidden="true">{heard ? "🔇" : "🔊"}</span> {heard ? introVideo.mute : introVideo.unmute}
+            </button>
+          )}
           {!started && (
             <button
               type="button"
@@ -132,13 +167,15 @@ export function IntroVideo() {
       </p>
       <p className="flex flex-wrap items-center justify-center gap-x-2 text-sm text-muted">
         {!story && <span>{introVideo.caption}</span>}
-        <button
-          type="button"
-          onClick={() => setStory((s) => !s)}
-          className="font-semibold text-link underline underline-offset-2"
-        >
-          {story ? introVideo.showVideo : introVideo.showStory}
-        </button>
+        {!standalone && (
+          <button
+            type="button"
+            onClick={() => setStory((s) => !s)}
+            className="font-semibold text-link underline underline-offset-2"
+          >
+            {story ? introVideo.showVideo : introVideo.showStory}
+          </button>
+        )}
       </p>
     </div>
   );
