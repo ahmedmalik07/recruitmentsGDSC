@@ -100,6 +100,11 @@ export function Level0Start() {
           <span>Quest</span>
         </m.h1>
         <p className="text-base text-muted sm:text-lg">{titleScreen.subtitle}</p>
+        {site.deadline && titleScreen.closing && (
+          <p className="self-start rounded-2xl border-2 border-[#f6d36b] bg-tint-yellow px-3 py-1.5 text-[15px] font-bold">
+            {titleScreen.closing}
+          </p>
+        )}
         <ul className="flex flex-wrap gap-2" aria-label="Quick facts">
           {titleScreen.facts.map((f) => (
             <li key={f} className="rounded-full border-2 border-line bg-surface px-3 py-1 text-sm font-semibold">

@@ -253,10 +253,12 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
   gets "Is roll no se already apply ho chuka hai…" plus a WhatsApp button.
 - **Department** is free text (candidates write it themselves); `departmentSuggestions` in `content.ts` shows up
   as tap-to-fill chips and autocomplete. The admin Department filter matches by "contains".
-- **Deadline is optional.** Leave `NEXT_PUBLIC_APPLICATIONS_DEADLINE` empty and applications stay open.
-  Once set and passed, the quest shows "Quest closed" and the API returns 403.
+- **Deadline is optional.** Set `DEADLINE` at the top of `content.ts` (it wins), or
+  `NEXT_PUBLIC_APPLICATIONS_DEADLINE` in Vercel. Leave both empty and applications stay open. Once it passes,
+  the quest shows the closed page (checked every minute) and the API returns 403. `titleScreen.closing` is the
+  "last chance" line on the title screen while a deadline is set.
 - **Closing by hand:** `site.closed` in `content.ts` closes applications right away, whatever the deadline says
-  (it's `true` now). Set it to `false` and push to reopen. People who already applied still see their card.
+  Set it to `false` and push to reopen. People who already applied still see their card.
   The closed page shows the interview date, the intro video (with its own sound button), Ahmed and his game,
   about GDG, and the council. Its copy is `closed` in `content.ts`.
 

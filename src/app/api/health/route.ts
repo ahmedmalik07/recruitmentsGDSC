@@ -37,7 +37,7 @@ export async function GET() {
       turnstileSecretSet: Boolean(process.env.TURNSTILE_SECRET_KEY),
       turnstileSiteKeySet: Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
       firebaseWebConfigSet: Boolean(process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID),
-      deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "none (open)",
+      deadline: site.deadline || "none (open)",
       closed: site.closed,
     },
     { headers: { "Cache-Control": "no-store" } },

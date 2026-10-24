@@ -10,6 +10,12 @@
 // Chapter + logistics
 // ---------------------------------------------------------------------------
 
+/**
+ * Applications close at this moment (ISO 8601 with timezone, e.g. 2026-11-01T23:59:00+05:00).
+ * Empty = NEXT_PUBLIC_APPLICATIONS_DEADLINE decides; empty there too = applications stay open.
+ */
+const DEADLINE: string = "2026-10-24T12:00:00+05:00";
+
 export const site = {
   appName: "GDG Quest",
   chapterName: "GDG on Campus Air University",
@@ -30,13 +36,10 @@ export const site = {
   /** Full artwork: the AU building in Google colors + lockup (desktop side panel) */
   art: "/brand/gdgoc-au-full.png",
   artSize: { width: 800, height: 524 },
-  /**
-   * Optional. Applications close at this moment if NEXT_PUBLIC_APPLICATIONS_DEADLINE is set
-   * (ISO 8601 with timezone, e.g. 2026-11-01T23:59:00+05:00). Empty = applications stay open.
-   */
-  deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "",
+  /** When applications close (see DEADLINE above). After it, everyone sees the closed page */
+  deadline: DEADLINE || process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "",
   /** Closes applications right away, whatever the deadline says. Set to false to reopen */
-  closed: true,
+  closed: false,
   /** Shown on the success screen instead of a date */
   shortlistNote: "Date will be announced soon on our Instagram and WhatsApp.",
   /** Recruitment WhatsApp group: updates, shortlist, interview slots */
@@ -209,6 +212,8 @@ export const titleScreen = {
   ctaNames: "Sumaiyyah · Ahmed · Rafay",
   ctaSub: "No sign-in · ~5 minutes · all AU students",
   facts: ["🎮 7 levels", "⏱️ ~5 minutes", "🔓 No sign-in", "🏆 Shareable card"],
+  /** Shown on the title screen while a deadline is set. Empty = hidden */
+  closing: "⏰ Last chance: applications close today at 12 noon",
   npc: [
     "Hey hey! I'm Sumaiyyah, President of GDGOC AU 👋",
     "Welcome to GDG Quest. Yeh koi boring form nahi hai, it's a mini game.",
