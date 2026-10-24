@@ -17,7 +17,7 @@ export function QuestClosed() {
         🔒 {closed.title}
       </h1>
       <p className="text-lg text-muted">{closed.body}</p>
-      <JoinGroup />
+      <JoinGroup label={closed.joinGroup} note={closed.joinGroupNote} />
       <FollowLinks />
     </section>
   );

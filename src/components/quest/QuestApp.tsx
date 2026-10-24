@@ -57,13 +57,13 @@ export function QuestApp() {
 function Quest() {
   const { state } = useQuest();
   const instant = useInstant();
-  const [isClosed, setIsClosed] = useState(false);
+  const [isClosed, setIsClosed] = useState<boolean>(site.closed);
 
   // Checked on the client after mount (the page is statically rendered).
   // The API enforces the same deadline server side.
   useEffect(() => {
     const deadline = Date.parse(site.deadline);
-    const check = () => setIsClosed(Number.isFinite(deadline) && Date.now() > deadline);
+    const check = () => setIsClosed(site.closed || (Number.isFinite(deadline) && Date.now() > deadline));
     check();
     const id = window.setInterval(check, 60_000);
     return () => window.clearInterval(id);
@@ -90,10 +90,11 @@ function Quest() {
         className="mx-auto min-h-dvh w-full max-w-md px-4 md:max-w-2xl md:px-6 lg:grid lg:max-w-6xl lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12 lg:px-8"
       >
         <BackgroundFX />
-        {isClosed && state.level !== 7 ? (
-          <div className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-xl">
+        {/* Anyone who already applied keeps their success screen and card */}
+        {isClosed && !(state.level === 7 && state.submitted) ? (
+          <main className="lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-xl">
             <QuestClosed />
-          </div>
+          </main>
         ) : (
           <>
             <QuestSidebar />

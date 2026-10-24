@@ -47,9 +47,9 @@ export async function POST(req: Request) {
     return reply({ ok: false, code: "bot", message: copy.bot }, 400);
   }
 
-  // 3. Deadline
+  // 3. Closed, by hand or by the deadline
   const deadline = Date.parse(site.deadline);
-  if (Number.isFinite(deadline) && Date.now() > deadline) {
+  if (site.closed || (Number.isFinite(deadline) && Date.now() > deadline)) {
     return reply({ ok: false, code: "closed", message: copy.closed }, 403);
   }
 

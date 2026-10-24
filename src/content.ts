@@ -35,6 +35,8 @@ export const site = {
    * (ISO 8601 with timezone, e.g. 2026-11-01T23:59:00+05:00). Empty = applications stay open.
    */
   deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "",
+  /** Closes applications right away, whatever the deadline says. Set to false to reopen */
+  closed: true,
   /** Shown on the success screen instead of a date */
   shortlistNote: "Date will be announced soon on our Instagram and WhatsApp.",
   /** Recruitment WhatsApp group: updates, shortlist, interview slots */
@@ -799,6 +801,8 @@ export const avatarQuips = [
 export const closed = {
   title: "Quest closed",
   body: "Applications for this round are closed. Follow us so you don't miss the next one.",
+  joinGroup: "Applied already? Join the recruitment WhatsApp group",
+  joinGroupNote: "The shortlist and interview slots are shared only there.",
   follow: "Follow on Instagram",
 };
 
@@ -822,7 +826,7 @@ export const errors = {
   turnstileLoad: "Bot check couldn't load. Check your connection and refresh.",
   cardFailed: "Couldn't make the card on this device. Try a screenshot instead 📸",
   duplicate: "Is roll no se already apply ho chuka hai. Masla ho to email ya WhatsApp karo",
-  closed: "Applications are closed now. The deadline passed.",
+  closed: "Applications for this round are closed now.",
   bot: "Bot check failed. Refresh the page and try again.",
   validation: "Kuch fields theek nahi hain. Check the highlighted ones.",
   network: "Network issue. Check your connection and try again.",

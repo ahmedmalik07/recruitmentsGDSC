@@ -255,6 +255,8 @@ The script reads the Admin SDK credentials from `.env.local`. The person just re
   as tap-to-fill chips and autocomplete. The admin Department filter matches by "contains".
 - **Deadline is optional.** Leave `NEXT_PUBLIC_APPLICATIONS_DEADLINE` empty and applications stay open.
   Once set and passed, the quest shows "Quest closed" and the API returns 403.
+- **Closing by hand:** `site.closed` in `content.ts` closes applications right away, whatever the deadline says
+  (it's `true` now). Set it to `false` and push to reopen. People who already applied still see their card.
 
 ### Admin
 

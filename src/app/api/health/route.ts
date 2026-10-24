@@ -1,4 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
+import { site } from "@/content";
 import { AdminConfigError, adminApp } from "@/lib/server/firebaseAdmin";
 
 /**
@@ -37,6 +38,7 @@ export async function GET() {
       turnstileSiteKeySet: Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
       firebaseWebConfigSet: Boolean(process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID),
       deadline: process.env.NEXT_PUBLIC_APPLICATIONS_DEADLINE || "none (open)",
+      closed: site.closed,
     },
     { headers: { "Cache-Control": "no-store" } },
   );
